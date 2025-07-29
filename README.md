@@ -14,3 +14,12 @@ Maintain strict UTF-8 encoding and compatibility with iNEWS character requiremen
 Support bidirectional communication with iNEWS rundowns, including active rundown loading and status updates.
 
 
+# Change log
+
+## 2.0
+
+- Updated all senders to UCS-2 big endian encoding"
+```
+Buffer.from(string, 'utf16le').swap16();
+```
+

@@ -109,7 +109,7 @@ class MosMediaConnector {
     
     sendToMediaListener(payload) {
         if (this.mediaServerSocket) {
-            const buffer = Buffer.from(payload);
+            const buffer = Buffer.from(payload, 'utf16le').swap16();;
             this.mediaServerSocket.write(buffer);
         } else {
             logger('[TCP_MEDIA] No active media-listener connection',"red");
@@ -118,7 +118,7 @@ class MosMediaConnector {
 
     sendToMediaClient(payload) {
         if (this.mediaClient.readyState === 'open') {
-            const buffer = Buffer.from(payload);
+            const buffer = Buffer.from(payload, 'utf16le').swap16();
             this.mediaClient.write(buffer);
             logger('[TCP_MEDIA] Data sent to media-client');
         } else {

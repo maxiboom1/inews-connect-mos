@@ -33,7 +33,7 @@ class MosConnector {
                 // Append incoming data to the buffer
                 buffer = Buffer.concat([buffer, data]);
                 let endTagIndex;
-    
+                console.log(buffer);
                 // Search for the `</mos>` delimiter in the buffer
                 while ((endTagIndex = buffer.indexOf(this.mosDelimiter)) !== -1) {
                     // Extract the complete message up to the end of `</mos>`
@@ -75,7 +75,7 @@ class MosConnector {
                 socket.on('data', (data) => {
                     buffer = Buffer.concat([buffer, data]); // Append incoming data to the buffer
                     let endTagIndex;
-                    
+                    console.log(buffer);
                     // Search for the `</mos>` delimiter in the buffer
                     while ((endTagIndex = buffer.indexOf(this.mosDelimiter)) !== -1) {
                         const completeMessage = Uint8Array.prototype.slice.call(buffer, 0, endTagIndex + this.mosDelimiter.length);
@@ -108,7 +108,7 @@ class MosConnector {
     sendToListener(payload) {
         try {
             if (this.serverSocket) {
-                const buffer = Buffer.from(payload);
+                const buffer = Buffer.from(payload, 'utf16le').swap16();
                 this.serverSocket.write(buffer);
             } else {
                 //console.error('No active listener connection');
@@ -121,7 +121,7 @@ class MosConnector {
     sendToClient(payload) {
         try {
             if (this.client.readyState === 'open') {
-                const buffer = Buffer.from(payload);
+                const buffer = Buffer.from(payload, 'utf16le').swap16();
                 this.client.write(buffer);
             } else {
                 console.error('Client not connected');
