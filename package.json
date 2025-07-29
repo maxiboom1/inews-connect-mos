@@ -1,0 +1,26 @@
+{
+  "name": "octopus-connect",
+  "version": "1.0",
+  "description": "Connects to octopus server using MOS protocol. Provide GFX plugin",
+  "license": "MIT",
+  "author": {
+    "name": "Alex Samih-Zade",
+    "email": "galutziogen@gmail.com"
+  },
+  "type": "module",
+  "main": "app.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "fast-xml-parser": "^4.3.2",
+    "he": "^1.2.0",
+    "jsdom": "^23.0.1",
+    "mssql": "^10.0.1"
+  },
+  "scripts": {
+    "start": "nodemon --ignore unlinkedItemsCache.json --ignore duplicatesCache.json app.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
