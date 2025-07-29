@@ -10,7 +10,7 @@ class MosMediaConnector {
         this.mediaClient = new net.Socket();
         this.mediaServer = null;
         this.mediaServerSocket = null;
-        this.mosDelimiter = mosCommands.mosDelimitedUtf8();
+        this.mosDelimiter = mosCommands.mosDelimiter();
         this.port = appConfig.mediaPort;
     }
 

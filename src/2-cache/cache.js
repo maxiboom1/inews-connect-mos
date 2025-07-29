@@ -1,4 +1,4 @@
-import replaceAndNormalizeSpaces from "../3-utilities/normalize.js";
+import normalize from "../3-utilities/normalize.js";
 
 class Cache {
     
@@ -26,10 +26,10 @@ class Cache {
             const productionData = JSON.parse(decodedStr);
             const scenes = productionData.Scenes.map(scene => {
                 return {
-                    name:replaceAndNormalizeSpaces(scene.Name),
+                    name:normalize.replaceAndNormalizeSpaces(scene.Name),
                     color:scene.Color,
                     folders: scene.Folders.map(folder => ({
-                        name: replaceAndNormalizeSpaces(folder.Name),
+                        name: normalize.replaceAndNormalizeSpaces(folder.Name),
                         itemUids: folder.ItemUids
                     }))
                 };

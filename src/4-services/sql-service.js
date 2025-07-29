@@ -56,6 +56,8 @@ class SqlService {
             tag: "",
             roID:roID
         };
+
+        console.log(values)
     
         const selectQuery = `
             SELECT uid FROM ngn_inews_rundowns WHERE name = @name;

@@ -10,7 +10,7 @@ class MosConnector {
         this.client = new net.Socket();
         this.server = null;
         this.serverSocket = null; // Store the single active connection for the listener
-        this.mosDelimiter = mosCommands.mosDelimitedUtf8();
+        this.mosDelimiter = mosCommands.mosDelimiter();
         this.port = appConfig.rundownPort
     }
 
@@ -33,7 +33,6 @@ class MosConnector {
                 // Append incoming data to the buffer
                 buffer = Buffer.concat([buffer, data]);
                 let endTagIndex;
-                console.log(buffer);
                 // Search for the `</mos>` delimiter in the buffer
                 while ((endTagIndex = buffer.indexOf(this.mosDelimiter)) !== -1) {
                     // Extract the complete message up to the end of `</mos>`
@@ -75,7 +74,6 @@ class MosConnector {
                 socket.on('data', (data) => {
                     buffer = Buffer.concat([buffer, data]); // Append incoming data to the buffer
                     let endTagIndex;
-                    console.log(buffer);
                     // Search for the `</mos>` delimiter in the buffer
                     while ((endTagIndex = buffer.indexOf(this.mosDelimiter)) !== -1) {
                         const completeMessage = Uint8Array.prototype.slice.call(buffer, 0, endTagIndex + this.mosDelimiter.length);

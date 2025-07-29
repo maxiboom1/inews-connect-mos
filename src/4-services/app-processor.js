@@ -9,6 +9,7 @@ import appConfig from "../3-utilities/app-config.js";
 import octopusService from "./octopus-service.js";
 import logMessages from "../3-utilities/logger-messages.js";
 import itemsHash from "../2-cache/items-hashmap.js";
+import normalize from "../3-utilities/normalize.js";
 
 // MOS 2.8.5
 class AppProcessor {
@@ -30,15 +31,18 @@ class AppProcessor {
             logger("[RUNDOWN] NCS doesn't have active rundowns.","red");
             return;
         }
-        const roArr = [].concat(msg.mos.roListAll.ro); // Normalize ro data
-
-        for(const ro of roArr){
-             const rundownStr = ro.roSlug;
-             const roID = ro.roID;
+        const roArr = normalize.normalizeRoListAll(msg);
+        // const roArr = msg.mos.roListAll;
+        // roArr.roID = [].concat(roArr.roID);
+        // roArr.roSlug = [].concat(roArr.roSlug);
+        console.log(roArr);
+        for(let i=0;i<roArr.roID.length;i++){
+             const rundownStr = roArr.roSlug[i];
+             const roID = roArr.roID[i];
              const production = this.getProdByRundownStr(rundownStr);
              const uid = await sqlService.addDbRundown(rundownStr,roID,production);
              await cache.initializeRundown(rundownStr,uid, production, roID);
-             this.roQueue.push(ro.roID); // Add roID to queue
+             this.roQueue.push(roID); // Add roID to queue
         }
         // Now, when cache is updated, hide unwatched rundowns in sql
         await sqlService.hideUnwatchedRundowns();

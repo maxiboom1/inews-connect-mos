@@ -37,8 +37,8 @@ class MosCommands {
         </mos>`;
     }
 
-    mosDelimitedUtf8(){
-        const delimiter = Buffer.from([0x3C, 0x2F, 0x6D, 0x6F, 0x73, 0x3E]); // </mos> in UTF-8
+    mosDelimiter(){
+        const delimiter = Buffer.from([0x00, 0x3C, 0x00, 0x2F, 0x00, 0x6D, 0x00, 0x6F, 0x00, 0x73, 0x00, 0x3E]); // </mos> in UTF-8
         return delimiter;
     }
 

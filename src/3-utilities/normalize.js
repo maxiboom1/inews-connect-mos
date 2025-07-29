@@ -8,4 +8,33 @@ function replaceAndNormalizeSpaces(str) {
     return result;
 }
 
-export default replaceAndNormalizeSpaces;
+
+
+/**
+ * Normalize msg.mos.roListAll so roID/roSlug are arrays
+ * and, for each item, keep only the substring after the first "/" ("/" removed).
+ * Returns the normalized roListAll object.
+ */
+function normalizeRoListAll(msg) {
+    const asArray = v => v == null ? [] : (Array.isArray(v) ? v : [v]);
+  
+    const cutAfterFirstSlash = s => {
+      if (typeof s !== 'string') return s;
+      const str = s.trim();
+      const i = str.indexOf('/');
+      return i >= 0 ? str.slice(i + 1) : str; // if no "/", leave as-is
+    };
+  
+    const ro = msg?.mos?.roListAll ?? {};
+  
+    const roID = asArray(ro.roID).filter(Boolean).map(cutAfterFirstSlash);
+    const roSlug = asArray(ro.roSlug).filter(Boolean).map(cutAfterFirstSlash);
+  
+    ro.roID = roID;
+    ro.roSlug = roSlug;
+  
+    return msg.mos.roListAll;
+  }
+
+export default { replaceAndNormalizeSpaces, normalizeRoListAll }
+    
