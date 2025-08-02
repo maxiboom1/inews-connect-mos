@@ -16,7 +16,13 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
-## 2.0
+## 2.0.1
+
+- Added SQL create scripts for ngn_inews_items, ngn_inews_rundowns and ngn_inews_stories.
+- In ngn_inews_rundowns, the roID is nvarchar type (in octopus we get it as number).
+
+
+## 2.0.0
 
 - Updated all senders to UCS-2 big endian encoding"
 ```
