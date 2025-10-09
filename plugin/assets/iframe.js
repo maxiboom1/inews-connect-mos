@@ -22,6 +22,31 @@ function drag(event) {
     event.dataTransfer.setData("text",msg);
 }
 
+function createMosMessage_test(){
+    const templateId = document.body.getAttribute('data-template');
+    const productionId = document.body.getAttribute('data-production');
+    const gfxItem = document.body.getAttribute('data-gfxItem');
+    const mosID = document.body.getAttribute('data-mos-id');
+    let itemID = "0";
+    if(document.body.hasAttribute("data-itemID")){
+        itemID = document.body.getAttribute('data-itemID');
+    }
+    const data = __NA_GetValues();
+    const scripts = JSON.stringify(__NA_GetScripts());
+    const itemSlug = document.getElementById("nameInput").value.replace(/'/g, "")
+    return `<mos>
+                <ncsItem>
+                    <item>
+                    <itemSlug>TEST</itemSlug>
+                    <objID>GFX-12345</objID>
+                    <mosID>NAMOS</mosID>
+                    <mosItemBrowserProgID>alexB</mosItemBrowserProgID>
+                    <mosItemEditorProgID>alexE</mosItemEditorProgID>
+                    <mosAbstract>abstract</mosAbstract>
+                    </item>
+                </ncsItem>
+                </mos>`;
+}
 function createMosMessage(){
     const templateId = document.body.getAttribute('data-template');
     const productionId = document.body.getAttribute('data-production');
@@ -37,11 +62,12 @@ function createMosMessage(){
     return `<mos> 
         <ncsItem>
             <item>
-                <itemID>${itemID}</itemID>
                 <itemSlug>${itemSlug}</itemSlug>
                 <objID></objID>
                 <objAir>READY</objAir>
                 <mosID>${mosID}</mosID>
+                <mosItemBrowserProgID>alex</mosItemBrowserProgID>
+                <mosItemEditorProgID>alexE</mosItemEditorProgID>
                 <mosExternalMetadata>
                     <gfxItem>${gfxItem === null? "0": gfxItem}</gfxItem>
                     <gfxTemplate>${templateId}</gfxTemplate>

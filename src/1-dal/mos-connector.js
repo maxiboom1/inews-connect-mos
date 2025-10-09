@@ -105,11 +105,17 @@ class MosConnector {
 
     sendToListener(payload) {
         try {
-            if (this.serverSocket) {
-                const buffer = Buffer.from(payload, 'utf16le').swap16();
+            if (this.serverSocket) { 
+                //const buffer = Buffer.from(payload, 'utf16le').swap16();
+                
+                // UTF-16BE with BOM
+                const bom = Buffer.from([0xFE, 0xFF]);
+                const body = Buffer.from(payload, 'utf16le').swap16();
+                const buffer = Buffer.concat([bom, body]);
                 this.serverSocket.write(buffer);
+                
             } else {
-                //console.error('No active listener connection');
+                console.error('No active listener connection');
             }
         } catch (error) {
             console.error('Error sending data to listener:', error);

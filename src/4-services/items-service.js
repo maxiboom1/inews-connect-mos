@@ -7,12 +7,14 @@ import mosRouter from "./mos-router.js";
 
 
 async function registerItems(story, options = { itemIDArr: [], replaceEvent:false }) {
+    
     const { rundown, uid: storyUid, rundownStr } = story;
     let ord = 0;
-    for (const el of story.item) {
-        const {gfxItem} = el.mosExternalMetadata;
+    for (let el of story.item) {
         const itemID = el.itemID;
-        
+        el=el.ncsItem.item; // Fix, for avid data struct
+        const {gfxItem} = el.mosExternalMetadata;
+        el.itemID=itemID;
         // If its from replaceEvent, process only items in the list
         if (options.replaceEvent) {
             const indexInAdd = options.itemIDArr.indexOf(itemID);
@@ -27,9 +29,9 @@ async function registerItems(story, options = { itemIDArr: [], replaceEvent:fals
             // user copy same item in same story (we get then 2 items with same gfxItem)
             options.itemIDArr.splice(indexInAdd, 1);
         }
-
+        
         const item = constructItem(el, rundown, storyUid, ord);
-
+        
         if (itemsHash.isUsed(item.uid)) {
             await handleDuplicateItem(item, story, el, ord);
         } else {
@@ -55,7 +57,7 @@ async function createNewItem(item, story, el) { //Item: {uid, name, production, 
 
         // Item wasn't exist in DB ==> Restore item
         else if(result.event === "create"){
-            //logger(`[ITEM] New Item {${item.name}} restored in {${story.rundownStr}}`);
+            logger(`[ITEM] New Item {${item.name}} restored in {${story.rundownStr}}`);
             await sendMosItemReplace(story, el, result.uid, "NEW ITEM");
         }
 
@@ -105,34 +107,34 @@ function constructItem(item, rundown, storyUid, ord) {
 
 async function sendMosItemReplace(story, el, assertedUid, action){
     
-    const m = mosCommands.mosItemReplace(story, el, assertedUid); // Returns {item:{},messageID:messageID}
+    const m = mosCommands.mosItemReplace(story, el, assertedUid); // Returns {replaceMosMessage,storyID}
     
-    logger(`[ITEM] ${action}: Sending mosItemReplace for item {${assertedUid}}: messageID:{${m.messageID}}`,"blue");
+    logger(`[ITEM] ${action}: Sending mosItemReplace for item {${assertedUid}}`,"blue");
 
     mosConnector.sendToClient(m.replaceMosMessage);
     
     // Wait for roAck for sended mosItemReplace
     try {
-        await waitForRoAck(m.messageID);
+        await waitForRoAck();
     } catch (error) {
         logger(error.message, "red");
     }
 
 }
 
-function waitForRoAck(messageID, timeout = 5000) {
+function waitForRoAck(timeout = 5000) {
     return new Promise((resolve, reject) => {
         const listener = (msg) => {
-            if (msg.mos && msg.mos.roAck && msg.mos.messageID === messageID) {
+            if (msg.mos && msg.mos.roAck) {
                 mosRouter.off('roAckMessage', listener);
-                //logger(`[ITEM] mosItemReplace ack'd for messageID: ${messageID}`, "green");
+                logger(`[ITEM] mosItemReplace ack'd`, "green");
                 resolve();
             }
         };
         
         const timer = setTimeout(() => {
             mosRouter.off('roAckMessage', listener);
-            reject(new Error(`[ITEM] Timeout waiting for roAck (messageID: ${messageID})`));
+            reject(new Error(`[ITEM] Timeout waiting for roAck `));
         }, timeout);
 
         mosRouter.on('roAckMessage', listener);

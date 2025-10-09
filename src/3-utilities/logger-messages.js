@@ -5,11 +5,10 @@ import getServerIP from "./host-ip.js";
 class Messages {
 
     appLoadedMessage(){
-        //mosConnector.sendToClient(mosCommands.reqMachInfo());
         const host = getServerIP();
         console.clear();
         logger(`**********************************************************************`,"blue");
-        logger(`[SYSTEM] Octopus-Connect, App Version: ${appConfig.version}, now starting...`,"green");
+        logger(`[SYSTEM] Inews-Connect, App Version: ${appConfig.version}, now starting...`,"green");
         logger(`[SYSTEM] Plugin url: http://${host}:${appConfig.pluginPort}/index.html`,"green")
         logger(`**********************************************************************`,"blue");
     }

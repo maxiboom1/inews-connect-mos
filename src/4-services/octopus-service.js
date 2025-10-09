@@ -11,13 +11,15 @@ class OctopusProcessor {
     
     // Triggered from roList incoming mos message, and from insert event
     async handleNewStory(story) {        
-        
+    
         // Add props to story
         story = await this.constructStory(story);
 
+        //console.log(JSON.stringify(story));
+        
         // Store story in DB, and save assigned uid
         story.uid = await sqlService.addDbStory(story);
-        
+
         // Create a deep copy of the story object
         const storyCopy = this.removeItemsMeta(story)
 
@@ -166,11 +168,23 @@ class OctopusProcessor {
         await this.handleNewStory(story); 
         ackService.sendAck(roID);
     }
-
+    
+    async appendStory(msg) {
+        const roID = msg.mos.roStoryAppend.roID; 
+        const story = msg.mos.roStoryAppend.story; 
+        story.rundownStr = cache.getRundownSlugByRoID(roID);
+        const storiesLength = await cache.getRundownLength(story.rundownStr);            
+        story.ord = storiesLength === 0? 0: storiesLength;
+        
+        // Store new story and its items
+        await this.handleNewStory(story); 
+        ackService.sendAck(roID);
+    }    
+    
     async deleteStory(msg) {
-        const roID = msg.mos.roElementAction.roID; // roID
+        const roID = msg.mos.roStoryDelete.roID; // roID
         const rundownStr = cache.getRundownSlugByRoID(roID); // rundownSlug
-        const sourceStoryID = msg.mos.roElementAction.element_source.storyID; // Deleted story
+        const sourceStoryID = msg.mos.roStoryDelete.storyID; // Deleted story
         const stories = await cache.getRundown(rundownStr); // Get copy of stories
         const deletedOrd = stories[sourceStoryID].ord;
 
@@ -205,7 +219,7 @@ class OctopusProcessor {
     // Adds to story uid, production, normalizing item for array. Story obj must have "rundownStr" prop!
     async constructStory(story){
         story.item = Array.isArray(story.item) ? story.item : [story.item];
-        
+
         // Run over items, and assign ord
         for(let i = 0; i<story.item.length; i++){
             story.item[i].ord = i;
@@ -229,7 +243,7 @@ class OctopusProcessor {
     }
 
     propsExtractor(msg){
-        const roID = msg.mos.roElementAction.roID; 
+        const roID = msg.mos.roStoryAppend.roID; 
         const rundownStr = cache.getRundownSlugByRoID(roID); 
         const targetStoryID = msg.mos.roElementAction.element_target.storyID;
         const story = msg.mos.roElementAction.element_source.story; 
@@ -242,10 +256,10 @@ class OctopusProcessor {
         
         if (storyCopy.item && Array.isArray(storyCopy.item)) {
             storyCopy.item.forEach(item => {
-                if (item.mosExternalMetadata) {
-                    delete item.mosExternalMetadata.data;
-                    delete item.mosExternalMetadata.scripts;
-                    delete item.mosExternalMetadata.metadata;
+                if (item.ncsItem.item.mosExternalMetadata) {
+                    delete item.ncsItem.item.mosExternalMetadata.data;
+                    delete item.ncsItem.item.mosExternalMetadata.scripts;
+                    delete item.ncsItem.item.mosExternalMetadata.metadata;
                 }
             });
         }

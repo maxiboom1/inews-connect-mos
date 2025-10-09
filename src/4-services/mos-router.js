@@ -13,13 +13,13 @@ class MosRouter extends EventEmitter {
     async mosMessageProcessor(msg, port) {
     
         if(logMosIncomingMessages){
-            logger(`[MOS-DEBUG] {${port}} ${this.color(JSON.stringify(msg),"dimmed")}`); 
+            logger(`[MOS-PROTOCOL-DEBUG] {${port}} ${this.msgBuider(msg)}`,'yellow'); 
         }
         // double !! converts expression to boolean - so, 
         // if msg.mos.heartbeat exists - the !! convert it to "true"
         switch (true) {
             case !!msg.mos.listMachInfo:
-                //logger("Octopus is Alive! \nNCS Machine Info: " + JSON.stringify(msg.mos.listMachInfo,null,2));
+                logger("NCS Machine Info: " + JSON.stringify(msg,null,2));
                 break;
             case !!msg.mos.heartbeat:
                 ackService.sendHeartbeat(port);
@@ -27,8 +27,7 @@ class MosRouter extends EventEmitter {
             case !!msg.mos.roMetadataReplace:
                 await appProcessor.roMetadataReplace(msg);
                 ackService.sendAck(msg.mos.roMetadataReplace.roID);
-                break;         
-                  
+                break;              
             case msg.mos.roListAll !== undefined:
                 logger(`[MOS] {${this.color("roListAll")}} are received from ${port}`);
                 await appProcessor.roListAll(msg)
@@ -45,47 +44,47 @@ class MosRouter extends EventEmitter {
                 logger(`[MOS] {${this.color("roReadyToAir")}} are received from ${port}`);
                 ackService.sendAck(msg.mos.roReadyToAir.roID);
                 break;
-            case !!msg.mos.roStorySend:
-                logger(`[MOS] {${this.color("roStorySend")}} are received from ${port}`);
-                ackService.sendAck(msg.mos.roStorySend.roID);
-                break;
             case !!msg.mos.roDelete:
                 logger(`[MOS] {${this.color("roDelete")}} are received from ${port}`);
                 await appProcessor.roDelete(msg);
                 break; 
-    
+            
+            // ****************** NEW ACTIONS ************************
+            case !!msg.mos.roStorySend:
+                logger(`[MOS] {${this.color("roStorySend")}} are received from ${port}`);
+                ackService.sendAck(msg.mos.roStorySend.roID);
+                break;            
+            case !!msg.mos.roStoryAppend:
+                logger(`[MOS] {${this.color("roStoryAppend")}} are received from ${port}`);
+                await octopusService.appendStory(msg);
+                break; 
+            case !!msg.mos.roStoryReplace:
+                logger(`[MOS] {${this.color("roStoryReplace")}} are received from ${port}`);
+                ackService.sendAck(msg.mos.roStoryReplace.roID);
+                break;             
+            case !!msg.mos.roStoryDelete:
+                logger(`[MOS] {${this.color("roStoryDelete")}} are received from ${port}`);
+                await octopusService.deleteStory(msg);
+                break;                 
+            case !!msg.mos.roStoryInsert:
+                logger(`[MOS] {${this.color("roStoryInsert")}} are received from ${port}`);
+                ackService.sendAck(msg.mos.roStoryInsert.roID);
+                break;  
+            case !!msg.mos.roItemInsert:
+                logger(`[MOS] {${this.color("roItemInsert")}} are received from ${port}`);
+                ackService.sendAck(msg.mos.roItemInsert.roID);
+                break;                              
+            case !!msg.mos.roItemDelete:
+                logger(`[MOS] {${this.color("roItemDelete")}} are received from ${port}`);
+                ackService.sendAck(msg.mos.roItemDelete.roID);
+                break; 
+            case !!msg.mos.roItemReplace:
+                logger(`[MOS] {${this.color("roItemReplace")}} are received from ${port}`);
+                ackService.sendAck(msg.mos.roItemReplace.roID);
+                break;                             
             // ****************** roAck handling ************************
             case !!msg.mos.roAck:
-                //logger(`[MOS] {${this.color("roAck")}} are received from ${port}`);
                 this.emit('roAckMessage', msg);// Emit the message, 
-                break; 
-            
-            // ****************** roElementAction complex message with actions ************************
-            case !!msg.mos.roElementAction:
-                const action = msg.mos.roElementAction["@_operation"];
-    
-                if(action === "MOVE"){
-                    logger(`[MOS] {${this.color("roElementAction@MOVE")}} are received from ${port}`);
-                    await octopusService.storyMove(msg);
-                } 
-                else if(action === "REPLACE"){
-                    logger(`[MOS] {${this.color("roElementAction@REPLACE")}} are received from ${port}`); 
-                    await octopusService.storyReplace(msg);
-                } 
-                else if(action === "INSERT"){
-                    logger(`[MOS] {${this.color("roElementAction@INSERT")}} are received from ${port}`);
-                    await octopusService.insertStory(msg);
-                } 
-                else if(action === "DELETE"){
-                    logger(`[MOS] {${this.color("roElementAction@DELETE")}} are received from ${port}`);
-                    await octopusService.deleteStory(msg);
-                } 
-                
-                else {
-                    logger(`[MOS] {${this.color("roElementAction@[!UNKNOWN!]")}} are received from ${port}`,"red");
-                    ackService.sendAck(msg.mos.roElementAction.roID);
-                }
-    
                 break;      
             
             default:
@@ -93,10 +92,10 @@ class MosRouter extends EventEmitter {
                 const roID = findRoID(msg);
                 if(roID){
                     ackService.sendAck(roID);
-                }
+                    logger(`[MOS] Sent roAck for ${roID}`,"red");
+            }
         }
         
-    
     }
 
     color(msg, color = "yellow") { // Used to set color to MOS events in console
@@ -114,8 +113,15 @@ class MosRouter extends EventEmitter {
     
     };
 
-}
+    logLine(){
+        const d = this.color('\n-------------------------------------------------------\n');
+        return d;
+    }
 
+    msgBuider(msg){
+        return `${this.logLine()}${this.color(JSON.stringify(msg),"dimmed")}${this.logLine()}`;
+    }
+}
 
 const mosRouter = new MosRouter();
 export default mosRouter;

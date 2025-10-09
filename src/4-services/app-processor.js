@@ -22,6 +22,7 @@ class AppProcessor {
         await sqlService.initialize();
         await mosConnector.connect();
         await mosMediaConnector.connect();
+        //mosConnector.sendToClient(mosCommands.reqMachInfo());
         mosConnector.sendToClient(mosCommands.roReqAll());// Start point - sends roReqAll and server receives roListAll
     }
     
@@ -48,7 +49,6 @@ class AppProcessor {
         
     }
 
-
     async processNextRoReq() {
         if (this.pendingRequest || this.roQueue.length === 0) {
             return; // Exit if a request is already in progress or the queue is empty
@@ -60,12 +60,18 @@ class AppProcessor {
     }
 
     async roList(msg){
+        
         const roSlug = msg.mos.roList.roSlug;
-
+        
         // Normalize `story` to always be an array, handling undefined properly (nested ternary)
         const stories = msg.mos.roList.story ? (Array.isArray(msg.mos.roList.story) ? msg.mos.roList.story : [msg.mos.roList.story]) : [];
-        let ord = 0;       
+        let ord = 0;  
+        //console.log(stories)
         for(const story of stories){
+            if(story.item === undefined) {
+                logger("[STORY] Ignored - empty story report (Disable sending empty stories!)", "yellow");
+                continue;
+            }
             story.rundownStr = roSlug; //Add rundownStr to story
             story.ord = ord; //Add ord to story
             await octopusService.handleNewStory(story);

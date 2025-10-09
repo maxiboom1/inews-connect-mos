@@ -5,14 +5,12 @@ class MosCommands {
     constructor() {
         this.mosID = appConfig.mosID.toString(); // Store mosID once onload
         this.ncsID = appConfig.ncsID.toString(); // Store ncsID once onload
-        this.messageID = 2000; // Initialize the message ID counter
     }
 
     reqMachInfo() {
         return `<mos>
             <mosID>${this.mosID}</mosID>
             <ncsID>${this.ncsID}</ncsID>
-            <messageID></messageID>
             <reqMachInfo/>
         </mos>`;
     }
@@ -21,7 +19,6 @@ class MosCommands {
         return `<mos>
             <mosID>${this.mosID}</mosID>
             <ncsID>${this.ncsID}</ncsID>
-            <messageID></messageID>
             <roReqAll/>   
             </mos>`;
     }   
@@ -30,7 +27,6 @@ class MosCommands {
         return `<mos>
             <mosID>${this.mosID}</mosID>
             <ncsID>${this.ncsID}</ncsID>
-            <messageID></messageID>
             <roReq>
                 <roID>${roID.toString()}</roID> 
             </roReq>       
@@ -47,36 +43,37 @@ class MosCommands {
             <mos>
                 <mosID>${this.mosID}</mosID>
                 <ncsID>${this.ncsID}</ncsID>
-                <messageID>${this.messageID}</messageID>
                 <mosItemReplace>
                     <roID>${story.roID}</roID>
                     <storyID>${story.storyID}</storyID>
                         <item>
+                            <ncsItem>
+                                <item>
+                                    <itemSlug>${el.itemSlug}</itemSlug>
+                                    <objID></objID>
+                                    <objAir>READY</objAir>
+                                    <mosID>${el.mosID}</mosID>
+                                    <mosExternalMetadata>
+                                        <gfxItem>${newUid}</gfxItem>
+                                        <gfxTemplate>${el.mosExternalMetadata.gfxTemplate}</gfxTemplate>
+                                        <gfxProduction>${el.mosExternalMetadata.gfxProduction}</gfxProduction>
+                                        <data>${el.mosExternalMetadata.data}</data>
+                                        <scripts>${el.mosExternalMetadata.scripts}</scripts>
+                                        <metadata>${el.mosExternalMetadata.metadata}</metadata>
+                                        <modified>Controller</modified>
+                                    </mosExternalMetadata>
+                                </item>
+                            </ncsItem> 
                             <itemID>${el.itemID}</itemID>
-                            <itemSlug>${el.itemSlug}</itemSlug>
-                            <objID></objID>
-                            <objAir>READY</objAir>
-                            <mosID>${el.mosID}</mosID>
-                            <mosExternalMetadata>
-                                <gfxItem>${newUid}</gfxItem>
-                                <gfxTemplate>${el.mosExternalMetadata.gfxTemplate}</gfxTemplate>
-                                <gfxProduction>${el.mosExternalMetadata.gfxProduction}</gfxProduction>
-                                <data>${el.mosExternalMetadata.data}</data>
-                                <scripts>${el.mosExternalMetadata.scripts}</scripts>
-                                <metadata>${el.mosExternalMetadata.metadata}</metadata>
-                                <modified>Controller</modified>
-                            </mosExternalMetadata>
                         </item>
                 </mosItemReplace>
             </mos>`;  
             
             const result = {
                 replaceMosMessage: msg,
-                messageID: this.messageID,
                 storyID: story.storyID
             };
             
-            this.messageID++;
             return result;
     }
 
@@ -85,14 +82,3 @@ class MosCommands {
 
 const mosCommands = new MosCommands();
 export default mosCommands;
-
-/*
-{
-      itemID: '1-39',
-      itemSlug: 'מגירה 1 - 123',
-      objID: 60889,
-      mosID: 'newsarts',
-      mosExternalMetadata: [Object]
-    }
-`
-*/

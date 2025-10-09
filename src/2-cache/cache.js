@@ -138,7 +138,7 @@ class Cache {
         if (!story) { return []; }
     
         // Extract gfxItem values from the items array
-        const itemsIdArr = story.item.map(item => item.mosExternalMetadata.gfxItem);
+        const itemsIdArr = story.item.map(item => item.ncsItem.item.mosExternalMetadata.gfxItem);
         
         return itemsIdArr;
     }
