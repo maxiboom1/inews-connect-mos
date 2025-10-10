@@ -17,7 +17,7 @@ appConfig.keepSqlItems = false;
 appConfig.debug = {
     sql:1,
     functions:1,
-    showMos:1
+    showMos:0
 }
 
 

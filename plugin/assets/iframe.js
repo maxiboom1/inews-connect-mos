@@ -22,31 +22,6 @@ function drag(event) {
     event.dataTransfer.setData("text",msg);
 }
 
-function createMosMessage_test(){
-    const templateId = document.body.getAttribute('data-template');
-    const productionId = document.body.getAttribute('data-production');
-    const gfxItem = document.body.getAttribute('data-gfxItem');
-    const mosID = document.body.getAttribute('data-mos-id');
-    let itemID = "0";
-    if(document.body.hasAttribute("data-itemID")){
-        itemID = document.body.getAttribute('data-itemID');
-    }
-    const data = __NA_GetValues();
-    const scripts = JSON.stringify(__NA_GetScripts());
-    const itemSlug = document.getElementById("nameInput").value.replace(/'/g, "")
-    return `<mos>
-                <ncsItem>
-                    <item>
-                    <itemSlug>TEST</itemSlug>
-                    <objID>GFX-12345</objID>
-                    <mosID>NAMOS</mosID>
-                    <mosItemBrowserProgID>alexB</mosItemBrowserProgID>
-                    <mosItemEditorProgID>alexE</mosItemEditorProgID>
-                    <mosAbstract>abstract</mosAbstract>
-                    </item>
-                </ncsItem>
-                </mos>`;
-}
 function createMosMessage(){
     const templateId = document.body.getAttribute('data-template');
     const productionId = document.body.getAttribute('data-production');
@@ -57,11 +32,10 @@ function createMosMessage(){
         itemID = document.body.getAttribute('data-itemID');
     }
     const data = __NA_GetValues();
-    const scripts = JSON.stringify(__NA_GetScripts());
+    //const scripts = 'JSON.stringify(__NA_GetScripts())';
+    const scripts = 'AA'; // Only for debug
     const itemSlug = document.getElementById("nameInput").value.replace(/'/g, "")
-    return `<mos> 
-        <ncsItem>
-            <item>
+    return `<mos><ncsItem><item>
                 <itemSlug>${itemSlug}</itemSlug>
                 <objID></objID>
                 <objAir>READY</objAir>
@@ -69,17 +43,14 @@ function createMosMessage(){
                 <mosItemBrowserProgID>alex</mosItemBrowserProgID>
                 <mosItemEditorProgID>alexE</mosItemEditorProgID>
                 <mosExternalMetadata>
+                    <mosSchema>A</mosSchema>
                     <gfxItem>${gfxItem === null? "0": gfxItem}</gfxItem>
                     <gfxTemplate>${templateId}</gfxTemplate>
                     <gfxProduction>${productionId}</gfxProduction>
-                    <metadata>${decodeURIComponent(data)}</metadata>
-                    <modified>Plugin</modified>
                     <data>${JSON.stringify(data).slice(1,-1)}</data>
                     <scripts>${scripts.slice(1,-1)}</scripts>
-                </mosExternalMetadata>
-            </item>
-        </ncsItem>
-    </mos>`;
+                </mosExternalMetadata></item></ncsItem>
+            </mos>`;
 }
 
 function setGfxItem(gfxItem){

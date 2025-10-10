@@ -156,8 +156,7 @@ async function mosMsgFromHost(event) {
     if (message.indexOf('<ncsItem>') !== -1){
         const templateId = extractTagContent(message, "gfxTemplate");
         const gfxItem = extractTagContent(message, "gfxItem");
-        const itemID = extractTagContent(message, "itemID");
-        
+        const itemID = extractTagContent(message, "itemID");        
         //Sending also "data" and itemName from NRCS story - so if rundown is offline (un-monitored), user still can open and edit it
         const cachedData = extractTagContent(message, "data");//.slice(1,-1);
         const cachedName = extractTagContent(message, "itemSlug");

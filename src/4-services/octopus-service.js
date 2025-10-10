@@ -253,7 +253,7 @@ class OctopusProcessor {
     removeItemsMeta(story){
         
         const storyCopy = JSON.parse(JSON.stringify(story));
-        
+         
         if (storyCopy.item && Array.isArray(storyCopy.item)) {
             storyCopy.item.forEach(item => {
                 if (item.ncsItem.item.mosExternalMetadata) {

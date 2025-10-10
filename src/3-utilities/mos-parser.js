@@ -1,5 +1,6 @@
 import {XMLParser} from "fast-xml-parser";
 import mosRouter from "../4-services/mos-router.js";
+import logger from "./logger.js";
 
 function parseMos(buffer, port) {
     try {
@@ -12,8 +13,12 @@ function parseMos(buffer, port) {
           processEntities: true,     // Handle special XML entities (like &amp;)
           parseTagValue: true        // Parse inner text of tags, even when empty
       });
+      
       let obj = parser.parse(decodedData);
       mosRouter.mosMessageProcessor(obj, port);
+      
+    logger(`[MOS-PROTOCOL-DEBUG] ${JSON.stringify(decodedData)}`,'yellow'); 
+
 
   } catch (error) {
       console.error(`${port}: Error parsing MOS message: ${buffer.toString()}`, error);

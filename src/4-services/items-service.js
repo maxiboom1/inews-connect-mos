@@ -11,6 +11,7 @@ async function registerItems(story, options = { itemIDArr: [], replaceEvent:fals
     const { rundown, uid: storyUid, rundownStr } = story;
     let ord = 0;
     for (let el of story.item) {
+        
         const itemID = el.itemID;
         el=el.ncsItem.item; // Fix, for avid data struct
         const {gfxItem} = el.mosExternalMetadata;
