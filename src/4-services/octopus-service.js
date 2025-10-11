@@ -15,7 +15,7 @@ class OctopusProcessor {
         // Add props to story
         story = await this.constructStory(story);
 
-        //console.log(JSON.stringify(story));
+        console.log(JSON.stringify(story));
         
         // Store story in DB, and save assigned uid
         story.uid = await sqlService.addDbStory(story);
@@ -168,7 +168,7 @@ class OctopusProcessor {
         await this.handleNewStory(story); 
         ackService.sendAck(roID);
     }
-    
+    // Done, Alex.
     async appendStory(msg) {
         const roID = msg.mos.roStoryAppend.roID; 
         const story = msg.mos.roStoryAppend.story; 
@@ -180,7 +180,7 @@ class OctopusProcessor {
         await this.handleNewStory(story); 
         ackService.sendAck(roID);
     }    
-    
+    // Done, Alex.
     async deleteStory(msg) {
         const roID = msg.mos.roStoryDelete.roID; // roID
         const rundownStr = cache.getRundownSlugByRoID(roID); // rundownSlug
@@ -222,6 +222,12 @@ class OctopusProcessor {
 
         // Run over items, and assign ord
         for(let i = 0; i<story.item.length; i++){
+            
+            // Here we normalize type-1 item - the one that coming with <ncsItem><item>
+            if(story.item[i].ncsItem){
+                    Object.assign(story.item[i],story.item[i].ncsItem.item);
+                    delete story.item[i].ncsItem; 
+            }
             story.item[i].ord = i;
         }
         const rundownMeta = await cache.getRundownList(story.rundownStr);
@@ -229,11 +235,7 @@ class OctopusProcessor {
         story.rundown = String(rundownMeta.uid);
         story.production = rundownMeta.production;
         story.storySlug = String(story.storySlug);
-        story.floating = story.storySlug.endsWith(' [SKIP]') ? 1:0;
-        if(story.floating === 1){
-            story.storySlug = story.storySlug.slice(0,-7); // Slice the " [SKIP]" from story name
-        }
-        
+        story.floating = 0;
         return story;
     }
      
@@ -256,11 +258,9 @@ class OctopusProcessor {
          
         if (storyCopy.item && Array.isArray(storyCopy.item)) {
             storyCopy.item.forEach(item => {
-                if (item.ncsItem.item.mosExternalMetadata) {
-                    delete item.ncsItem.item.mosExternalMetadata.data;
-                    delete item.ncsItem.item.mosExternalMetadata.scripts;
-                    delete item.ncsItem.item.mosExternalMetadata.metadata;
-                }
+                delete item.mosExternalMetadata.data;
+                delete item.mosExternalMetadata.scripts;
+                delete item.mosExternalMetadata.metadata;  
             });
         }
         return storyCopy;

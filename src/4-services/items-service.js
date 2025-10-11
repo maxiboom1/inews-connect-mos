@@ -9,16 +9,16 @@ import mosRouter from "./mos-router.js";
 async function registerItems(story, options = { itemIDArr: [], replaceEvent:false }) {
     
     const { rundown, uid: storyUid, rundownStr } = story;
+    
     let ord = 0;
+    
     for (let el of story.item) {
         
-        const itemID = el.itemID;
-        el=el.ncsItem.item; // Fix, for avid data struct
         const {gfxItem} = el.mosExternalMetadata;
-        el.itemID=itemID;
+        
         // If its from replaceEvent, process only items in the list
         if (options.replaceEvent) {
-            const indexInAdd = options.itemIDArr.indexOf(itemID);
+            const indexInAdd = options.itemIDArr.indexOf(el.itemID);
 
             if (indexInAdd === -1) {
                 await sqlService.updateItemOrd(rundownStr, gfxItem, ord);

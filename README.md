@@ -16,6 +16,14 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.1.1
+
+- In inews, new item wrapped in <ncsItem><item>, this is also the legal wrapper for item that sent by plugin, and in mosItemReplace.
+But, once the item has been modyfied in inews (using "apply" or "Ok" buttons), the item struct is change, and the <ncsItem><item> ommited.
+Added an little normalizer that flat the incoming items in stories to non <ncsItem><item> struct.
+I did it in octopus-service/constructStory method.
+- Added example for 2 types of item in mos-examples.js
+- Added showRawMos debug option to show incoming mos messages before the parser(as str), while showMos will print the message after the parser (as object).
 ## 2.1.0
 
 - Added missing mosItemBrowserProgID and mosItemEditorProgID to mosItemReplace template.

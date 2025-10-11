@@ -213,3 +213,47 @@ const storyAsItComesToItemService ={
   "production": 20013,
   "floating": 0
 }
+
+// The not-edited item struct
+const itemType1 = {
+  "ncsItem":{
+    "item":{
+      "itemSlug":"11",
+      "objID":"",
+      "objAir":"READY",
+      "mosID":"NAMOS",
+      "mosItemBrowserProgID":"alex",
+      "mosItemEditorProgID":"alexE",
+      "mosExternalMetadata":{
+        "mosSchema":"A",
+        "gfxItem":0,
+        "gfxTemplate":90194,
+        "gfxProduction":20013,
+        "data":"%5B%222%22%2C%22%E2%80%AB123%22%5D",
+        "scripts":""
+      }
+    }
+  },
+  "itemID":1,
+  "ord":0
+} 
+
+// Once the item edited from plugin - its struct became this
+let itemType2 = {
+  "itemSlug":"3",
+  "objID":"",
+  "objAir":"READY",
+  "mosID":"NAMOS",
+  "mosItemBrowserProgID":"alex",
+  "mosItemEditorProgID":"alexE",
+  "mosExternalMetadata":{
+    "mosSchema":"A",
+    "gfxItem":63009,
+    "gfxTemplate":90194,
+    "gfxProduction":20013 ,
+    "data":"%5B%222%22%2C%22%E2%80%AB%E2%80%AB333%22%5D",
+    "scripts":""
+  },
+  "itemID":1,
+  "ord":0
+}
