@@ -230,7 +230,21 @@ class Cache {
         }
 
     }
-    
+
+    // Done, Alex.
+    async itemUpdate(rundownStr, storyID, itemID, newItem){
+        const items = this.stories[rundownStr][storyID].item;
+        for (const item of items) {
+            if(item.itemID === itemID){
+                item.itemSlug = newItem.itemSlug;
+                item.mosExternalMetadata.gfxItem = newItem.mosExternalMetadata.gfxItem
+                item.mosExternalMetadata.gfxTemplate = newItem.mosExternalMetadata.gfxTemplate
+                item.mosExternalMetadata.gfxProduction = newItem.mosExternalMetadata.gfxProduction;
+                break;
+            }
+        }
+    } 
+
 }
 
 const cache = new Cache();

@@ -48,28 +48,26 @@ class MosCommands {
                     <storyID>${story.storyID}</storyID>
                         <item>
                             <itemID>${el.itemID}</itemID>
-                            <ncsItem>
-                                <item>
-                                    <itemSlug>${el.itemSlug}</itemSlug>
-                                    <objID></objID>
-                                    <objAir>READY</objAir>
-                                    <mosID>${el.mosID}</mosID>
-                                    <mosItemBrowserProgID>${el.mosItemBrowserProgID}</mosItemBrowserProgID>
-                                    <mosItemEditorProgID>${el.mosItemEditorProgID}</mosItemEditorProgID>
-                                    <mosExternalMetadata>
-                                        <mosSchema>A</mosSchema>
-                                        <gfxItem>${newUid}</gfxItem>
-                                        <gfxTemplate>${el.mosExternalMetadata.gfxTemplate}</gfxTemplate>
-                                        <gfxProduction>${el.mosExternalMetadata.gfxProduction}</gfxProduction>
-                                        <data>${el.mosExternalMetadata.data}</data>
-                                        <scripts>${el.mosExternalMetadata.scripts}</scripts>
-                                    </mosExternalMetadata>
-                                </item>
-                            </ncsItem>
+                            ${el.type===1?"<ncsItem><item>":""}
+                            <itemSlug>${el.itemSlug}</itemSlug>
+                            <objID></objID>
+                            <objAir>READY</objAir>
+                            <mosID>${el.mosID}</mosID>
+                            <mosItemBrowserProgID>${el.mosItemBrowserProgID}</mosItemBrowserProgID>
+                            <mosItemEditorProgID>${el.mosItemEditorProgID}</mosItemEditorProgID>
+                            <mosExternalMetadata>
+                                <mosSchema>A</mosSchema>
+                                <gfxItem>${newUid}</gfxItem>
+                                <gfxTemplate>${el.mosExternalMetadata.gfxTemplate}</gfxTemplate>
+                                <gfxProduction>${el.mosExternalMetadata.gfxProduction}</gfxProduction>
+                                <data>${el.mosExternalMetadata.data}</data>
+                                <scripts>${el.mosExternalMetadata.scripts}</scripts>
+                            </mosExternalMetadata>
+                            ${el.type===1?"</item></ncsItem>":""}
                         </item>
                 </mosItemReplace>
-            </mos>`;  
-            
+            </mos>`;             
+
             const result = {
                 replaceMosMessage: msg,
                 storyID: story.storyID

@@ -16,6 +16,12 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.1.2
+
+- Finished with roItemReplace == > it updates sql, and cache. Added updateItem methods in SQL , and in cache.
+- Added conditional roItemReplace command constructor - according type 1 and 2.
+- Cleaned items-service and octopus-service from old func (old modules saves as backup).
+
 ## 2.1.1
 
 - In inews, new item wrapped in <ncsItem><item>, this is also the legal wrapper for item that sent by plugin, and in mosItemReplace.

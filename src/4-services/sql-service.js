@@ -537,6 +537,39 @@ class SqlService {
             console.error('Error on updating GFX item:', error);
         }
     }
+
+    // This func is triggered from roItemReplace MOS message 
+    async updateItem(item) { // Expect: {name, data, scripts, template, production, uid}
+        const values = {
+            name: item.name,
+            lastupdate: timeConvertors.createTick(),
+            production: item.production,
+            template: item.template,
+            data: item.data,
+            scripts: item.scripts,
+            enabled: 1,
+            uid: item.uid
+        };
+
+        const sqlQuery = `
+            UPDATE ngn_inews_items
+            SET name = @name,
+                lastupdate = @lastupdate,
+                production = @production,
+                template = @template,
+                data = @data,
+                scripts = @scripts,
+                enabled = @enabled
+            WHERE uid = @uid;`;
+
+        try {
+            // Execute the update query with the provided values
+            await db.execute(sqlQuery, values);
+            logger(`[SQL] Item {${item.uid}} updated.`);
+        } catch (error) {
+            console.error('Error on updating GFX item:', error);
+        }
+    }    
     
     async storeNewDuplicate(item) { // Expect: {name, production, rundown, story, ord, scripts, template, data, scripts}
         const values = {

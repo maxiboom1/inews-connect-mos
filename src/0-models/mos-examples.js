@@ -257,3 +257,37 @@ let itemType2 = {
   "itemID":1,
   "ord":0
 }
+
+
+const roItemReplace = {
+  "mos":{
+    "mosID":"NAMOS",
+    "ncsID":"INEWS",
+    "roItemReplace":{
+      "roID":"INEWS/SHOW.TEST.TEST01",
+      "storyID":344081574,
+      "itemID":1,
+      "item":{
+        "ncsItem":{
+          "item":{
+            "itemSlug":"מגירה 1 - 111",
+            "objID":"",
+            "objAir":"READY",
+            "mosID":"NAMOS",
+            "mosItemBrowserProgID":"alex",
+            "mosItemEditorProgID":"alexE",
+            "mosExternalMetadata":{
+              "mosSchema":"A",
+              "gfxItem":63034,
+              "gfxTemplate":90199,
+              "gfxProduction":20013,
+              "data":"data",
+              "scripts":""
+            }
+          }
+        },
+        "itemID":1
+      }
+    }
+  }
+}

@@ -8,8 +8,6 @@ function replaceAndNormalizeSpaces(str) {
     return result;
 }
 
-
-
 /**
  * Normalize msg.mos.roListAll so roID/roSlug are arrays
  * and, for each item, keep only the substring after the first "/" ("/" removed).
@@ -34,7 +32,18 @@ function normalizeRoListAll(msg) {
     ro.roSlug = roSlug;
   
     return msg.mos.roListAll;
-  }
+}
 
-export default { replaceAndNormalizeSpaces, normalizeRoListAll }
+function normalizeItem(item){
+    if(item.ncsItem && item.ncsItem.item){
+        Object.assign(item, item.ncsItem.item);
+        delete item.ncsItem;
+        item.type = 1;
+    } else {
+        item.type = 2;
+    }
+    return item;
+} 
+
+export default { replaceAndNormalizeSpaces, normalizeRoListAll, normalizeItem }
     

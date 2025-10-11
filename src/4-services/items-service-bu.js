@@ -4,17 +4,32 @@ import mosCommands from "../3-utilities/mos-cmds.js";
 import itemsHash from "../2-cache/items-hashmap.js";
 import logger from "../3-utilities/logger.js";
 import mosRouter from "./mos-router.js";
-import ackService from "./ack-service.js";
-import normalize from "../3-utilities/normalize.js";
-import cache from "../2-cache/cache.js";
 
-async function registerItems(story) {
+
+async function registerItems(story, options = { itemIDArr: [], replaceEvent:false }) {
     
     const { rundown, uid: storyUid, rundownStr } = story;
     
     let ord = 0;
     
     for (let el of story.item) {
+        
+        const {gfxItem} = el.mosExternalMetadata;
+        
+        // If its from replaceEvent, process only items in the list
+        if (options.replaceEvent) {
+            const indexInAdd = options.itemIDArr.indexOf(el.itemID);
+
+            if (indexInAdd === -1) {
+                await sqlService.updateItemOrd(rundownStr, gfxItem, ord);
+                ord++;
+                continue; // Skip if not in itemIDArr
+            }
+
+            // Remove the itemID from itemIDArr after processing,  to handle case when
+            // user copy same item in same story (we get then 2 items with same gfxItem)
+            options.itemIDArr.splice(indexInAdd, 1);
+        }
         
         const item = constructItem(el, rundown, storyUid, ord);
         
@@ -26,15 +41,6 @@ async function registerItems(story) {
         
         ord++;
     }
-}
-
-// Done, Alex.
-async function replaceItem(msg) {
-    const m = msg.mos.roItemReplace;
-    const item = constructItem(normalize.normalizeItem(msg.mos.roItemReplace.item));
-    await sqlService.updateItem(item);
-    await cache.itemUpdate(m.roID,m.storyID, m.itemID, m.item);
-    ackService.sendAck(msg.mos.roItemReplace.roID);
 }
 
 async function createNewItem(item, story, el) { //Item: {uid, name, production, rundown, story, ord, template, data, scripts}
@@ -136,4 +142,4 @@ function waitForRoAck(timeout = 5000) {
     });
 }
 
-export default { registerItems , replaceItem};
+export default { registerItems };

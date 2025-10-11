@@ -5,6 +5,7 @@ import appProcessor from "./app-processor.js";
 import findRoID from "../3-utilities/findRoID.js";
 import appConfig from "../3-utilities/app-config.js";
 import EventEmitter from 'events';
+import itemsService from "./items-service.js";
 
 const logMosIncomingMessages = appConfig.debug.showMos;
 
@@ -13,7 +14,7 @@ class MosRouter extends EventEmitter {
     async mosMessageProcessor(msg, port) {
     
         if(logMosIncomingMessages){
-            logger(`[MOS-PROTOCOL-DEBUG] {${port}} ${this.msgBuider(msg)}`,'yellow'); 
+            logger(`[MOS-PROTOCOL-DEBUG] ${this.msgBuider(msg)}`,'yellow'); 
         }
         // double !! converts expression to boolean - so, 
         // if msg.mos.heartbeat exists - the !! convert it to "true"
@@ -80,7 +81,7 @@ class MosRouter extends EventEmitter {
                 break; 
             case !!msg.mos.roItemReplace:
                 logger(`[MOS] {${this.color("roItemReplace")}} are received from ${port}`);
-                ackService.sendAck(msg.mos.roItemReplace.roID);
+                itemsService.replaceItem(msg);
                 break;                             
             // ****************** roAck handling ************************
             case !!msg.mos.roAck:
