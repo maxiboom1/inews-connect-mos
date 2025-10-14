@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="mosconfig.xsl"?>
+<!-- MOS GATEWAY 5.0 Config file -->
+<!-- This file contains configuration settings for the iNEWS MOS Gateway and is meant to be used as a template. -->
+<!-- It is in an XML-based format, with the root element being mosGatewayConfiguration. -->
+<mosGatewayConfiguration>
+	<!-- The logging element specifies the directory in which to put log files, -->
+	<!-- the maximum number of log files to create, and how big each one can grow. -->
+	<logging>
+		<directory>C:\Program Files (x86)\Avid\iNEWS MOS Gateway\Logs</directory>
+		<maxFileCount>100</maxFileCount>
+		<maxFileBytes>10000000</maxFileBytes>
+		<!-- YES/NO Also sends all logging to OutputDebugString so any Windows debugger will see it. -->
+		<winDebugTrace>yes</winDebugTrace>
+		<!-- on/off Sends all incoming socket traffic to seperate log files. -->
+		<socket>off</socket>
+		<!-- Default to 0xff to enable all messages, user could use it to disable specific messages. -->
+		<LoggingLevel>0xff</LoggingLevel>
+		<TurnOffLogging>NO</TurnOffLogging>
+	</logging>
+	<!-- -->
+	<!-- The tcpPorts element specifies the TCP ports on which the MOS Gateway listens for -->
+	<!-- MOS connections. Every MOS that connects to the MOS Gateway must use the same ports. -->
+	<tcpPorts>
+		<out_upper>10541</out_upper>
+		<out_lower>10540</out_lower>
+		<in_upper>10541</in_upper>
+		<in_lower>10540</in_lower>
+	</tcpPorts>
+	<!-- -->
+	<!-- Newsroom system info -->
+	<ncs>
+		<!-- -->
+		<!-- The ncsID used for replication, this must match the ncsID on the MOS Device -->
+		<!-- and the system ID of the iNEWS server.  This setting is case sensitive. -->
+		<ncsID>INEWS</ncsID>
+		<!-- -->
+		<!-- NCS's Host Name -->
+		<!-- Make sure this resolves to the correct IP address of the iNEWS server. -->
+		<!-- If you leave the '-A' or '-B' off of the hostname it will automatically -->
+		<!-- rotate through looking for an iNEWS Server. -->
+		<host>INEWS</host>
+		<!-- -->
+		<!-- The ReplicationUsername and ReplicationPassword must match an iNEWS -->
+		<!-- username and password to use the roStorySend feature and/or replication. -->
+		<ReplicationUsername>mosrep</ReplicationUsername>
+		<ReplicationPassword>mosrep</ReplicationPassword>
+		<!-- -->
+		<!-- Specifies whether MOS Gateway is connecting to a Unicode iNEWS Server or not. -->
+		<Unicode>YES</Unicode>
+		<!-- -->
+		<!-- Allow or Disallow Replication, YES/NO -->
+		<!-- default is YES -->
+		<AllowReplication>NO</AllowReplication>
+		<!-- -->
+		<!-- Allow or Disallow mosItemReplace, YES/NO -->
+		<!-- default is YES -->
+		<AllowMosItemReplace>YES</AllowMosItemReplace>
+		<!-- -->
+		<!-- Enable or Disable FTPS certificate validation, YES/NO -->
+		<!-- default is YES -->
+		<UseFTPS>YES</UseFTPS>
+	</ncs>
+	<!-- -->
+	<!-- The listDevices element contains device-specific configurations. It contains -->
+	<!-- one or more mosDevice elements. The mosDevice element contains configuration -->
+	<!-- settings that are specific to a particular MOS. -->
+	<listDevices>
+		<!--***********************************************************************-->
+		<mosDevice>
+			<!-- The names element contains the mapping of the MOS's mosID value to -->
+			<!-- an NRCS device name, as well as the network name of the MOS. -->
+			<names>
+				<mos>NAMOS</mos>
+				<amcp>NAAMCP</amcp>
+				<network>NAHOST</network>
+			</names>
+			<roChannels>
+				<roChannel>
+					<iNewsChannel>A</iNewsChannel>
+					<MosDevChannel>A</MosDevChannel>
+				</roChannel>
+				<roChannel>
+					<iNewsChannel>B</iNewsChannel>
+					<MosDevChannel>B</MosDevChannel>
+				</roChannel>
+			</roChannels>
+			<!-- -->
+			<!-- Maps a NRCS Running Order Name to a more readable MOS roSlug. -->
+			<!-- A NRCS Running Order Name is the NRCS server name plus the -->
+			<!-- running order's complete queue path. If a mapping doesn't exist -->
+			<!-- then the NRCS Running Order Name is used for the MOS roSlug. -->
+			<roSlugMaps>
+				<roSlugMap>
+					<iNewsRunningOrderName>iNEWSSYSTEMNAME/SHOW.6P.RUNDOWN</iNewsRunningOrderName>
+					<MOSroSlug>6P</MOSroSlug>
+				</roSlugMap>
+				<roSlugMap>
+					<iNewsRunningOrderName>iNEWSSYSTEMNAME/SHOW.10P.RUNDOWN</iNewsRunningOrderName>
+					<MOSroSlug>11P</MOSroSlug>
+				</roSlugMap>
+			</roSlugMaps>
+			<!-- -->
+			<!-- Setting specifies whether this device uses short roID. -->
+			<!-- Valid settings are YES or NO. Default is NO. -->
+			<ShortRoID>NO</ShortRoID>
+			<!-- -->
+			<!-- The handlesEmptyStories element specifies whether this device accepts -->
+			<!-- a roStoryInsert message that contains no item. -->
+			<handlesEmptyStories>NO</handlesEmptyStories>
+			<!-- -->
+			<!-- The handlesRoStoryMoveMultiple element specifies whether this device supports -->
+			<!-- the roStoryMoveMultiple message. The router defaults to YES. -->
+			<!-- Valid settings are YES or NO. -->
+			<handlesRoStoryMoveMultiple>YES</handlesRoStoryMoveMultiple>
+			<!-- -->
+			<!-- The handlesRoItemLevelCommands element specifies whether this device supports -->
+			<!-- roItemInsert, roItemDelete and roItemReplace. The router defaults to YES. -->
+			<!-- Valid settings are YES or NO. -->
+			<handlesRoItemLevelCommands>YES</handlesRoItemLevelCommands>
+			<!-- -->
+			<!-- If YES then the stories page number from NRCS is prepended to the story slug. -->
+			<prependPageNumber>YES</prependPageNumber>
+			<!-- -->
+			<!-- The character seperator used between the page number and the story slug.-->
+			<prependSeparator>-</prependSeparator>
+			<!-- -->
+			<!-- The character string which is used in place of an empty page number.-->
+			<prependStringForEmptyPageNumber>NO PAGE</prependStringForEmptyPageNumber>
+			<!-- -->
+			<!-- When set to NO, all MOS items in the rundown will be contained within -->
+			<!-- the roCreate message.  When set to YES, a blank roCreate message is sent -->
+			<!-- and all MOS items in the rundown will be added using roStoryInsert -->
+			<!-- messages.  The recommended setting is NO unless it’s absolutely required. -->
+			<sendRoCreateOnStartLoad>NO</sendRoCreateOnStartLoad>
+			<!-- -->
+			<handlesSpecMosReqAll>YES</handlesSpecMosReqAll>
+			<!-- The statusTranslations element defines the status strings that correspond -->
+			<!-- to the various NRCS status codes. This allows the MOS Gateway to translate -->
+			<!-- the roItemStatus messages received from a MOS into status codes that NRCS -->
+			<!-- can recognize and display. -->
+			<!-- -->
+			<!-- Should we ignore the item status in roAck messages? -->
+			<!-- Valid settings are YES or NO, default is NO -->
+			<ignoreItemStatusInRoAck>YES</ignoreItemStatusInRoAck>
+			<!-- -->
+			<!-- Does this device expect the MOS 2.8 version of roListAll. -->
+			<!-- Valid settings are YES or NO, default is NO -->
+			<handlesRoListAll28>YES</handlesRoListAll28>
+			<!-- -->
+			<!-- Does this device handle roStorySend messages? -->
+			<!-- Valid settings are YES or NO, default is NO -->
+			<handlesRoStorySend>NO</handlesRoStorySend>
+			<!-- -->
+			<!-- The handlesRoStorySendNSMLX element specifies whether this device supports -->
+			<!-- sending the NSMLX via the roStorySend mosExternalMetadata payload. The router defaults to NO. -->
+			<!-- Valid settings are YES or NO -->
+			<handlesRoStorySendNSMLX>NO</handlesRoStorySendNSMLX>
+			<!-- -->
+			<!-- The retry timeout in seconds for this device. -->
+			<!-- Set to 0 if you do not want to have retries. -->
+			<!-- Valid values: 0 - 214748647 -->
+			<!-- Default is 0. -->
+			<retryTimeout>0</retryTimeout>
+			<!-- -->
+			<statusTranslations>
+				<statusUnknown>UNKNOWN</statusUnknown>
+				<statusUnavailable>NOT READY</statusUnavailable>
+				<statusUnavailable>DELETED</statusUnavailable>
+				<statusAvailable>READY</statusAvailable>
+				<statusAvailable>NEW</statusAvailable>
+				<statusCued>CUED</statusCued>
+				<statusPlaying>PLAY</statusPlaying>
+				<statusPaused>PAUSE</statusPaused>
+				<statusStopped>STOP</statusStopped>
+				<statusTensionReleased/>
+				<statusPlayRequested/>
+				<statusRewinding/>
+			</statusTranslations>
+			<!-- -->
+			<mosObjReplication>
+				<trigger>manual</trigger>
+				<replicationTime>12:31:15</replicationTime>
+				<clearQueue>true</clearQueue>
+				<path>mos.mosdevicename</path>
+				<mosItemBrowserProgID>alexB</mosItemBrowserProgID>
+				<mosItemEditorProgID>alexE</mosItemEditorProgID>
+			</mosObjReplication>
+			<!-- -->
+			<!-- If the replication for the device is set up setting specifies whether this device saves the updated duration in the replication service’s cache. -->
+			<!-- Valid settings are YES or NO. Default is NO. -->
+			<GetMosDuration>NO</GetMosDuration>
+			<!-- -->
+			<!-- Setting specifies whether this device supports mosObjCreate message. -->
+			<!-- Valid settings are YES or NO. Default is NO. -->
+			<AllowMosObjCreate>NO</AllowMosObjCreate>
+			<!-- -->
+			<!-- Setting specifies whether MOS Gateway removes uninitialized mosObjCreate items. -->
+			<!-- Valid settings are YES or NO, default is NO. -->
+			<removeMosObjCreate>NO</removeMosObjCreate>
+			<!-- -->
+			<!-- Setting specifies whether MOS Gateway conveys roItemStat messages from this device to Newsroom Management Server. -->
+			<!-- Valid settings are YES or NO. Default is NO. -->
+			<DisableMosItemStatChannel>NO</DisableMosItemStatChannel>
+			<!-- -->
+		</mosDevice>
+	</listDevices>
+</mosGatewayConfiguration>
