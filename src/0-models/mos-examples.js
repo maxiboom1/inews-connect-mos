@@ -10,7 +10,6 @@ const roListAll = {
     }
 }
 
-
 const roListAll_multiRundowns = {
     "mos": {
         "mosID": "NAMOS",

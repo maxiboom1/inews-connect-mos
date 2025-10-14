@@ -16,6 +16,12 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.1.5
+
+- Added prependSeparator and prependStringForEmptyPageNumber values to appConfig - they should be the same as on inews gateway mosconfig.xml.
+- Added hanlding for replaceStory event - basically we replace there only story slug name and page (storyNum) - those are the only cases I found. 
+
+
 ## 2.1.4
 
 - Refactored sql method modifyBbStoryOrdByStoryID to modifyBbStoryOrd (before we had 2 of them with minor diff).

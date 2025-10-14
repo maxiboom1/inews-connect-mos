@@ -5,6 +5,11 @@ import logger from "../3-utilities/logger.js";
 import itemsService from "./items-service.js";
 import deleteManager from "../3-utilities/delete-manager.js";
 import normalize from "../3-utilities/normalize.js";
+import appConfig from "../3-utilities/app-config.js";
+
+const prependSeparator = appConfig.prependSeparator;
+const prependStringForEmptyPageNumber = appConfig.prependStringForEmptyPageNumber;
+
 
 // MOS 2.8.5
 class OctopusProcessor {
@@ -180,6 +185,23 @@ class OctopusProcessor {
         ackService.sendAck(roID);
     }
 
+    async replaceStory(msg){
+        
+        const m = String(msg.mos.roStoryReplace.story.storySlug).split(prependSeparator);
+        
+        const values = {
+            storySlug:m[1],
+            storyNum: m[0] === prependStringForEmptyPageNumber ? "": m[0],
+            storyID:msg.mos.roStoryReplace.storyID,
+            floating: 0
+        };
+        
+        await sqlService.modifyDbStory(values);
+        
+        ackService.sendAck(msg.mos.roStoryReplace.roID);
+
+    }
+
 // ============================ Helper/common functions ============================ // 
 
     // Adds to story uid, production, normalizing item for array. Story obj must have "rundownStr" prop!
@@ -193,13 +215,14 @@ class OctopusProcessor {
                 story.item[i].ord = i;
             }
         }
-
-
+        
+        const m = String(story.storySlug).split(prependSeparator);
         const rundownMeta = await cache.getRundownList(story.rundownStr);
         story.roID = rundownMeta.roID;
         story.rundown = String(rundownMeta.uid);
         story.production = rundownMeta.production;
-        story.storySlug = String(story.storySlug);
+        story.storySlug = m[1];
+        story.storyNum = m[0] === prependStringForEmptyPageNumber ? "": m[0];
         story.floating = 0;
         return story;
     }

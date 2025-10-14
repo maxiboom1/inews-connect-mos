@@ -61,7 +61,7 @@ class MosRouter extends EventEmitter {
                 break; 
             case !!msg.mos.roStoryReplace:
                 logger(`[MOS] {${this.color("roStoryReplace")}} are received from ${port}`);
-                ackService.sendAck(msg.mos.roStoryReplace.roID);
+                octopusService.replaceStory(msg);
                 break;             
             case !!msg.mos.roStoryDelete:
                 logger(`[MOS] {${this.color("roStoryDelete")}} are received from ${port}`);
