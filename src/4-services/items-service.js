@@ -34,6 +34,12 @@ async function replaceItem(msg) {
     const item = constructItem(normalize.normalizeItem(msg.mos.roItemReplace.item));
     await sqlService.updateItem(item);
     await cache.itemUpdate(m.roID,m.storyID, m.itemID, m.item);
+    const storyUid = await cache.getStoryUid(m.roID,m.storyID);
+    
+    // Update last updates
+    await sqlService.rundownLastUpdate(m.roID);
+    await sqlService.storyLastUpdate(storyUid);
+    
     ackService.sendAck(msg.mos.roItemReplace.roID);
 }
 

@@ -16,6 +16,15 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.1.3
+
+- Fixed getItemsArrByStoryID cache method.
+- Added general comment to normalizeItem function.
+- Done with replaceItem event.
+- Added check for non-item storyAppend event (we then skip the event - this in case user choosed to send empty stories in mos gw settings).
+- Started with roStoryInsert.
+- Some function-level comments in octopus service. 
+
 ## 2.1.2
 
 - Finished with roItemReplace == > it updates sql, and cache. Added updateItem methods in SQL , and in cache.

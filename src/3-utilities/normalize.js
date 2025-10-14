@@ -34,8 +34,12 @@ function normalizeRoListAll(msg) {
     return msg.mos.roListAll;
 }
 
+// Since there is 2 types of items - with and without <ncsItem> - here we normalize both cases to non-ncsItem version 
+// Also, add type prop: type-1 = <ncsItem> type, type-2 = non-ncsItem type. We need to save the original item format since we must 
+// send mosItemReplace in same format.
 function normalizeItem(item){
-    if(item.ncsItem && item.ncsItem.item){
+    if (item === undefined) return [];
+    if(item && item.ncsItem && item.ncsItem.item){
         Object.assign(item, item.ncsItem.item);
         delete item.ncsItem;
         item.type = 1;

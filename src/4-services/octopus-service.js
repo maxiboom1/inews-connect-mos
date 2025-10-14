@@ -34,14 +34,43 @@ class OctopusProcessor {
         
     }
 
+    async insertStory(msg) {
+        const roID = msg.mos.roID;
+        const targetStoryID = msg.mos.roStoryInsert.storyID;
+        const story = msg.mos.roStoryInsert.story;
+
+        const targetOrd = await sqlService.getStoryOrdByStoryID(targetStoryID);// Why use sql and not cache?? need to chack this
+        const storyIDsArr = await cache.getSortedStoriesIdArrByOrd(roID, targetOrd);            
+
+        for(let i = 0; i<storyIDsArr.length; i++){
+            const newStoryOrder = targetOrd + i + 1;
+            await cache.modifyStoryOrd(rundownStr, storyIDsArr[i], newStoryOrder);
+            await sqlService.modifyBbStoryOrdByStoryID(storyIDsArr[i], newStoryOrder);                 
+        }
+
+        story.ord = targetOrd;
+
+        story.rundownStr = rundownStr;
+        // Store new story and its items
+        await this.handleNewStory(story); 
+        ackService.sendAck(roID);
+    }
+
     // Done, Alex.
     async appendStory(msg) {
         const roID = msg.mos.roStoryAppend.roID; 
         const story = msg.mos.roStoryAppend.story; 
         story.rundownStr = cache.getRundownSlugByRoID(roID);
         const storiesLength = await cache.getRundownLength(story.rundownStr);            
-        story.ord = storiesLength === 0? 0: storiesLength;
+        story.ord = storiesLength === 0? 0: storiesLength;        
         
+        // If for some reason item is missing
+        if(!story.item) {
+            ackService.sendAck(roID);
+            logger("[STORY] Ignored - empty storyAppend report", "yellow");
+            return;
+        }
+
         // Store new story and its items
         await this.handleNewStory(story); 
         ackService.sendAck(roID);
@@ -80,17 +109,21 @@ class OctopusProcessor {
         ackService.sendAck(roID);
     }
 
-    // *************************************** Helper/common functions *************************************** // 
+    
+// ============================ Helper/common functions ============================ // 
 
     // Adds to story uid, production, normalizing item for array. Story obj must have "rundownStr" prop!
     async constructStory(story){
-        story.item = Array.isArray(story.item) ? story.item : [story.item];
-
-        // Run over items, and assign ord, also normalize type 1 and 2 (with or without <ncsItem>)
-        for(let i = 0; i<story.item.length; i++){
-            normalize.normalizeItem(story.item[i]);
-            story.item[i].ord = i;
+        
+        if (story.item){
+            story.item = Array.isArray(story.item) ? story.item : [story.item];
+            // Run over items, and assign ord, also normalize type 1 and 2 (with or without <ncsItem>)
+            for(let i = 0; i<story.item.length; i++){
+                normalize.normalizeItem(story.item[i]);
+                story.item[i].ord = i;
+            }
         }
+
 
         const rundownMeta = await cache.getRundownList(story.rundownStr);
         story.roID = rundownMeta.roID;
@@ -101,20 +134,8 @@ class OctopusProcessor {
         return story;
     }
     
-    async modifyOrd(rundownStr, storyID, storyUid,storyName, ord){
-        await cache.modifyStoryOrd(rundownStr, storyID, ord);
-        await sqlService.modifyBbStoryOrd(rundownStr, storyUid, storyName, ord); 
-    }
-
-    propsExtractor(msg){
-        const roID = msg.mos.roStoryAppend.roID; 
-        const rundownStr = cache.getRundownSlugByRoID(roID); 
-        const targetStoryID = msg.mos.roElementAction.element_target.storyID;
-        const story = msg.mos.roElementAction.element_source.story; 
-        return {roID,rundownStr,targetStoryID,story}
-    }
-
-    removeItemsMeta(story){
+    // Here we remove un-nesessary props before saving item to cache
+    removeItemsMeta(story){ 
         
         const storyCopy = JSON.parse(JSON.stringify(story));
          
