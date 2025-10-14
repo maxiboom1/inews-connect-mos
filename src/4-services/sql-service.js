@@ -197,24 +197,24 @@ class SqlService {
 
     }
 
-    async modifyBbStoryOrd(rundownStr, uid, storyName, ord){
+    async modifyBbStoryOrd(roID, storyID, ord){
         const values = {
-            uid:uid,
+            storyID:storyID,
             ord: ord,
             ordupdate: timeConvertors.createTick(),
         };
         const sqlQuery = `
             UPDATE ngn_inews_stories
             SET ord = @ord, ordupdate = @ordupdate
-            WHERE uid = @uid;
+            WHERE storyID = @storyID;
         `;
         try {
+            logger(`[SQL] Reorder story in {${roID}}:{${storyID}}: {${ord}}`);
             await db.execute(sqlQuery, values);
-            logger(`[SQL] Reorder story in {${rundownStr}}: {${storyName}}`);
         } catch (error) {
-            console.error('Error executing query:', error);
+            console.error('Error update story order by storyID: ', error);
         }
-    }
+    } 
 
     async deleteStory(rundownStr,uid) {
         const values = {uid: uid};
@@ -239,24 +239,6 @@ class SqlService {
             console.error(`Error fetching story ${storyID} order:`, error);
         }
     }
-
-    async modifyBbStoryOrdByStoryID(storyID, ord){
-        const values = {
-            storyID:storyID,
-            ord: ord,
-            ordupdate: timeConvertors.createTick(),
-        };
-        const sqlQuery = `
-            UPDATE ngn_inews_stories
-            SET ord = @ord, ordupdate = @ordupdate
-            WHERE storyID = @storyID;
-        `;
-        try {
-            await db.execute(sqlQuery, values);
-        } catch (error) {
-            console.error('Error update story order by storyID: ', error);
-        }
-    } 
     
 // ********************* ITEMS FUNCTIONS ********************** //
 

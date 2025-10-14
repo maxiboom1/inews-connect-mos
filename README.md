@@ -16,6 +16,12 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.1.4
+
+- Refactored sql method modifyBbStoryOrdByStoryID to modifyBbStoryOrd (before we had 2 of them with minor diff).
+- Now we can handle delete stories message that sends array of stories to delete (Added deleteStoriesHandler that runs over stories and trigger delete story for each)
+- Now we are handle complex roStoryMoveMultiple MOS message that covers all story reorder/move even if user move group of stories. New method is moveMultiple - is quete hard to understand but have linear complexity, optimized to write only real changes, and tested for working in major edge cases. 
+
 ## 2.1.3
 
 - Fixed getItemsArrByStoryID cache method.

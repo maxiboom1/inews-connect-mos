@@ -32,8 +32,7 @@ function createMosMessage(){
         itemID = document.body.getAttribute('data-itemID');
     }
     const data = __NA_GetValues();
-    //const scripts = 'JSON.stringify(__NA_GetScripts())';
-    const scripts = 'AscriptsA'; // Only for debug
+    const scripts = 'JSON.stringify(__NA_GetScripts())';
     const itemSlug = document.getElementById("nameInput").value.replace(/'/g, "")
     return `<mos><ncsItem><item>
                 <itemSlug>${itemSlug}</itemSlug>

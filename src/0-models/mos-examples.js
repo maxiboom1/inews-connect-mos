@@ -325,3 +325,12 @@ const roStoryInsert = {
         } 
     } 
 }
+
+// if we move something to last position
+const roStoryMoveMultiple1 = {"mos":{"mosID":"NAMOS","ncsID":"INEWS","roStoryMoveMultiple":{"roID":"INEWS/SHOW.TEST.TEST01","storyID":[159532678,""]}}}
+
+// Single story move
+const roStoryMoveMultiple2 = {"mos":{"mosID":"NAMOS","ncsID":"INEWS","roStoryMoveMultiple":{"roID":"INEWS/SHOW.TEST.TEST01","storyID":[276973169,344081574]}}}
+
+// 2 stories to last position
+const roStoryMoveMultiple3 = {"mos":{"mosID":"NAMOS","ncsID":"INEWS","roStoryMoveMultiple":{"roID":"INEWS/SHOW.TEST.TEST01","storyID":[310527603,327304819,""]}}}
