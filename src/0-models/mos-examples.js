@@ -333,3 +333,15 @@ const roStoryMoveMultiple2 = {"mos":{"mosID":"NAMOS","ncsID":"INEWS","roStoryMov
 
 // 2 stories to last position
 const roStoryMoveMultiple3 = {"mos":{"mosID":"NAMOS","ncsID":"INEWS","roStoryMoveMultiple":{"roID":"INEWS/SHOW.TEST.TEST01","storyID":[310527603,327304819,""]}}}
+
+const roItemDelete = {
+  mos: {
+    mosID: 'NAMOS',
+    ncsID: 'INEWS',
+    roItemDelete: { 
+        roID: 'INEWS/SHOW.TEST.TEST01', 
+        storyID: 310527603, 
+        itemID: 1 
+    }
+  }
+}

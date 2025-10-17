@@ -16,6 +16,12 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.1.6
+
+-RundownStr - is prop we carry from octopus project when roID and roSlug was different. Since in inews its same value - I try to remove it now from everywhere and simplify methods accross the project. Instead adding to each story rundownStr prop, and roID, i now avoid to adding rundownstr, also in cache methods adjustment was done.
+- Added itemDelete method in itemsService - now we are handle the case of single item delete - reorder other items in story, save new story to cache and sql and update last updates. 
+
+
 ## 2.1.5
 
 - Added prependSeparator and prependStringForEmptyPageNumber values to appConfig - they should be the same as on inews gateway mosconfig.xml.

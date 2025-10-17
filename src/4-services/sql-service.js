@@ -168,7 +168,7 @@ class SqlService {
             const result = await db.execute(sqlQuery, values);
             const assertedStoryUid = result.recordset[0].uid;
             story.uid = assertedStoryUid;
-            logger(`[SQL] Registering new story to {${story.rundownStr}}: {${story.storySlug}}`);
+            logger(`[SQL] Registering new story to {${story.roID}}: {${story.storySlug}}`);
             return assertedStoryUid;
         } catch (error) {
             console.error('Error executing query:', error); 

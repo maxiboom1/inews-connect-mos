@@ -72,7 +72,8 @@ class AppProcessor {
                 logger("[STORY] Ignored - empty story report (Disable sending empty stories!)", "yellow");
                 continue;
             }
-            story.rundownStr = roSlug; //Add rundownStr to story
+            story.roID = roSlug; //Add ro
+            // Append roID to story
             story.ord = ord; //Add ord to story
             await octopusService.handleNewStory(story);
             

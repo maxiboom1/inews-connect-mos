@@ -33,9 +33,9 @@ class OctopusProcessor {
         await itemsService.registerItems(story);
 
         // Update last updates to story and rundown
-        await sqlService.rundownLastUpdate(story.rundownStr);
+        await sqlService.rundownLastUpdate(story.roID);
 
-        logger(`[STORY] Registering new story to {${story.rundownStr}}: {${story.storySlug}}`);
+        logger(`[STORY] Registering new story to {${story.roID}}: {${story.storySlug}}`);
         
     }
 
@@ -54,7 +54,7 @@ class OctopusProcessor {
         }
 
         story.ord = targetOrd;
-        story.rundownStr = roID;
+        story.roID = roID;
         
         // Store new story and its items
         await this.handleNewStory(story); 
@@ -65,8 +65,8 @@ class OctopusProcessor {
     async appendStory(msg) {
         const roID = msg.mos.roStoryAppend.roID; 
         const story = msg.mos.roStoryAppend.story; 
-        story.rundownStr = cache.getRundownSlugByRoID(roID);
-        const storiesLength = await cache.getRundownLength(story.rundownStr);            
+        story.roID = roID;
+        const storiesLength = await cache.getRundownLength(story.roID);            
         story.ord = storiesLength === 0? 0: storiesLength;        
         
         // If for some reason item is missing
@@ -217,7 +217,7 @@ class OctopusProcessor {
         }
         
         const m = String(story.storySlug).split(prependSeparator);
-        const rundownMeta = await cache.getRundownList(story.rundownStr);
+        const rundownMeta = await cache.getRundownList(story.roID);
         story.roID = rundownMeta.roID;
         story.rundown = String(rundownMeta.uid);
         story.production = rundownMeta.production;

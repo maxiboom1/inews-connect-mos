@@ -98,7 +98,7 @@ class Cache {
     }
 
     async saveStory(story) {
-        this.stories[story.rundownStr][story.storyID] = {
+        this.stories[story.roID][story.storyID] = {
             uid:story.uid,
             storyID:story.storyID,
             name: story.storySlug,

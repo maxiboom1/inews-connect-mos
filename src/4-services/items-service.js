@@ -7,10 +7,11 @@ import mosRouter from "./mos-router.js";
 import ackService from "./ack-service.js";
 import normalize from "../3-utilities/normalize.js";
 import cache from "../2-cache/cache.js";
+import deleteManager from "../3-utilities/delete-manager.js";
 
 async function registerItems(story) {
     
-    const { rundown, uid: storyUid, rundownStr } = story;
+    const { rundown, uid: storyUid } = story;
     
     let ord = 0;
     
@@ -43,9 +44,40 @@ async function replaceItem(msg) {
     ackService.sendAck(msg.mos.roItemReplace.roID);
 }
 
+async function deleteItem(msg) {
+    const { roID, storyID, itemID } = msg.mos.roItemDelete;
+    
+    const story = await cache.getStory(roID, storyID);
+    
+    //Find index of deleted item
+    const idx = story.item.findIndex(i => i.itemID === itemID);
+    
+    //Removes the element (mutates the array) from stories.item and returns the removed item
+    const removed = story.item.splice(idx, 1)[0];
+
+    //Schedule item delete
+    await deleteManager.deleteItem(removed.mosExternalMetadata.gfxItem);
+
+    //Compact ord on remaining items
+    story.item.sort((a, b) => a.ord - b.ord);
+    story.item.forEach((it, i) => { it.ord = i; });
+
+    story.roID      = roID;
+    story.storySlug = story.name;
+    story.storyNum  = story.number;
+    
+    await cache.saveStory(story);
+    
+    // last updates
+    await sqlService.rundownLastUpdate(roID);
+    await sqlService.storyLastUpdate(story.uid);
+
+    ackService.sendAck(msg.mos.roItemDelete.roID);
+}
+
 async function createNewItem(item, story, el) { //Item: {uid, name, production, rundown, story, ord, template, data, scripts}
     
-    const result = await sqlService.upsertItem(story.rundownStr, item);
+    const result = await sqlService.upsertItem(story.roID, item);
     
     if (result.success) {
         
@@ -53,12 +85,12 @@ async function createNewItem(item, story, el) { //Item: {uid, name, production, 
         
         // Item was exists in DB ==> Update item
         if(result.event === "update"){
-            logger(`[ITEM] New Item {${item.name}} updated in {${story.rundownStr}}`);
+            logger(`[ITEM] New Item {${item.name}} updated in {${story.roID}}`);
         } 
 
         // Item wasn't exist in DB ==> Restore item
         else if(result.event === "create"){
-            logger(`[ITEM] New Item {${item.name}} restored in {${story.rundownStr}}`);
+            logger(`[ITEM] New Item {${item.name}} restored in {${story.roID}}`);
             await sendMosItemReplace(story, el, result.uid, "NEW ITEM");
         }
 
@@ -142,4 +174,4 @@ function waitForRoAck(timeout = 5000) {
     });
 }
 
-export default { registerItems , replaceItem};
+export default { registerItems , replaceItem, deleteItem};
