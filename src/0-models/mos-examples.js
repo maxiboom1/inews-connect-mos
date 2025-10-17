@@ -345,3 +345,31 @@ const roItemDelete = {
     }
   }
 }
+
+const roItemInsert = {
+    mos: {
+        mosID: 'NAMOS',
+        ncsID: 'INEWS',
+        roItemInsert: {
+            roID: 'INEWS/SHOW.TEST.TEST01',
+            storyID: 109201375,
+            itemID: 2,
+            item: {
+                itemSlug: "123",
+                objAir: "READY",
+                mosID: "NAMOS",
+                mosItemBrowserProgID: "alex",
+                mosItemEditorProgID: "alexE",
+                mosExternalMetadata: {
+                    mosSchema: "A",
+                    gfxItem: 64312,
+                    gfxTemplate: 90195,
+                    gfxProduction: 20013,
+                    data: "D",
+                    scripts: "asdas"
+                },
+                itemID: 3
+            }
+        }
+    }
+}

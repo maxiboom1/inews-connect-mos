@@ -79,13 +79,13 @@ class MosRouter extends EventEmitter {
             
             // Items events
             case !!msg.mos.roItemInsert:
+                await itemsService.insertItem(msg);    
                 logger(`[MOS] {${this.color("roItemInsert")}} are received from ${port}`);
-                ackService.sendAck(msg.mos.roItemInsert.roID);
+                
                 break;                              
             case !!msg.mos.roItemDelete:
                 logger(`[MOS] {${this.color("roItemDelete")}} are received from ${port}`);
                 await itemsService.deleteItem(msg);
-                //ackService.sendAck(msg.mos.roItemDelete.roID);
                 break; 
             case !!msg.mos.roItemReplace:
                 logger(`[MOS] {${this.color("roItemReplace")}} are received from ${port}`);

@@ -49,5 +49,28 @@ function normalizeItem(item){
     return item;
 } 
 
-export default { replaceAndNormalizeSpaces, normalizeRoListAll, normalizeItem }
+// Here we remove un-nesessary props before saving item to cache
+function removeItemsMeta(story){ 
+    
+    const storyCopy = JSON.parse(JSON.stringify(story));
+        
+    if (storyCopy.item && Array.isArray(storyCopy.item)) {
+        storyCopy.item.forEach(item => {
+            delete item.mosExternalMetadata.data;
+            delete item.mosExternalMetadata.scripts;
+            delete item.mosExternalMetadata.mosSchema;
+            delete item.mosItemEditorProgID;
+            delete item.mosItemBrowserProgID;
+            delete item.objID;  
+        });
+    }
+    return storyCopy;
+}
+
+export default { 
+    replaceAndNormalizeSpaces, 
+    normalizeRoListAll, 
+    normalizeItem, 
+    removeItemsMeta 
+}
     

@@ -23,11 +23,8 @@ class OctopusProcessor {
         // Store story in DB, and save assigned uid
         story.uid = await sqlService.addDbStory(story);
 
-        // Create a deep copy of the story object
-        const storyCopy = this.removeItemsMeta(story)
-
         // Clear meta form story items, and save story to cache
-        await cache.saveStory(storyCopy);
+        await cache.saveStory(normalize.removeItemsMeta(story));
         
         // Save Items of the story to DB
         await itemsService.registerItems(story);
@@ -225,24 +222,6 @@ class OctopusProcessor {
         story.storyNum = m[0] === prependStringForEmptyPageNumber ? "": m[0];
         story.floating = 0;
         return story;
-    }
-    
-    // Here we remove un-nesessary props before saving item to cache
-    removeItemsMeta(story){ 
-        
-        const storyCopy = JSON.parse(JSON.stringify(story));
-         
-        if (storyCopy.item && Array.isArray(storyCopy.item)) {
-            storyCopy.item.forEach(item => {
-                delete item.mosExternalMetadata.data;
-                delete item.mosExternalMetadata.scripts;
-                delete item.mosExternalMetadata.mosSchema;
-                delete item.mosItemEditorProgID;
-                delete item.mosItemBrowserProgID;
-                delete item.objID;  
-            });
-        }
-        return storyCopy;
     }
 
     async modifyOrd(roID, storyID, ord){
