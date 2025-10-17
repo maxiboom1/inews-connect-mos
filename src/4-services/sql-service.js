@@ -302,7 +302,7 @@ class SqlService {
         }
     }
 
-    async updateItemOrd(rundownStr, gfxItem, ord) { 
+    async updateItemOrd(roID, gfxItem, ord) { 
         const values = {
             ord: ord,
             ordupdate: timeConvertors.createTick(),
@@ -319,7 +319,7 @@ class SqlService {
             if(result.rowsAffected[0] > 0){
                 logger(`[SQL] GFX item {${gfxItem}} order changed`); 
             } else {
-                logger(`[SQL] Item {${gfxItem}} order:{${ord}} in {${rundownStr}}, doesn't exists in DB`);
+                logger(`[SQL] Item {${gfxItem}} order:{${ord}} in {${roID}}, doesn't exists in DB`);
             }
 
         } catch (error) {

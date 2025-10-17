@@ -47,6 +47,7 @@ async function replaceItem(msg) {
 async function deleteItem(msg) {
     const { roID, storyID, itemID } = msg.mos.roItemDelete;
     
+    // Get deep copy of story (we will mutate it)
     const story = await cache.getStory(roID, storyID);
     
     //Find index of deleted item
@@ -58,14 +59,22 @@ async function deleteItem(msg) {
     //Schedule item delete
     await deleteManager.deleteItem(removed.mosExternalMetadata.gfxItem);
 
-    //Compact ord on remaining items
-    story.item.sort((a, b) => a.ord - b.ord);
-    story.item.forEach((it, i) => { it.ord = i; });
+    // Reindex only the shifted tail: idx..end (we are mutiting here the story obj) 
+    for (let i = idx; i < story.item.length; i++) {
+        story.item[i].ord = i;
+    }
 
+    //Modify sql ord - persist only changed ords (items after the removed index)
+    for (let i = idx; i < story.item.length; i++) {
+        const it = story.item[i];
+        await sqlService.updateItemOrd(roID, it.mosExternalMetadata.gfxItem, i);
+    }
+
+    // Set roID, storySlug, storyNum props
     story.roID      = roID;
     story.storySlug = story.name;
     story.storyNum  = story.number;
-    
+
     await cache.saveStory(story);
     
     // last updates
