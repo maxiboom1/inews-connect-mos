@@ -16,6 +16,7 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+
 ## 2.2.0
 
 - Implemented insertItem method - it covers new/duplicate/uniq cases: 
@@ -25,6 +26,7 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 I need to check all edge cases - but for first look, the logic works fine and handles correctly cache and sql
 - Refactored removeItemsMeta to normalize.js module (now we call it from items service and from octopus-service).
 - Now we force types conversion in itec constructor, before saving to cache.
+- We need to deeply debug and test the roItemInsert event with many scenarios - copy from offline rundown etc...
 
 ## 2.1.6
 
