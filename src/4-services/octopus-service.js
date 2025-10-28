@@ -178,6 +178,9 @@ class OctopusProcessor {
             await this.modifyOrd(roID, id, i);
             }
         }
+        
+        // Update rundown last update
+        await sqlService.rundownLastUpdate(roID);
 
         ackService.sendAck(roID);
     }
@@ -185,7 +188,7 @@ class OctopusProcessor {
     async replaceStory(msg){
         
         const m = String(msg.mos.roStoryReplace.story.storySlug).split(prependSeparator);
-        
+        const roID = String(msg.mos.roStoryReplace.roID)
         const values = {
             storySlug:m[1],
             storyNum: m[0] === prependStringForEmptyPageNumber ? "": m[0],
@@ -195,6 +198,8 @@ class OctopusProcessor {
         
         await sqlService.modifyDbStory(values);
         
+        // Update rundown last update
+        await sqlService.rundownLastUpdate(roID);
         ackService.sendAck(msg.mos.roStoryReplace.roID);
 
     }

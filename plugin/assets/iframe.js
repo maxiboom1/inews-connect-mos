@@ -1,5 +1,25 @@
 // window.parent.funcName()
 
+const originUrl = window.location.origin;
+//document.getElementById('drag').addEventListener('dragstart', drag);
+document.getElementById('drag').addEventListener('click', save);
+document.querySelector("#navigateBack").addEventListener('click', ()=>{window.parent.hideIframe();});
+
+async function save(){
+    // Try copying with Clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(createMosMessage());
+    } else {
+        // Fallback method
+        const tempTextarea = document.createElement("textarea");
+        tempTextarea.value = createMosMessage();
+        document.body.appendChild(tempTextarea);
+        tempTextarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempTextarea);
+        console.warn("Clipboard API not available; used fallback method.");
+    }
+}
 // returns item{name,data,scripts,templateId,productionId}
 function getItemData(){
         const _NA_Values = __NA_GetValues();
@@ -18,7 +38,6 @@ function getItemData(){
 
 function drag(event) { 
     const msg = createMosMessage();
-    console.log(msg)
     event.dataTransfer.setData("text",msg);
 }
 
@@ -52,36 +71,15 @@ function createMosMessage(){
             </mos>`;
 }
 
-function setGfxItem(gfxItem){
-    document.body.setAttribute("data-gfxItem",gfxItem);
-}
+function setGfxItem(gfxItem){document.body.setAttribute("data-gfxItem",gfxItem);}
 
-function getGfxItem(){
-    return document.body.getAttribute("data-gfxItem");
-}
+function getGfxItem(){return document.body.getAttribute("data-gfxItem");}
+
 // Internal inews id
-function setItemID(itemID){
-    document.body.setAttribute("data-itemID",itemID);
-}
+function setItemID(itemID){document.body.setAttribute("data-itemID",itemID);}
+
 // Internal inews id
-function getItemID(){
-    return document.body.getAttribute("data-itemID");
-}
-
-//function showSaveButton(){document.getElementById("save").style.display = 'block'; hideDragButton();}
-function hideSaveButton(){document.getElementById("save").style.display = 'none';}
-function showDragButton(){document.getElementById("drag").style.display = 'block'; hideSaveButton();}
-function hideDragButton(){document.getElementById("drag").style.display = 'none';}
-function hideBackButton(){document.getElementById("navigateBack").style.display = 'none';}
-
-
-const originUrl = window.location.origin;
-
-document.getElementById('drag').addEventListener('dragstart', drag);
-
-document.querySelector("#navigateBack").addEventListener('click', ()=>{
-    window.parent.hideIframe();
-});
+function getItemID(){return document.body.getAttribute("data-itemID");}
 
 // ========================================= Preview server ========================================= \\
 document.getElementById('preview').addEventListener('click', async ()=>{
@@ -125,7 +123,6 @@ document.body.addEventListener('input', function(event) {
 });
 
 document.body.addEventListener('change', function(event) {
-    console.log("x")
     const target = event.target;
     // Check if the event target is a select element, a checkbox, or a radio button
     if (target.tagName === 'SELECT' || (target.tagName === 'INPUT' && (target.type === 'checkbox' || target.type === 'radio'))) {
@@ -197,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle key handler to change to favorite
-    document.addEventListener("keydown", (event) => {
+    document.addEventListener("keydown", async (event) => {
         const modifier = document.getElementById("pluginPopover").getAttribute("data-modifier"); // Return string "alt"/"ctrl"/"shift"
         const keyPressed = event.key.toLowerCase();
         
@@ -210,11 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (buttonData[keyPressed]&& isModifierPressed) {
                 window.parent.renderTemplate(buttonData[keyPressed]);
             }
+
+            if ((keyPressed === "s" || keyPressed === "ד") && event.ctrlKey) {
+                await save();
+            }
     
     });
 
 })
 
-function handleLinksButtonsClick(){
-    window.parent.renderTemplate(this.id);
-}
+function handleLinksButtonsClick(){window.parent.renderTemplate(this.id);}

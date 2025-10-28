@@ -16,6 +16,16 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.2.1
+
+- On front page: 
+    1. Added save() func that creates and copies mosItem to clipboard.
+    2. Added "cntrl+s"/"cntrl+ד" handler that triggers save() - so, user can use ctrl+s shortcut to save item to clipboard.
+    3. Added click handler for "drag" button to do the same save().
+- BUG FIX: In items service ==> insertItem we fixed critical bug - by adding roID to story that was fetched from cache. Before that - it sent 
+mosItemReplace without roID and caused heavy bugs.
+- BUG FIX: Added rundownLastUpdate in replaceStory and moveMultiple. Without that - nesarts not react to changes.
+
 
 ## 2.2.0
 

@@ -88,7 +88,7 @@ async function insertItem(msg) {
 
     // 1) pull story (deep copy)
     const story = await cache.getStory(roID, storyID);
-
+    story.roID = roID;
     // 2) compute insertion index
     let insertIdx;
     if (targetItemID === "" || targetItemID === undefined || targetItemID === null) {
@@ -101,6 +101,12 @@ async function insertItem(msg) {
     // 3) resolve identity (NEW vs DUPLICATE vs UNIQUE) before we touch cache order
     const gfxIncoming = Number(item?.mosExternalMetadata?.gfxItem || 0);
     let assertedUid = gfxIncoming;
+
+    // DEBUG
+    //console.log("Inserted item: ", JSON.stringify(msg));
+    //console.log("Cached Story: ", story);
+    //console.log("Inserted item order: ", insertIdx);
+
 
     if (!gfxIncoming) {
         // NEW: no UID yet -> upsert to get a fresh UID
@@ -213,7 +219,7 @@ function constructItem(item, rundown, storyUid, ord) {
         ord: Number(ord),
         template: Number(item.mosExternalMetadata.gfxTemplate),
         data:String(item.mosExternalMetadata.data),
-        scripts: Number(item.mosExternalMetadata.scripts)
+        scripts: String(item.mosExternalMetadata.scripts)
     };
 }
 

@@ -72,7 +72,7 @@ class MosCommands {
                 replaceMosMessage: msg,
                 storyID: story.storyID
             };
-            
+            //console.log("Sent message! ",msg)
             return result;
     }
 

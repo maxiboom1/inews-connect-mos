@@ -5,7 +5,6 @@ import timeConvertors from "../3-utilities/time-convertors.js";
 import logger from "../3-utilities/logger.js";
 import appConfig from "../3-utilities/app-config.js";
 
-
 class SqlService {
 
 // ****************************** INIT FUNCTIONS - RUNS ONCE ONLOAD ****************************** //
@@ -243,7 +242,6 @@ class SqlService {
 // ********************* ITEMS FUNCTIONS ********************** //
 
     async upsertItem(rundownStr, item) { // Item: {uid, name, production, rundown, story, ord, template, data, scripts}
-        
         const values = {
             uid: item.uid,
             name: item.name,
@@ -254,8 +252,8 @@ class SqlService {
             ord: item.ord,
             ordupdate: timeConvertors.createTick(),
             template: item.template,
-            data: (item.data),
-            scripts: (item.scripts),
+            data: item.data,
+            scripts: item.scripts,
             enabled: 1,
             tag: ""
         };
