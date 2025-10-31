@@ -19,6 +19,7 @@ async function save(){
         document.body.removeChild(tempTextarea);
         console.warn("Clipboard API not available; used fallback method.");
     }
+    showPrompt();
 }
 // returns item{name,data,scripts,templateId,productionId}
 function getItemData(){
@@ -34,7 +35,7 @@ function getItemData(){
             template: template,
             production: production
         }        
-}
+} 
 
 function drag(event) { 
     const msg = createMosMessage();
@@ -80,13 +81,6 @@ function setItemID(itemID){document.body.setAttribute("data-itemID",itemID);}
 
 // Internal inews id
 function getItemID(){return document.body.getAttribute("data-itemID");}
-
-// ========================================= Preview server ========================================= \\
-document.getElementById('preview').addEventListener('click', async ()=>{
-    const previewHost = document.getElementById("preview").getAttribute("data-preview-host");
-    const previewPort = document.getElementById("preview").getAttribute("data-preview-port");
-    await fetch(`http://${previewHost}:${previewPort}?reset`,{method:'GET'});
-});
 
 // ========================================= DEBOUNCER ========================================= \\
 const debounce = (func, wait) => {
@@ -214,6 +208,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     });
 
-})
+}) 
 
 function handleLinksButtonsClick(){window.parent.renderTemplate(this.id);}
+
+// Indication for user on "ctrl+s" with green dot
+function showPrompt(){
+    const promptSpan = document.getElementById('promptSpan');
+    promptSpan.style.display = "block";
+
+    setTimeout(() => {
+        promptSpan.style.display = "none";
+    }, 2000);
+}
+
+// ========================================= Preview server ========================================= \\
+document.getElementById('preview').addEventListener('click', async ()=>{
+
+});

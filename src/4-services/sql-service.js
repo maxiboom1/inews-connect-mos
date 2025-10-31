@@ -4,6 +4,8 @@ import cache from "../2-cache/cache.js";
 import timeConvertors from "../3-utilities/time-convertors.js";
 import logger from "../3-utilities/logger.js";
 import appConfig from "../3-utilities/app-config.js";
+import itemsService from "./items-service.js";
+
 
 class SqlService {
 

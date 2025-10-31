@@ -16,6 +16,11 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.2.2
+
+- Implemented "ctrl+s" user indicator with timeout - when user do "ctrl+s", we show green dot that indicates to user that operation has been completed.
+- Removed old preview logic - as we will implement more robust preview options in the future.
+
 ## 2.2.1
 
 - On front page: 

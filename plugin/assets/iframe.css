@@ -78,6 +78,13 @@ button{
     display: inline-block;
   }
   
-  .linksButton:hover {
+.linksButton:hover {
     background-color: #444;
-  }
+}
+
+#promptSpan{
+    font-weight: normal;
+    color:#abf65bda;
+    margin-left: 5px;
+    display: none;
+}
