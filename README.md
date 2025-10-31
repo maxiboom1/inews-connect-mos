@@ -16,6 +16,16 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.2.3
+
+- Implemented robust TCP communication protocol with NewsArts to dynamically to send re-sync command from NewsArts.
+- iNews-Connect acts as a TCP server on port 5431, accepting commands from NewsArts clients.
+- Supported protocol commands (null-terminated strings):
+* iNewsC-reset- → forcefully clear and reload **all** rundowns.
+- New modules: TCP, TCP-router and re-sync service
+- This is start of implementation. While NewsArts sends reset with rundown uid - we need ideally to reset only provided uid and not all rundowns. Then, we need to implement delayed response mechanism: TCP -OK is sent only after given rundown is fully cleared and re-loaded. Currently - I send OK after fixed timeout.
+
+
 ## 2.2.2
 
 - Implemented "ctrl+s" user indicator with timeout - when user do "ctrl+s", we show green dot that indicates to user that operation has been completed.

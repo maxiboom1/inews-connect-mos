@@ -60,6 +60,8 @@ class AppProcessor {
     }
 
     async roList(msg){
+        // Check if ro exists
+        
         const roSlug = msg.mos.roList.roSlug;
         
         // Normalize `story` to always be an array, handling undefined properly (nested ternary)

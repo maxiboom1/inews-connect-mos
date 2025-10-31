@@ -200,6 +200,15 @@ class Cache {
         return this.rundownsList;
     }
 
+    async getRundownByUid(uid) {
+        for (const rundown in this.rundownsList) {
+            if (this.rundownsList[rundown].uid === uid) {
+                return this.rundownsList[rundown];
+            }
+        }
+        return null; 
+    }
+
     async getStories() {
         return this.stories;
     }

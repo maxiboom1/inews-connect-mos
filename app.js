@@ -4,6 +4,9 @@ import bodyParser from 'body-parser';
 import routes from "./src/5-routes/routes.js";
 import appProcessor from "./src/4-services/app-processor.js";
 import appConfig from "./src/3-utilities/app-config.js";
+import startTcpServer from './src/1-dal/tcp.js'; // just importing starts the listener
+
+
 const app = express(); 
 
 app.use(cors({origin: '*'}));
@@ -16,6 +19,7 @@ app.use("/api",routes);
 // Static server http://localhost:3000/plugin
 app.use(express.static('plugin')); 
 
+startTcpServer();
 // Start the Express server
 
 app.listen(appConfig.pluginPort, () => {
