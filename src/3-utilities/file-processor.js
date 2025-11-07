@@ -89,7 +89,7 @@ function createPluginPanel(document) {
     previewButton.setAttribute("data-preview-port", appConfig.previewPort);
 
     // Create drag btn
-    const dragButton = createButton(document,"button","Drag","drag","pluginPanelBtn");
+    const dragButton = createButton(document,"button","Save","drag","pluginPanelBtn");
     dragButton.draggable = true;
     
     // Create Link btn

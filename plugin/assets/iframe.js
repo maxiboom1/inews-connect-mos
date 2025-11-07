@@ -82,49 +82,6 @@ function setItemID(itemID){document.body.setAttribute("data-itemID",itemID);}
 // Internal inews id
 function getItemID(){return document.body.getAttribute("data-itemID");}
 
-// ========================================= DEBOUNCER ========================================= \\
-const debounce = (func, wait) => {
-    let timeout;
-  
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-  
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-};
-
-// Create debounced functions outside of the event listeners
-const debouncedInput = debounce(async function(text) {
-    const scripts = __NA_GetScripts();
-    const templateId = document.body.getAttribute('data-template');
-    const previewHost = document.getElementById("preview").getAttribute("data-preview-host");
-    const previewPort = document.getElementById("preview").getAttribute("data-preview-port");
-    // Send templateId and scripts to preview server
-    await fetch(`http://${previewHost}:${previewPort}?${templateId},${scripts}`,{method:'GET'});
-}, 500);
-
-document.body.addEventListener('input', function(event) {
-    const target = event.target;
-    // Check if the event target is an input or textarea
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
-        // Call the debounced function
-        debouncedInput(`Input changed: ${target.value}`);
-    }
-});
-
-document.body.addEventListener('change', function(event) {
-    const target = event.target;
-    // Check if the event target is a select element, a checkbox, or a radio button
-    if (target.tagName === 'SELECT' || (target.tagName === 'INPUT' && (target.type === 'checkbox' || target.type === 'radio'))) {
-        // Call the debounced function
-        debouncedInput(`Input changed: ${target.value}`);
-    }
-});
-
 // ======================== Item name based on input (triggered from template func updateName()), or from renderItem onload ================== \\
 
 // Onload, we showing the name that we receive from renderItem, 
@@ -223,6 +180,52 @@ function showPrompt(){
 }
 
 // ========================================= Preview server ========================================= \\
-document.getElementById('preview').addEventListener('click', async ()=>{
 
+// Core debouncing function
+const debounce = (func, wait) => {
+    let timeout;
+  
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+  
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+};
+
+// Reset Preview server handler
+document.getElementById('preview').addEventListener('click', async ()=>{
+    const previewHost = document.getElementById("preview").getAttribute("data-preview-host");
+    const previewPort = document.getElementById("preview").getAttribute("data-preview-port");
+    await fetch(`http://${previewHost}:${previewPort}?reset`,{method:'GET'});
+});
+
+const debouncedInput = debounce(async function(text) {
+    const scripts = __NA_GetScripts();
+    const templateId = document.body.getAttribute('data-template');
+    const previewHost = document.getElementById("preview").getAttribute("data-preview-host");
+    const previewPort = document.getElementById("preview").getAttribute("data-preview-port");
+    // Send templateId and scripts to preview server
+    await fetch(`http://${previewHost}:${previewPort}?${templateId},${scripts}`,{method:'GET'});
+}, 500);
+
+document.body.addEventListener('input', function(event) {
+    const target = event.target;
+    // Check if the event target is an input or textarea
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        // Call the debounced function
+        debouncedInput(`Input changed: ${target.value}`);
+    }
+});
+
+document.body.addEventListener('change', function(event) {
+    const target = event.target;
+    // Check if the event target is a select element, a checkbox, or a radio button
+    if (target.tagName === 'SELECT' || (target.tagName === 'INPUT' && (target.type === 'checkbox' || target.type === 'radio'))) {
+        // Call the debounced function
+        debouncedInput(`Input changed: ${target.value}`);
+    }
 });

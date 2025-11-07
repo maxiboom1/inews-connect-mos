@@ -16,6 +16,12 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.2.4
+
+- Rename "save" button
+- Re-factor send to preview handlers on front page
+
+
 ## 2.2.3
 
 - Implemented robust TCP communication protocol with NewsArts to dynamically to send re-sync command from NewsArts.
