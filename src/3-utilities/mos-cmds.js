@@ -3,8 +3,8 @@ import appConfig from "./app-config.js";
 class MosCommands {
     
     constructor() {
-        this.mosID = appConfig.mosID.toString(); // Store mosID once onload
-        this.ncsID = appConfig.ncsID.toString(); // Store ncsID once onload
+        this.mosID = appConfig.mosID; // Store mosID once onload
+        this.ncsID = appConfig.ncsID; // Store ncsID once onload
     }
 
     reqMachInfo() {

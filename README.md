@@ -16,6 +16,24 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.2.5
+
+- Added "alias" property to rundown in appConfig. We write this alias as friendly name that will be shown to end user in NewsArts. In Database, we write it to "tag" prop.
+- Data struct example in appConfig:
+
+```
+    "rundowns": {
+        
+        "SHOW.TEST.TEST01":{"production":200, "alias":"Test01"},
+        
+        "SHOW.TEST.RUNDOWN":{"production":201, "alias":"Friendly-Rundown-Name"},
+        
+        "default":{"production":20011, "alias":"Default-RD"}
+
+    }
+```
+
+
 ## 2.2.4
 
 - Rename "save" button

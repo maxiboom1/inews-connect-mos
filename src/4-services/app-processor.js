@@ -36,8 +36,8 @@ class AppProcessor {
         for(const ro of roArr){
              const rundownStr = ro.roSlug;
              const roID = ro.roID;
-             const production = this.getProdByRundownStr(rundownStr);
-             const uid = await sqlService.addDbRundown(rundownStr,roID,production);
+             const {production, alias} = this.getProdByRundownStr(rundownStr);
+             const uid = await sqlService.addDbRundown(rundownStr,roID,production, alias);
              await cache.initializeRundown(rundownStr,uid, production, roID);
              this.roQueue.push(ro.roID); // Add roID to queue
         }
@@ -91,10 +91,10 @@ class AppProcessor {
     async roCreate(msg){
         const rundownStr = msg.mos.roCreate.roSlug;
         const roID = msg.mos.roCreate.roID;
-        const production = this.getProdByRundownStr(rundownStr);
+        const {production, alias} = this.getProdByRundownStr(rundownStr);
         
         // Register rundown in DB and cache
-        const uid = await sqlService.addDbRundown(rundownStr,roID,production);
+        const uid = await sqlService.addDbRundown(rundownStr,roID,production, alias);
         await cache.initializeRundown(rundownStr,uid, production, roID);
         
         //Send ack to NCS

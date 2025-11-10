@@ -70,7 +70,10 @@ class MosConnector {
             this.server = net.createServer((socket) => {
                 this.serverSocket = socket;
                 let buffer = Buffer.alloc(0);
-                
+                // socket.on('connection', (s) => {
+                //     logger(`[TCP] Accepted ${s.remoteAddress}:${s.remotePort} -> ${s.localAddress}:${s.localPort}`);
+                //   });
+
                 socket.on('data', (data) => {
                     buffer = Buffer.concat([buffer, data]); // Append incoming data to the buffer
                     let endTagIndex;

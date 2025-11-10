@@ -48,13 +48,13 @@ class SqlService {
         }
     }
 
-    async addDbRundown(rundownStr,roID,production) {
+    async addDbRundown(rundownStr,roID,production, alias) {
         const values = {
             name: String(rundownStr),
             lastUpdate: timeConvertors.createTick(),
             production: production,
             enabled: 1,
-            tag: "",
+            tag: alias,
             roID:roID
         };
     
