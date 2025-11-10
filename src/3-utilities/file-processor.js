@@ -104,7 +104,6 @@ function createPluginPanel(document) {
 
     // Append buttons to the "pluginPanel" div
     pluginPanelDiv.appendChild(backButton);
-    pluginPanelDiv.appendChild(dragButton);
     pluginPanelDiv.appendChild(previewButton);
     pluginPanelDiv.appendChild(linkButton);
 
@@ -121,6 +120,9 @@ function createPluginPanel(document) {
     // Append label and input to the "pluginPanel" div
     pluginPanelDiv.appendChild(nameLabel);
     pluginPanelDiv.appendChild(nameInput);
+
+    pluginPanelDiv.appendChild(dragButton);
+
     pluginPanelDiv.appendChild(promptSpan);
 
 

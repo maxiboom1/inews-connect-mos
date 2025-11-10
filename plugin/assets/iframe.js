@@ -52,8 +52,13 @@ function createMosMessage(){
         itemID = document.body.getAttribute('data-itemID');
     }
     const data = __NA_GetValues();
-    const scripts = JSON.stringify(__NA_GetScripts());
+    let scripts = JSON.stringify(__NA_GetScripts());
+    
+    // They have elements without scripts at all - this is fallback fot this case
+    if(scripts === undefined) {scripts = "  ";}
+    
     const itemSlug = document.getElementById("nameInput").value.replace(/'/g, "")
+    
     return `<mos><ncsItem><item>
                 <itemSlug>${itemSlug}</itemSlug>
                 <objID></objID>

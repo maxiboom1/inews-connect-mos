@@ -16,6 +16,11 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.2.6
+
+- "Save" moved after the input box (its just an appending order in fileProcessor)
+- Added fallback condition to case when the gfx element have no scripts. 
+
 ## 2.2.5
 
 - Added "alias" property to rundown in appConfig. We write this alias as friendly name that will be shown to end user in NewsArts. In Database, we write it to "tag" prop.

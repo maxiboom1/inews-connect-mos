@@ -85,6 +85,10 @@ button{
 #promptSpan{
     font-weight: normal;
     color:#abf65bda;
-    margin-left: 5px;
+    margin-left: -10px;
     display: none;
+}
+
+#drag{
+    margin-left: 12px;
 }
