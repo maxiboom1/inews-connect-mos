@@ -42,6 +42,13 @@ function htmlWrapper(htmlContent,templateUid, productionUid, templateName) {
     
     const dom = new JSDOM(htmlContent);
     const document = dom.window.document;
+
+    // NEW: detect direction from inline <style> that targets only body/.body
+    const detectedDir = detectDirFromBodyStyle(document);
+    if (detectedDir) {
+        document.body.classList.add(`na-doc-${detectedDir}`); // e.g., na-doc-rtl | na-doc-ltr
+    }
+
     const scriptFileName = "../assets/iframe.js";
 
     const scriptTag = document.createElement('script');
@@ -74,7 +81,19 @@ function htmlWrapper(htmlContent,templateUid, productionUid, templateName) {
     } else {
         document.body.setAttribute('data-template-name', "");     
     }
-  
+    
+    const pane = createPreviewPane(document);
+    //document.body.appendChild(pane);
+    if (!pane.isConnected) {
+        const toolbox = document.querySelector('.toolbox');   // the wrapper you described
+        if (toolbox) {
+            toolbox.appendChild(pane);                           
+        } else {
+          logger('[File-processor] .toolbox not found, appending Preview panel to <body> as fallback',"red");
+          document.body.appendChild(pane);                     // fallback (shouldn't happen)
+        }
+    }
+
     return dom.serialize();
 }
 
@@ -161,5 +180,53 @@ function createSpan(document,id, text){
     span.id = id;
     return span;
 }
+
+function createPreviewPane(document) {
+  
+    const aside = document.createElement('aside');
+    aside.id = 'previewPane';
+    aside.setAttribute('aria-label', 'Preview');
+    aside.innerHTML = `
+      <div class="prw-header">Preview</div>
+      <img id="previewImg" alt="Preview will appear here">
+    `;
+    return aside;
+}
+
+function detectDirFromBodyStyle(document) {
+    // Grab all inline <style> contents
+    const cssText = Array.from(document.querySelectorAll('style'))
+      .map(s => s.textContent || '')
+      .join('\n')
+      // strip /* comments */
+      .replace(/\/\*[\s\S]*?\*\//g, '');
+  
+    if (!cssText.trim()) return null;
+  
+    // Very simple block parser: selectors { declarations }
+    const blockRE = /([^{}]+)\{([^}]*)\}/g;
+    let m, dir = null;
+  
+    while ((m = blockRE.exec(cssText)) !== null) {
+      const rawSelectors = m[1].trim();
+      const declarations = m[2];
+  
+      // Split selectors and check ONLY 'body' (and optional '.body' if you want)
+      const selectors = rawSelectors.split(',').map(s => s.trim());
+      const targetsBody =
+        selectors.some(sel => sel === 'body' || sel === '.body'); // keep only what you asked for
+  
+      if (!targetsBody) continue;
+  
+      // Look for "direction: rtl|ltr" inside the declaration block
+      const d = /direction\s*:\s*(rtl|ltr)\b/i.exec(declarations);
+      if (d) {
+        dir = d[1].toLowerCase(); // last match wins
+      }
+    }
+  
+    return dir; // 'rtl' | 'ltr' | null
+  }
+
 
 export default processAndWriteFiles;

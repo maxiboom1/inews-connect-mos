@@ -92,3 +92,82 @@ button{
 #drag{
     margin-left: 12px;
 }
+
+/* ===== Toolbox + Preview split (header top, content left, preview right) ===== */
+
+/* 1) Grid layout */
+.toolbox {
+    display: grid;
+    grid-template-columns: 1fr 360px;      /* left grows, right fixed (preview) */
+    grid-template-rows: auto 1fr;          /* header auto, then fill */
+    grid-template-areas:
+      "header  header"
+      "content preview";
+    height: 100vh;                         /* fill iframe viewport */
+    overflow: hidden;                      /* inner panes will scroll */
+  }
+  
+  /* 1b) RTL flip: swap areas AND column sizes */
+  .na-doc-rtl .toolbox {
+    grid-template-columns: 360px 1fr;      /* preview fixed on the left, content grows on right */
+    grid-template-areas:
+      "header header"
+      "preview content";
+  }
+  
+  /* 2) Map existing blocks */
+  .toolbox-header { 
+    grid-area: header;
+    z-index: 1;
+  }
+  
+  .toolbox-content {
+    grid-area: content;
+    overflow: auto;
+    min-width: 0;                          /* allow shrink without overflow */
+  }
+  
+  /* 3) Preview pane */
+  .toolbox > #previewPane {
+    grid-area: preview;
+  
+    /* override any old fixed positioning */
+    position: static !important;
+    top: auto !important; 
+    right: auto !important;
+    height: auto !important;
+    width: auto !important;
+  
+    direction: ltr;                        /* keep preview UI predictable */
+    display: flex;
+    flex-direction: column;
+    background: #0f1115;
+    border-left: 1px solid #2a2f3a;        /* default divider on the left side of preview (LTR) */
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: auto;
+  }
+  
+  /* 3b) Divider side for RTL */
+  .na-doc-rtl .toolbox > #previewPane {
+    border-left: none;
+    border-right: 1px solid #2a2f3a;
+  }
+  
+  /* 4) Preview header + image */
+  .toolbox #previewPane .prw-header {
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    opacity: 0.8;
+    margin-bottom: 8px;
+  }
+  
+  .toolbox #previewPane #previewImg {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    background: #0b0d11;
+    flex: 1;
+  }
+  

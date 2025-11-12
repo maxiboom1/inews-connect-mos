@@ -16,6 +16,17 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.3.0
+
+- Fully implemented preview feature — including frontend UI, logic and file-serving.
+- On any user input change — via debounce — we send a GET to the preview server, then poll with lightware HEAD requests our Express server for the rendered file (same UUID). Once HEAD return OK, we assign the url of the image on html
+- On server side - implemented routes for HEAD requests - its new prw.js module in routes.
+- Since grid order affected by direction property of the bidy - and we have templates of rtl and ltr kind - i"ve implemented direction detector in fileProcessor.js file - if it detects that body has rtl prop - we assign <body class="na-doc-rtl"> and based on this swap in css the order of the grid. works perfect, without affecting the content.
+- There are still style work to do to polish the preview pane.
+- There are some templates that shoulds have prw pane - need to implement some mechanism (Dor).
+- Next update: add close/open pane option - when closed disable send to render on change.
+
+
 ## 2.2.6
 
 - "Save" moved after the input box (its just an appending order in fileProcessor)
