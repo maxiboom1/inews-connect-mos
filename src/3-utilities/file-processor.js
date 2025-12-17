@@ -193,6 +193,7 @@ function createPreviewPane(document) {
     return aside;
 }
 
+// Seeks for "dir" prop in inline css body selector
 function detectDirFromBodyStyle(document) {
     // Grab all inline <style> contents
     const cssText = Array.from(document.querySelectorAll('style'))
@@ -211,10 +212,10 @@ function detectDirFromBodyStyle(document) {
       const rawSelectors = m[1].trim();
       const declarations = m[2];
   
-      // Split selectors and check ONLY 'body' (and optional '.body' if you want)
+      // Split selectors and check ONLY 'body'
       const selectors = rawSelectors.split(',').map(s => s.trim());
       const targetsBody =
-        selectors.some(sel => sel === 'body' || sel === '.body'); // keep only what you asked for
+        selectors.some(sel => sel === 'body' || sel === '.body');
   
       if (!targetsBody) continue;
   

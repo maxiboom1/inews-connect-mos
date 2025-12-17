@@ -16,6 +16,10 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.3.1
+
+- Added more colors for scene colorifying (menu.js and menu.css)
+
 ## 2.3.0
 
 - Fully implemented preview feature — including frontend UI, logic and file-serving.

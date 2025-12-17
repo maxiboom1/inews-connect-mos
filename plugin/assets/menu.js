@@ -41,21 +41,39 @@ function createAccordionItem(sceneName, folders, templates, sceneCounter, sceneC
     sceneAccordion.className = 'accordion-item';
     sceneAccordion.className = 'dark';
 
-    // Determine the background color class based on sceneColor
-    let colorClass = '';
-    switch(sceneColor) {
-        case 1:
-            colorClass = 'dark-red';
-            break;
-        case 2:
-            colorClass = 'dark-green';
-            break;
-        case 3:
-            colorClass = 'dark-blue';
-            break;
-        default:
-            colorClass = 'no-color';
-    }
+// Determine the background color class based on sceneColor
+let colorClass = '';
+switch (sceneColor) {
+    case 1:
+        colorClass = 'dark-red';
+        break;
+    case 2:
+        colorClass = 'dark-green';
+        break;
+    case 3:
+        colorClass = 'dark-blue';
+        break;
+    case 4:
+        colorClass = 'dark-orange';
+        break;
+    case 5:
+        colorClass = 'dark-yellow';
+        break;
+    case 6:
+        colorClass = 'dark-turquoise';
+        break;
+    case 7:
+        colorClass = 'dark-violet';
+        break;
+    case 8:
+        colorClass = 'dark-pink';
+        break;
+    case 9:
+        colorClass = 'dark-grey';
+        break;
+    default:
+        colorClass = 'no-color';
+}
     //sceneAccordion.classList.add(colorClass);
 
     const sceneId = `scene-${sceneCounter}`;

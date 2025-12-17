@@ -100,16 +100,63 @@ hr{
     background-color: transparent;
 }
 
-/* Colors of scenes - Dor you can adjust the red/green/blue color here */
+/* Colors of scenes - adjust RGBA values freely */
+
+.no-color {
+    --bs-accordion-btn-bg: transparent;
+    --bs-accordion-active-bg: transparent;
+}
+
+/* 1 - Red */
 .dark-red {
-    --bs-accordion-btn-bg:rgba(139, 0, 0, 0.296);
-    --bs-accordion-active-bg:rgba(139, 0, 0, 0.296);;
+    --bs-accordion-btn-bg: rgba(139, 0, 0, 0.30);
+    --bs-accordion-active-bg: rgba(139, 0, 0, 0.30);
 }
+
+/* 2 - Green */
 .dark-green {
-    --bs-accordion-btn-bg:rgba(0, 100, 0, 0.28);
-    --bs-accordion-active-bg:rgba(0, 100, 0, 0.28);
+    --bs-accordion-btn-bg: rgba(0, 100, 0, 0.28);
+    --bs-accordion-active-bg: rgba(0, 100, 0, 0.28);
 }
+
+/* 3 - Blue */
 .dark-blue {
-    --bs-accordion-btn-bg:rgba(0, 0, 139, 0.28);
-    --bs-accordion-active-bg:rgba(0, 0, 139, 0.28);
+    --bs-accordion-btn-bg: rgba(0, 0, 139, 0.28);
+    --bs-accordion-active-bg: rgba(0, 0, 139, 0.28);
+}
+
+/* 4 - Orange */
+.dark-orange {
+    --bs-accordion-btn-bg: rgba(255, 140, 0, 0.30);
+    --bs-accordion-active-bg: rgba(255, 140, 0, 0.30);
+}
+
+/* 5 - Yellow */
+.dark-yellow {
+    --bs-accordion-btn-bg: rgba(218, 165, 32, 0.30);
+    --bs-accordion-active-bg: rgba(218, 165, 32, 0.30);
+}
+
+/* 6 - Turquoise */
+.dark-turquoise {
+    --bs-accordion-btn-bg: rgba(64, 224, 208, 0.30);
+    --bs-accordion-active-bg: rgba(64, 224, 208, 0.30);
+}
+
+/* 7 - Violet */
+.dark-violet {
+    --bs-accordion-btn-bg: rgba(138, 43, 226, 0.30);
+    --bs-accordion-active-bg: rgba(138, 43, 226, 0.30);
+}
+
+/* 8 - Pink */
+.dark-pink {
+    --bs-accordion-btn-bg: rgba(255, 105, 180, 0.30);
+    --bs-accordion-active-bg: rgba(255, 105, 180, 0.30);
+}
+
+/* 9 - Grey */
+.dark-grey {
+    --bs-accordion-btn-bg: rgba(128, 128, 128, 0.30);
+    --bs-accordion-active-bg: rgba(128, 128, 128, 0.30);
 }
