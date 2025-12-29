@@ -23,7 +23,7 @@ class OctopusProcessor {
         // Store story in DB, and save assigned uid
         story.uid = await sqlService.addDbStory(story);
 
-        // Clear meta form story items, and save story to cache
+        // Clear meta form story items, and save story to cache. Use deep copy - not modifying original story
         await cache.saveStory(normalize.removeItemsMeta(story));
         
         // Save Items of the story to DB
