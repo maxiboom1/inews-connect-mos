@@ -16,6 +16,11 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.4.1
+
+- Added option to resize preview panel
+- Added new previewPanelResize config.json option - set true to enable
+
 ## 2.4.0
 
 - Finally merged 2 different versions from 2 different places. The new version contain the prw version + boot improvment mechanism. roCreate now parsing the data from message itself (instead call roReq, and risk to fall into race conditions when on process users do modify items in rundown that not finished to process). With this tecnique, we garanteed that mos server wont send new updates since we not acked roCreate yet. Refactored struct in services files. next milestones should be dynamically resize prw section on whole window resize.

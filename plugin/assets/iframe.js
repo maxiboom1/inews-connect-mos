@@ -298,3 +298,99 @@ async function showPrwImage(uuid) {
 
 // Trigger only on item render - ignore on template render
 function updatePrw(){debouncedInput(`Initial Prw`);}
+
+(function initPreviewSplitter() {
+    const toolbox = document.querySelector('.toolbox');
+    const previewPane = document.getElementById('previewPane');
+    const isResizeActive = document.body.getAttribute('data-preview-resize');
+    if (!toolbox || !previewPane || isResizeActive != "true") return;
+  
+    // create splitter once
+    let splitter = document.getElementById('prwSplitter');
+    if (!splitter) {
+      splitter = document.createElement('div');
+      splitter.id = 'prwSplitter';
+      splitter.setAttribute('role', 'separator');
+      splitter.setAttribute('aria-label', 'Resize preview');
+      previewPane.parentNode.insertBefore(splitter, previewPane);
+    }
+  
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+    const getClientX = (evt) =>
+      (evt.touches && evt.touches[0] ? evt.touches[0].clientX : evt.clientX);
+  
+    // preview side:
+    // LTR: preview is on the RIGHT
+    // RTL: preview is on the LEFT (you flip areas/columns)
+    const isRTL = !document.body.classList.contains('na-doc-rtl');
+  
+    let dragging = false;
+    let startX = 0;
+    let startWidth = 0;
+  
+    // read current preview width (from css var or from actual rect)
+    const getCurrentPreviewWidth = () => {
+      const v = getComputedStyle(toolbox).getPropertyValue('--prw-width').trim();
+      if (v.endsWith('px')) {
+        const n = parseFloat(v);
+        if (!Number.isNaN(n) && n > 0) return n;
+      }
+      // fallback: actual rendered width
+      return previewPane.getBoundingClientRect().width || 360;
+    };
+  
+    const onMove = (e) => {
+      if (!dragging) return;
+      e.preventDefault();
+  
+      const rect = toolbox.getBoundingClientRect();
+      const x = getClientX(e);
+  
+      const deltaX = x - startX;
+  
+      // LTR (preview right): dragging splitter to the RIGHT should make preview SMALLER
+      // newWidth = startWidth - deltaX
+      //
+      // RTL (preview left): dragging splitter to the RIGHT should make preview BIGGER
+      // newWidth = startWidth + deltaX
+      let newWidth = isRTL ? (startWidth + deltaX) : (startWidth - deltaX);
+  
+      const min = 220;
+      const max = Math.max(260, rect.width - 220);
+      newWidth = clamp(Math.round(newWidth), min, max);
+  
+      toolbox.style.setProperty('--prw-width', `${newWidth}px`);
+    };
+  
+    const onUp = (e) => {
+      if (!dragging) return;
+      e.preventDefault();
+  
+      dragging = false;
+      toolbox.classList.remove('prw-resizing');
+  
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener('touchmove', onMove);
+      window.removeEventListener('touchend', onUp);
+    };
+  
+    const onDown = (e) => {
+      e.preventDefault();
+  
+      dragging = true;
+      toolbox.classList.add('prw-resizing');
+  
+      startX = getClientX(e);
+      startWidth = getCurrentPreviewWidth();
+  
+      window.addEventListener('mousemove', onMove, { passive: false });
+      window.addEventListener('mouseup', onUp, { passive: false });
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('touchend', onUp, { passive: false });
+    };
+  
+    splitter.addEventListener('mousedown', onDown);
+    splitter.addEventListener('touchstart', onDown, { passive: false });
+})();
+  

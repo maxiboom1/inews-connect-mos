@@ -72,7 +72,8 @@ function htmlWrapper(htmlContent,templateUid, productionUid, templateName) {
     document.head.appendChild(styleTag);
     document.body.setAttribute('data-template', templateUid);  
     document.body.setAttribute('data-production', productionUid);  
-    document.body.setAttribute('data-mos-id', appConfig.mosID);   
+    document.body.setAttribute('data-mos-id', appConfig.mosID);
+    if(appConfig.previewPanelResize) {document.body.setAttribute('data-preview-resize',true);}
  
 
     // Add static category name in item name

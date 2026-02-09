@@ -97,22 +97,26 @@ button{
 
 /* 1) Grid layout */
 .toolbox {
-    display: grid;
-    grid-template-columns: 1fr 360px;      /* left grows, right fixed (preview) */
-    grid-template-rows: auto 1fr;          /* header auto, then fill */
-    grid-template-areas:
-      "header  header"
-      "content preview";
-    height: 100vh;                         /* fill iframe viewport */
-    overflow: hidden;                      /* inner panes will scroll */
-  }
+  --prw-width: 360px;
+  --splitter-w: 6px;
+
+  display: grid;
+  grid-template-columns: 1fr var(--splitter-w) var(--prw-width);
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "header  header   header"
+    "content splitter preview";
+
+  height: 100vh;
+  overflow: hidden;
+}
   
   /* 1b) RTL flip: swap areas AND column sizes */
   .na-doc-rtl .toolbox {
-    grid-template-columns: 360px 1fr;      /* preview fixed on the left, content grows on right */
+    grid-template-columns: var(--prw-width) var(--splitter-w) 1fr;
     grid-template-areas:
-      "header header"
-      "preview content";
+      "header  header   header"
+      "preview splitter content";
   }
   
   /* 2) Map existing blocks */
@@ -171,3 +175,15 @@ button{
     flex: 1;
   }
   
+  /* splitter */
+.toolbox > #prwSplitter {
+  grid-area: splitter;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+  background: #1a1f2a;
+}
+.toolbox > #prwSplitter:hover,
+.toolbox.prw-resizing > #prwSplitter {
+  background: #2a3140;
+}
