@@ -151,6 +151,122 @@ const roList2StoriesWith3Items = {
     }
 }
 
+const roCreateWithSingleStory = {
+    "mos":{
+        "mosID":"NAMOS",
+        "ncsID":"INEWS",
+        "roCreate":{
+            "roID":"INEWS/SHOW.YELADIM.RUNDOWN",
+            "roSlug":"INEWS/SHOW.YELADIM.RUNDOWN",
+            "roTrigger":"",
+            "story":{
+                "storySlug":"NO PAGE | alex",
+                "storyID":488441575,
+                "item":{
+                    "ncsItem":{
+                        "item":{
+                            "itemSlug":"נ - Stripe-1",
+                            "objID":"",
+                            "objAir":"READY",
+                            "mosID":"NAMOS",
+                            "mosItemBrowserProgID":"alex",
+                            "mosItemEditorProgID":"alexE",
+                            "mosExternalMetadata":{
+                                "mosSchema":"A",
+                                "gfxItem":37062,
+                                "gfxTemplate":70281,
+                                "gfxProduction":20011,
+                                "data":"%5B%222%22%2C%22%E2%80%ABStripe-1%22%5D",
+                                "scripts":"%7B%22scriptIn%2RIPE%3B1)%n%3B100)%22%5D%7D"
+                            }
+                        }
+                    },
+                    "itemID":1
+                }
+            }
+        }
+    }
+}
+
+const roCreateWithMultiplestoryAndItems = {
+    "mos": {
+        "mosID": "NAMOS",
+        "ncsID": "INEWS",
+        "roCreate": {
+            "roID": "INEWS/SHOW.YELADIM.RUNDOWN",
+            "roSlug": "INEWS/SHOW.YELADIM.RUNDOWN",
+            "roTrigger": "",
+            "story": [
+                {
+                    "storySlug": "NO PAGE | alex2",
+                    "storyID": 1902312,
+                    "item": {
+                        "itemSlug": "נ - Stripe-0",
+                        "objID": "",
+                        "objAir": "READY",
+                        "mosID": "NAMOS",
+                        "mosItemBrowserProgID": "alex",
+                        "mosItemEditorProgID": "alexE",
+                        "mosExternalMetadata": {
+                            "mosSchema": "A",
+                            "gfxItem": 37065,
+                            "gfxTemplate": 70281,
+                            "gfxProduction": 20011,
+                            "data": "%5B%222%22%2C%22%E2%80%ABStripe-0%22%5D",
+                            "scripts": "%7B%22scriptIn%22%3A%5B%22If(STRIPE_ISLONG%3B%3D%3B1)%22%2C%22Abort(Stripe%20is%20too%20long.%20Please%20try%20again.%3BPU)%22%2C%22EndIf%22%2C%22Flag(STRIPE)%22%2C%22SetGlobalVar(STRIPE%3B1)%22%2C%22SetGlobalVar(SUBTITLE%3B0)%22%2C%22ExportSet(stripe_mode%3B2)%22%2C%22ExportSet(stripe_text%3B%E2%80%ABStripe-0)%22%2C%22Direct(SET%20STRIPE%201)%22%2C%22If(REDSTRIPE%3B%3D%3B1)%22%2C%22SetGlobalVar(REDSTRIPE%3B0)%22%2C%22AnimPlay(white_in)%22%2C%22Wait(200)%22%2C%22UnFlag(REDSTRIPE)%22%2C%22ItemOut(REDSTRIPE)%22%2C%22EndIf%22%2C%22If(POLLS%3B%3D%3B1)%22%2C%22UnFlag(POLLS)%22%2C%22ItemOut(POLLS)%22%2C%22Wait(1000)%22%2C%22EndIf%22%2C%22Wait(50)%22%2C%22AnimPlay(stripe_in)%22%5D%2C%22scriptChange%22%3A%5B%22If(STRIPE_ISLONG%3B%3D%3B1)%22%2C%22Abort(Stripe%20is%20too%20long.%20Please%20try%20again.%3BPU)%22%2C%22EndIf%22%2C%22Flag(STRIPE)%22%2C%22SetGlobalVar(SUBTITLE%3B0)%22%2C%22AnimPlay(stripe_change)%22%2C%22ItemOut(SUBTITLE)%22%2C%22Wait(300)%22%2C%22ExportSet(stripe_mode%3B2)%22%2C%22ExportSet(stripe_text%3B%E2%80%ABStripe-0)%22%5D%2C%22scriptOut%22%3A%5B%22UnFlag(STRIPE)%22%2C%22UnFlag(DETAILEDSTRIPE)%22%2C%22SetGlobalVar(STRIPE%3B0)%22%2C%22AnimPlay(stripe_out)%22%2C%22ItemOut(SUBTITLE)%22%2C%22Direct(SET%20STRIPE%200)%22%2C%22If(BOX_1%3B%3D%3B1)%22%2C%22UnFlag(BOX_1)%22%2C%22ItemOutUi(BOX_1)%22%2C%22Wait(250)%22%2C%22SetGlobalVar(BOX_1%3B0)%22%2C%22EndIf%22%2C%22If(BOX_2%3B%3D%3B1)%22%2C%22UnFlag(BOX_2)%22%2C%22ItemOutUi(BOX_2)%22%2C%22Wait(250)%22%2C%22SetGlobalVar(BOX_2%3B0)%22%2C%22EndIf%22%2C%22If(BOX_3%3B%3D%3B1)%22%2C%22UnFlag(BOX_3)%22%2C%22ItemOutUi(BOX_3)%22%2C%22Wait(250)%22%2C%22SetGlobalVar(BOX_3%3B0)%22%2C%22EndIf%22%5D%2C%22scriptPvw%22%3A%5B%22ExportSet(stripe_mode%3B2)%22%2C%22ExportSet(stripe_text%3B%E2%80%ABStripe-0)%22%2C%22AnimGoToField(stripe_in%3B100)%22%5D%7D"
+                        },
+                        "itemID": 1
+                    }
+                },
+                {
+                    "storySlug": "NO PAGE | alex",
+                    "storyID": 488441575,
+                    "item": [
+                        {
+                            "ncsItem": {
+                                "item": {
+                                    "itemSlug": "נ - Stripe-1",
+                                    "objID": "",
+                                    "objAir": "READY",
+                                    "mosID": "NAMOS",
+                                    "mosItemBrowserProgID": "alex",
+                                    "mosItemEditorProgID": "alexE",
+                                    "mosExternalMetadata": {
+                                        "mosSchema": "A",
+                                        "gfxItem": 37064,
+                                        "gfxTemplate": 70281,
+                                        "gfxProduction": 20011,
+                                        "data": "%5B%222%22%2C%22%E2%80%ABStripe-1%22%5D",
+                                        "scripts": "%7B%22scriptIn%22%3A%5B%22If(STRIPE_ISLONG%3B%3D%3B1)%22%2C%22Abort(Stripe%20is%20too%20long.%20Please%20try%20again.%3BPU)%22%2C%22EndIf%22%2C%22Flag(STRIPE)%22%2C%22SetGlobalVar(STRIPE%3B1)%22%2C%22SetGlobalVar(SUBTITLE%3B0)%22%2C%22ExportSet(stripe_mode%3B2)%22%2C%22ExportSet(stripe_text%3B%E2%80%ABStripe-1)%22%2C%22Direct(SET%20STRIPE%201)%22%2C%22If(REDSTRIPE%3B%3D%3B1)%22%2C%22SetGlobalVar(REDSTRIPE%3B0)%22%2C%22AnimPlay(white_in)%22%2C%22Wait(200)%22%2C%22UnFlag(REDSTRIPE)%22%2C%22ItemOut(REDSTRIPE)%22%2C%22EndIf%22%2C%22If(POLLS%3B%3D%3B1)%22%2C%22UnFlag(POLLS)%22%2C%22ItemOut(POLLS)%22%2C%22Wait(1000)%22%2C%22EndIf%22%2C%22Wait(50)%22%2C%22AnimPlay(stripe_in)%22%5D%2C%22scriptChange%22%3A%5B%22If(STRIPE_ISLONG%3B%3D%3B1)%22%2C%22Abort(Stripe%20is%20too%20long.%20Please%20try%20again.%3BPU)%22%2C%22EndIf%22%2C%22Flag(STRIPE)%22%2C%22SetGlobalVar(SUBTITLE%3B0)%22%2C%22AnimPlay(stripe_change)%22%2C%22ItemOut(SUBTITLE)%22%2C%22Wait(300)%22%2C%22ExportSet(stripe_mode%3B2)%22%2C%22ExportSet(stripe_text%3B%E2%80%ABStripe-1)%22%5D%2C%22scriptOut%22%3A%5B%22UnFlag(STRIPE)%22%2C%22UnFlag(DETAILEDSTRIPE)%22%2C%22SetGlobalVar(STRIPE%3B0)%22%2C%22AnimPlay(stripe_out)%22%2C%22ItemOut(SUBTITLE)%22%2C%22Direct(SET%20STRIPE%200)%22%2C%22If(BOX_1%3B%3D%3B1)%22%2C%22UnFlag(BOX_1)%22%2C%22ItemOutUi(BOX_1)%22%2C%22Wait(250)%22%2C%22SetGlobalVar(BOX_1%3B0)%22%2C%22EndIf%22%2C%22If(BOX_2%3B%3D%3B1)%22%2C%22UnFlag(BOX_2)%22%2C%22ItemOutUi(BOX_2)%22%2C%22Wait(250)%22%2C%22SetGlobalVar(BOX_2%3B0)%22%2C%22EndIf%22%2C%22If(BOX_3%3B%3D%3B1)%22%2C%22UnFlag(BOX_3)%22%2C%22ItemOutUi(BOX_3)%22%2C%22Wait(250)%22%2C%22SetGlobalVar(BOX_3%3B0)%22%2C%22EndIf%22%5D%2C%22scriptPvw%22%3A%5B%22ExportSet(stripe_mode%3B2)%22%2C%22ExportSet(stripe_text%3B%E2%80%ABStripe-1)%22%2C%22AnimGoToField(stripe_in%3B100)%22%5D%7D"
+                                    }
+                                }
+                            },
+                            "itemID": 1
+                        },
+                        {
+                            "itemSlug": "נ - Stripe-2",
+                            "objID": "",
+                            "objAir": "READY",
+                            "mosID": "NAMOS",
+                            "mosItemBrowserProgID": "alex",
+                            "mosItemEditorProgID": "alexE",
+                            "mosExternalMetadata": {
+                                "mosSchema": "A",
+                                "gfxItem": 37066,
+                                "gfxTemplate": 70281,
+                                "gfxProduction": 20011,
+                                "data": "%5B%222%22%2C%22%E2%80%ABStripe-2%22%5D",
+                                "scripts": "%7B%22scriptIn%22%3A%5B%22If(STRIPE_ISLONG%3B%3D%3B1)%22%2C%22Abort(Stripe%20is%20too%20long.%20Please%20try%20again.%3BPU)%22%2C%22EndIf%22%2C%22Flag(STRIPE)%22%2C%22SetGlobalVar(STRIPE%3B1)%22%2C%22SetGlobalVar(SUBTITLE%3B0)%22%2C%22ExportSet(stripe_mode%3B2)%22%2C%22ExportSet(stripe_text%3B%E2%80%ABStripe-2)%22%2C%22Direct(SET%20STRIPE%201)%22%2C%22If(REDSTRIPE%3B%3D%3B1)%22%2C%22SetGlobalVar(REDSTRIPE%3B0)%22%2C%22AnimPlay(white_in)%22%2C%22Wait(200)%22%2C%22UnFlag(REDSTRIPE)%22%2C%22ItemOut(REDSTRIPE)%22%2C%22EndIf%22%2C%22If(POLLS%3B%3D%3B1)%22%2C%22UnFlag(POLLS)%22%2C%22ItemOut(POLLS)%22%2C%22Wait(1000)%22%2C%22EndIf%22%2C%22Wait(50)%22%2C%22AnimPlay(stripe_in)%22%5D%2C%22scriptChange%22%3A%5B%22If(STRIPE_ISLONG%3B%3D%3B1)%22%2C%22Abort(Stripe%20is%20too%20long.%20Please%20try%20again.%3BPU)%22%2C%22EndIf%22%2C%22Flag(STRIPE)%22%2C%22SetGlobalVar(SUBTITLE%3B0)%22%2C%22AnimPlay(stripe_change)%22%2C%22ItemOut(SUBTITLE)%22%2C%22Wait(300)%22%2C%22ExportSet(stripe_mode%3B2)%22%2C%22ExportSet(stripe_text%3B%E2%80%ABStripe-2)%22%5D%2C%22scriptOut%22%3A%5B%22UnFlag(STRIPE)%22%2C%22UnFlag(DETAILEDSTRIPE)%22%2C%22SetGlobalVar(STRIPE%3B0)%22%2C%22AnimPlay(stripe_out)%22%2C%22ItemOut(SUBTITLE)%22%2C%22Direct(SET%20STRIPE%200)%22%2C%22If(BOX_1%3B%3D%3B1)%22%2C%22UnFlag(BOX_1)%22%2C%22ItemOutUi(BOX_1)%22%2C%22Wait(250)%22%2C%22SetGlobalVar(BOX_1%3B0)%22%2C%22EndIf%22%2C%22If(BOX_2%3B%3D%3B1)%22%2C%22UnFlag(BOX_2)%22%2C%22ItemOutUi(BOX_2)%22%2C%22Wait(250)%22%2C%22SetGlobalVar(BOX_2%3B0)%22%2C%22EndIf%22%2C%22If(BOX_3%3B%3D%3B1)%22%2C%22UnFlag(BOX_3)%22%2C%22ItemOutUi(BOX_3)%22%2C%22Wait(250)%22%2C%22SetGlobalVar(BOX_3%3B0)%22%2C%22EndIf%22%5D%2C%22scriptPvw%22%3A%5B%22ExportSet(stripe_mode%3B2)%22%2C%22ExportSet(stripe_text%3B%E2%80%ABStripe-2)%22%2C%22AnimGoToField(stripe_in%3B100)%22%5D%7D"
+                            },
+                            "itemID": 2
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
+
 // Story with new item (single item)
 const roStoryAppend = {
     "mos": {

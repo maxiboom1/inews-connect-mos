@@ -1,5 +1,5 @@
 import mosConnector from "../1-dal/mos-connector.js";
-import sqlService from "./sql-service.js";
+import sqlService from "./4-sql-service.js";
 import cache from "../2-cache/cache.js";
 import logger from "../3-utilities/logger.js";
 import mosCommands from "../3-utilities/mos-cmds.js";
@@ -34,6 +34,31 @@ class ReSyncService {
         
     }
     
+    async resetRundown(uid){
+        
+        const r = await cache.getRundownByUid(uid); //{uid,production,roID}
+        
+
+        const roID =  r.roID;
+        
+        // Delete rundown and its stories 
+        await sqlService.deleteDbRundown(uid, roID);
+        await sqlService.deleteDbStoriesByRundownID(uid);
+        
+        //Delete item when user unmonitors rundown
+        await this.deleteItemsOnUnmonitor(uid);
+
+        // Delete rundown stories and items from cache
+        await cache.deleteRundownFromCache(roID);
+        
+        logger(`[RUNDOWN] {${roID}} was deleted from anywhere!` );
+
+
+        // Now, once we cleared everything, send roReqAll to get fresh state
+        mosConnector.sendToClient(mosCommands.roReqAll());
+        
+    }
+
     async deleteItemsOnUnmonitor(rundownId){
         
         if(appConfig.keepSqlItems) return;

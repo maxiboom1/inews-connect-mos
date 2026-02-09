@@ -1,6 +1,5 @@
 node_modules/
 plugin/templates/
-plugin/prw/
 config.json
 unlinkedItemsCache.json
 duplicatesCache.json

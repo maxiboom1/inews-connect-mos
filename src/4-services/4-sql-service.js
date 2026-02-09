@@ -4,7 +4,7 @@ import cache from "../2-cache/cache.js";
 import timeConvertors from "../3-utilities/time-convertors.js";
 import logger from "../3-utilities/logger.js";
 import appConfig from "../3-utilities/app-config.js";
-import itemsService from "./items-service.js";
+import itemsService from "./3-items-service.js";
 
 
 class SqlService {
@@ -148,7 +148,7 @@ class SqlService {
 
     async addDbStory(story){
         const values = {
-            name: story.storySlug,
+            name: (story.storySlug || '').substring(0, 32), // Fix: cut lenght to not exceed SQL max length
             lastupdate: timeConvertors.createTick(),
             rundown: story.rundown,
             production: story.production,
@@ -157,7 +157,7 @@ class SqlService {
             enabled: 1,
             floating: story.floating,
             tag: "",
-            number:story.storyNum || "",
+            number:(story.storyNum || "").substring(0, 8), // Fix: cut lenght to not exceed SQL max length
             properties:"",
             storyID: story.storyID
         }
@@ -173,6 +173,7 @@ class SqlService {
             return assertedStoryUid;
         } catch (error) {
             console.error('Error executing query:', error); 
+            console.error("Incoming: ", JSON.stringify(story));
         }
     }
 
@@ -463,6 +464,7 @@ class SqlService {
     }
 
     async getItemData(itemUid){
+        
         const values = {
             uid:itemUid
         };

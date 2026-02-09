@@ -16,6 +16,10 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.4.0
+
+- Finally merged 2 different versions from 2 different places. The new version contain the prw version + boot improvment mechanism. roCreate now parsing the data from message itself (instead call roReq, and risk to fall into race conditions when on process users do modify items in rundown that not finished to process). With this tecnique, we garanteed that mos server wont send new updates since we not acked roCreate yet. Refactored struct in services files. next milestones should be dynamically resize prw section on whole window resize.
+
 ## 2.3.1
 
 - Added more colors for scene colorifying (menu.js and menu.css)
@@ -29,7 +33,6 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 - There are still style work to do to polish the preview pane.
 - There are some templates that shoulds have prw pane - need to implement some mechanism (Dor).
 - Next update: add close/open pane option - when closed disable send to render on change.
-
 
 ## 2.2.6
 

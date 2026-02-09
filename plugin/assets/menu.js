@@ -41,39 +41,39 @@ function createAccordionItem(sceneName, folders, templates, sceneCounter, sceneC
     sceneAccordion.className = 'accordion-item';
     sceneAccordion.className = 'dark';
 
-// Determine the background color class based on sceneColor
-let colorClass = '';
-switch (sceneColor) {
-    case 1:
-        colorClass = 'dark-red';
-        break;
-    case 2:
-        colorClass = 'dark-green';
-        break;
-    case 3:
-        colorClass = 'dark-blue';
-        break;
-    case 4:
-        colorClass = 'dark-orange';
-        break;
-    case 5:
-        colorClass = 'dark-yellow';
-        break;
-    case 6:
-        colorClass = 'dark-turquoise';
-        break;
-    case 7:
-        colorClass = 'dark-violet';
-        break;
-    case 8:
-        colorClass = 'dark-pink';
-        break;
-    case 9:
-        colorClass = 'dark-grey';
-        break;
-    default:
-        colorClass = 'no-color';
-}
+    // Determine the background color class based on sceneColor
+    let colorClass = '';
+    switch (sceneColor) {
+        case 1:
+            colorClass = 'dark-red';
+            break;
+        case 2:
+            colorClass = 'dark-green';
+            break;
+        case 3:
+            colorClass = 'dark-blue';
+            break;
+        case 4:
+            colorClass = 'dark-orange';
+            break;
+        case 5:
+            colorClass = 'dark-yellow';
+            break;
+        case 6:
+            colorClass = 'dark-turquoise';
+            break;
+        case 7:
+            colorClass = 'dark-violet';
+            break;
+        case 8:
+            colorClass = 'dark-pink';
+            break;
+        case 9:
+            colorClass = 'dark-grey';
+            break;
+        default:
+            colorClass = 'no-color';
+    }
     //sceneAccordion.classList.add(colorClass);
 
     const sceneId = `scene-${sceneCounter}`;
@@ -175,7 +175,7 @@ async function mosMsgFromHost(event) {
         const templateId = extractTagContent(message, "gfxTemplate");
         const gfxItem = extractTagContent(message, "gfxItem");
         const itemID = extractTagContent(message, "itemID");        
-
+        
         //Sending also "data" and itemName from NRCS story - so if rundown is offline (un-monitored), user still can open and edit it
         const cachedData = extractTagContent(message, "data");
         const cachedName = extractTagContent(message, "itemSlug");
@@ -213,14 +213,14 @@ function renderTemplate(templateId) {
     function checkAndHideSpinner() {
         if (iframeLoaded && minTimeElapsed) {
             iframe.style.display = 'block';
-            try {iframe.contentWindow.selectFirstTextField();}catch{}
+            try {
+                iframe.contentWindow.selectFirstTextField();
+            }catch{
+                console.log("focus failed");
+            }
             spinner.style.visibility = "hidden";
         }
     }
-    
-
-
-
     
     // Set iframe source and onload handler
     iframe.src = url;  
@@ -240,9 +240,9 @@ function renderTemplate(templateId) {
 // User loaded exists item in inews
 async function renderItem(templateId,gfxItem, itemID, cachedData, cachedName){
     const itemObj = await fetchData(`${originUrl}/api/get-item-data/${gfxItem}`, "GET");
-    
+    console.log("Item Object is {data,name}: ", itemObj);
     // Here, we set item data depends of fetched from our sql - if no data in sql - we load data from NRCS story
-    const itemData = itemObj.data === "N/A" ? cachedData : itemObj.data;
+    const itemData = itemObj.data === "N/A" ? cachedData : itemObj.data.replace(/\\'/g, "%27");
     const itemName = itemObj.data === "N/A" ? cachedName :itemObj.name;
 
     let url = `${originUrl}/templates/${templateId}.html`;
@@ -264,7 +264,7 @@ async function renderItem(templateId,gfxItem, itemID, cachedData, cachedName){
         iframe.contentWindow.nameInputUpdate(itemName,true);
         // Show iframe
         iframe.style.display = 'block'; // Show the iframe
-        iframe.contentWindow.selectFirstTextField();
+        //iframe.contentWindow.selectFirstTextField();
 
     }
 }

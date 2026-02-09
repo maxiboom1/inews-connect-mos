@@ -1,10 +1,10 @@
-import sqlService from "./sql-service.js";
+import sqlService from "./4-sql-service.js";
 import mosConnector from "../1-dal/mos-connector.js";
 import mosCommands from "../3-utilities/mos-cmds.js";
 import itemsHash from "../2-cache/items-hashmap.js";
 import logger from "../3-utilities/logger.js";
-import mosRouter from "./mos-router.js";
-import ackService from "./ack-service.js";
+import mosRouter from "./0-mos-router.js";
+import ackService from "./5-ack-service.js";
 import normalize from "../3-utilities/normalize.js";
 import cache from "../2-cache/cache.js";
 import deleteManager from "../3-utilities/delete-manager.js";
@@ -228,7 +228,7 @@ async function sendMosItemReplace(story, el, assertedUid, action){
     const m = mosCommands.mosItemReplace(story, el, assertedUid); // Returns {replaceMosMessage,storyID}
     
     logger(`[ITEM] ${action}: Sending mosItemReplace for item {${assertedUid}}`,"blue");
-
+    //logger(`[ITEM TECH DEBUG] ${m.replaceMosMessage}`,"blue");
     mosConnector.sendToClient(m.replaceMosMessage);
     
     // Wait for roAck for sended mosItemReplace
@@ -240,23 +240,25 @@ async function sendMosItemReplace(story, el, assertedUid, action){
 
 }
 
-function waitForRoAck(timeout = 5000) {
-    return new Promise((resolve, reject) => {
-        const listener = (msg) => {
-            if (msg.mos && msg.mos.roAck) {
-                mosRouter.off('roAckMessage', listener);
-                logger(`[ITEM] mosItemReplace ack'd`, "green");
-                resolve();
-            }
-        };
-        
-        const timer = setTimeout(() => {
-            mosRouter.off('roAckMessage', listener);
-            reject(new Error(`[ITEM] Timeout waiting for roAck `));
-        }, timeout);
+function waitForRoAck(timeout = 5000, resolveDelayMs = 40) {
+  return new Promise((resolve, reject) => {
+    const listener = (msg) => {
+      if (msg?.mos?.roAck) {
+        clearTimeout(timer);
+        mosRouter.off('roAckMessage', listener);
+        logger(`[ITEM] mosItemReplace ack'd`, "green");
 
-        mosRouter.on('roAckMessage', listener);
-    });
+        setTimeout(() => resolve(), resolveDelayMs);
+      }
+    };
+
+    const timer = setTimeout(() => {
+      mosRouter.off('roAckMessage', listener);
+      reject(new Error(`[ITEM] Timeout waiting for roAck`));
+    }, timeout);
+
+    mosRouter.on('roAckMessage', listener);
+  });
 }
 
 export default { registerItems, replaceItem, deleteItem, insertItem};

@@ -1,8 +1,8 @@
-import sqlService from "./sql-service.js";
+import sqlService from "./4-sql-service.js";
 import cache from "../2-cache/cache.js";
-import ackService from "./ack-service.js";
+import ackService from "./5-ack-service.js";
 import logger from "../3-utilities/logger.js";
-import itemsService from "./items-service.js";
+import itemsService from "./3-items-service.js";
 import deleteManager from "../3-utilities/delete-manager.js";
 import normalize from "../3-utilities/normalize.js";
 import appConfig from "../3-utilities/app-config.js";
@@ -12,7 +12,7 @@ const prependStringForEmptyPageNumber = appConfig.prependStringForEmptyPageNumbe
 
 
 // MOS 2.8.5
-class OctopusProcessor {
+class StoryProcessor {
     
     // Triggered from roList, appendStory and insertStory
     async handleNewStory(story) {        
@@ -23,7 +23,7 @@ class OctopusProcessor {
         // Store story in DB, and save assigned uid
         story.uid = await sqlService.addDbStory(story);
 
-        // Clear meta form story items, and save story to cache. Use deep copy - not modifying original story
+        // Clear meta form story items, and save story to cache
         await cache.saveStory(normalize.removeItemsMeta(story));
         
         // Save Items of the story to DB
@@ -32,7 +32,7 @@ class OctopusProcessor {
         // Update last updates to story and rundown
         await sqlService.rundownLastUpdate(story.roID);
 
-        logger(`[STORY] Registering new story to {${story.roID}}: {${story.storySlug}}`);
+        logger(`[STORY] Registering new story to {${story.roID}}: {${story.storySlug}}`); 
         
     }
 
@@ -237,6 +237,6 @@ class OctopusProcessor {
 }
 
 
-const octopusService = new OctopusProcessor();
+const storyService = new StoryProcessor();
 
-export default octopusService;
+export default storyService;

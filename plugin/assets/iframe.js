@@ -3,9 +3,9 @@
 const originUrl = window.location.origin;
 //document.getElementById('drag').addEventListener('dragstart', drag);
 document.getElementById('drag').addEventListener('click', save);
-document.querySelector("#navigateBack").addEventListener('click', () => { window.parent.hideIframe(); });
+document.querySelector("#navigateBack").addEventListener('click', ()=>{window.parent.hideIframe();});
 
-async function save() {
+async function save(){
     // Try copying with Clipboard API
     if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(createMosMessage());
@@ -22,44 +22,44 @@ async function save() {
     showPrompt();
 }
 // returns item{name,data,scripts,templateId,productionId}
-function getItemData() {
-    const _NA_Values = __NA_GetValues().replace(/\\'/g, "%27"); ;
-    const _NA_Scripts = __NA_GetScripts().replace(/\\'/g, "%27"); ;
-    const template = document.body.getAttribute('data-template');
-    const production = document.body.getAttribute('data-production');
+function getItemData(){
+        const _NA_Values = __NA_GetValues().replace(/\\'/g, "%27");
+        const _NA_Scripts = __NA_GetScripts().replace(/\\'/g, "%27");
+        const template = document.body.getAttribute('data-template');
+        const production = document.body.getAttribute('data-production');
 
-    return values = {
-        name: document.getElementById("nameInput").value,
-        data: _NA_Values,
-        scripts: _NA_Scripts,
-        template: template,
-        production: production
-    }
-}
+        return values = {
+            name:document.getElementById("nameInput").value,
+            data: _NA_Values,
+            scripts: _NA_Scripts,
+            template: template,
+            production: production
+        }        
+} 
 
-function drag(event) {
+function drag(event) { 
     const msg = createMosMessage();
-    event.dataTransfer.setData("text", msg);
+    event.dataTransfer.setData("text",msg);
 }
 
-function createMosMessage() {
+function createMosMessage(){
     const templateId = document.body.getAttribute('data-template');
     const productionId = document.body.getAttribute('data-production');
     const gfxItem = document.body.getAttribute('data-gfxItem');
     const mosID = document.body.getAttribute('data-mos-id');
     let itemID = "";
-    if (document.body.hasAttribute("data-itemID")) {
+    if(document.body.hasAttribute("data-itemID")){
         itemID = document.body.getAttribute('data-itemID');
     }
-    const data = __NA_GetValues().replace(/\\'/g, "%27"); 
-    let scripts = __NA_GetScripts().replace(/\\'/g, "%27");
-
+    const data = __NA_GetValues().replace(/\\'/g, "%27");
+    let scripts = __NA_GetScripts().replace(/\\'/g, "%27");    
+    
     // They have elements without scripts at all - this is fallback fot this case
-    if (scripts === undefined) { scripts = "  "; }
+    if(scripts === undefined) {scripts = "  ";}
 
-    const itemSlug = document.getElementById("nameInput").value//.replace(/'/g, "")
+    const itemSlug = document.getElementById("nameInput").value.replace(/'/g, "")
     return `<mos><ncsItem><item>
-                <itemSlug>${itemSlug}</itemSlug> 
+                <itemSlug>${itemSlug}</itemSlug>
                 <objID></objID>
                 <objAir>READY</objAir>
                 <mosID>${mosID}</mosID>
@@ -67,7 +67,7 @@ function createMosMessage() {
                 <mosItemEditorProgID>alexE</mosItemEditorProgID>
                 <mosExternalMetadata>
                     <mosSchema>A</mosSchema>
-                    <gfxItem>${gfxItem === null ? "0" : gfxItem}</gfxItem>
+                    <gfxItem>${gfxItem === null? "0": gfxItem}</gfxItem>
                     <gfxTemplate>${templateId}</gfxTemplate>
                     <gfxProduction>${productionId}</gfxProduction>
                     <data>${data}</data>
@@ -76,71 +76,71 @@ function createMosMessage() {
             </mos>`;
 }
 
-function setGfxItem(gfxItem) { document.body.setAttribute("data-gfxItem", gfxItem); }
+function setGfxItem(gfxItem){document.body.setAttribute("data-gfxItem",gfxItem);}
 
-function getGfxItem() { return document.body.getAttribute("data-gfxItem"); }
-
-// Internal inews id
-function setItemID(itemID) { document.body.setAttribute("data-itemID", itemID); }
+function getGfxItem(){return document.body.getAttribute("data-gfxItem");}
 
 // Internal inews id
-function getItemID() { return document.body.getAttribute("data-itemID"); }
+function setItemID(itemID){document.body.setAttribute("data-itemID",itemID);}
+
+// Internal inews id
+function getItemID(){return document.body.getAttribute("data-itemID");}
 
 // ======================== Item name based on input (triggered from template func updateName()), or from renderItem onload ================== \\
 
 // Onload, we showing the name that we receive from renderItem, 
 //and its return name with template name, so we use includedTemplateName bool to handle this case
-function nameInputUpdate(name, includedTemplateName = false) {
+function nameInputUpdate(name, includedTemplateName = false){ 
     
-    // I found some control chars related to hebrew that inews cant hande - so i clean it here 
+    // I found some control chars related to hebrew that inews cant handle - so i clean it here 
     const stripBidi = (s = "") => String(s).replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, "");
     
-    if (includedTemplateName) {
+    if(includedTemplateName){
         document.getElementById("nameInput").value = name;
-        if (document.getElementById("nameInput").value === "") {
+        if(document.getElementById("nameInput").value === ""){
             const staticHeader = document.body.getAttribute('data-template-name');
         }
         return;
     }
     const staticHeader = document.body.getAttribute('data-template-name');
     let result = staticHeader + name;
-
-    if (result.length > 40) {
-        result = result.substring(0, 40);
+    
+    if(result.length>40){
+        result = result.substring(0,40);
     }
 
-    document.getElementById("nameInput").value = stripBidi(result);
+    document.getElementById("nameInput").value = stripBidi(result);    
 }
 
-function setNameOnLoad() {
+function setNameOnLoad(){
     const staticHeader = document.body.getAttribute('data-template-name');
-    document.getElementById("nameInput").value = staticHeader;
+    document.getElementById("nameInput").value = staticHeader;   
 }
 
-document.addEventListener('UpdateNameEvent', function (event) { nameInputUpdate(event.detail.name); });
+document.addEventListener('UpdateNameEvent', function(event) {nameInputUpdate(event.detail.name);}); 
 
 // ======================== Favorites ========================
 document.addEventListener('DOMContentLoaded', () => {
     const linkButton = document.getElementById('linkButton');
     const popover = document.getElementById('pluginPopover');
-
+    
     linkButton.addEventListener('mouseover', (e) => {
         const rect = linkButton.getBoundingClientRect();
         popover.style.top = `${rect.bottom + window.scrollY}px`;
         popover.style.left = `${rect.left + window.scrollX}px`;
         popover.style.display = 'block';
-    });
-
+      });
+    
     linkButton.addEventListener('mouseout', () => {
-        popover.style.display = 'none';
+    popover.style.display = 'none';
     });
 
     popover.addEventListener('mouseover', () => {
-        popover.style.display = 'block';
+    popover.style.display = 'block';
     });
 
     popover.addEventListener('mouseout', () => {
-        popover.style.display = 'none';
+    popover.style.display = 'none';
     });
 
     var favoritesButtons = document.querySelectorAll(".linksButton");
@@ -156,29 +156,29 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener("keydown", async (event) => {
         const modifier = document.getElementById("pluginPopover").getAttribute("data-modifier"); // Return string "alt"/"ctrl"/"shift"
         const keyPressed = event.key.toLowerCase();
-
+        
         // Check if the appropriate modifier key is pressed
-        const isModifierPressed =
+        const isModifierPressed = 
             (modifier === 'ctrl' && event.ctrlKey) ||
             (modifier === 'alt' && event.altKey) ||
             (modifier === 'shift' && event.shiftKey);
+        
+            if (buttonData[keyPressed]&& isModifierPressed) {
+                window.parent.renderTemplate(buttonData[keyPressed]);
+            }
 
-        if (buttonData[keyPressed] && isModifierPressed) {
-            window.parent.renderTemplate(buttonData[keyPressed]);
-        }
-
-        if ((keyPressed === "s" || keyPressed === "ד") && event.ctrlKey) {
-            await save();
-        }
-
+            if ((keyPressed === "s" || keyPressed === "ד") && event.ctrlKey) {
+                await save();
+            }
+    
     });
 
-})
+}) 
 
-function handleLinksButtonsClick() { window.parent.renderTemplate(this.id); }
+function handleLinksButtonsClick(){window.parent.renderTemplate(this.id);}
 
 // Indication for user on "ctrl+s" with green dot
-function showPrompt() {
+function showPrompt(){
     const promptSpan = document.getElementById('promptSpan');
     promptSpan.style.display = "block";
 
@@ -192,40 +192,40 @@ function showPrompt() {
 // Core debouncing function
 const debounce = (func, wait) => {
     let timeout;
-
+  
     return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-
+      const later = () => {
         clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        func(...args);
+      };
+  
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
     };
 };
 
-// Reset Preview server handler
-document.getElementById('preview').addEventListener('click', async () => {
+// Reset Preview server handler - check if we need this?
+document.getElementById('preview').addEventListener('click', async ()=>{
     const previewHost = document.getElementById("preview").getAttribute("data-preview-host");
     const previewPort = document.getElementById("preview").getAttribute("data-preview-port");
-    await fetch(`http://${previewHost}:${previewPort}?reset`, { method: 'GET' });
+    await fetch(`http://${previewHost}:${previewPort}?reset`,{method:'GET'});
 });
 
-const debouncedInput = debounce(async function (text) {
+const debouncedInput = debounce(async function(text) {
     const scripts = __NA_GetScripts();
     const templateId = document.body.getAttribute('data-template');
     const previewHost = document.getElementById("preview").getAttribute("data-preview-host");
     const previewPort = document.getElementById("preview").getAttribute("data-preview-port");
-    const uuid = uuidV4Dashless();
     
+    // Send templateId and scripts to LOCAL preview server ==> saved here as memorial
+    //await fetch(`http://${previewHost}:${previewPort}?${templateId},${scripts}`,{method:'GET'});
+
     // Send templateId and scripts to preview server
     await fetch(`http://${previewHost}:${previewPort}?${encodeURIComponent(uuid)},${templateId},${scripts}`, { method: 'GET' });
     showPrwImage(uuid);
 }, 500);
 
-
-
-document.body.addEventListener('input', function (event) {
+document.body.addEventListener('input', function(event) {
     const target = event.target;
     // Check if the event target is an input or textarea
     if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
@@ -234,7 +234,7 @@ document.body.addEventListener('input', function (event) {
     }
 });
 
-document.body.addEventListener('change', function (event) {
+document.body.addEventListener('change', function(event) {
     const target = event.target;
     // Check if the event target is a select element, a checkbox, or a radio button
     if (target.tagName === 'SELECT' || (target.tagName === 'INPUT' && (target.type === 'checkbox' || target.type === 'radio'))) {
@@ -266,7 +266,7 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 async function fetchHeadData(url) {
   try {
     const res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
-    console.log('[PRW HEAD]', url, res.status, res.statusText);
+    //console.log('[PRW HEAD]', url, res.status, res.statusText);
     return res.status;
   } catch (err) {
     console.error('[PRW HEAD] fetch error:', err);
@@ -276,7 +276,8 @@ async function fetchHeadData(url) {
 
 async function showPrwImage(uuid) {
   try {
-    const url = `http://localhost:3000/prw/${uuid}.jpg`;
+    const previewHost = document.getElementById("preview").getAttribute("data-preview-host");
+    const url = `http://${previewHost}:${previewPort}/prw/${uuid}.jpg`; // Reminder to fix it
     const maxTries = 10;
     const interval = 500;
 
@@ -295,3 +296,5 @@ async function showPrwImage(uuid) {
   }
 }
 
+// Trigger only on item render - ignore on template render
+function updatePrw(){debouncedInput(`Initial Prw`);}

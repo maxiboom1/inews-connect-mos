@@ -1,5 +1,5 @@
 import logger from '../3-utilities/logger.js'; 
-import reSyncService from '../4-services/re-sync.js';
+import reSyncService from '../4-services/6-newsarts-sync.js';
 
 
 export async function handleTcpMessage(socket, cmd) {
@@ -7,7 +7,7 @@ export async function handleTcpMessage(socket, cmd) {
 
     // Reset command
     if (cmd.startsWith('iNewsC-reset-')) {
-        const uid = cmd.split('-')[2];
+        const uid = Number(cmd.split('-')[2]);
         await reSyncService.deleteAllRundowns();
         setTimeout(() => {
             socket.write(`iNewsC-reset-${uid}-OK\0`);

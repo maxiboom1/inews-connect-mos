@@ -42,7 +42,7 @@ function htmlWrapper(htmlContent,templateUid, productionUid, templateName) {
     
     const dom = new JSDOM(htmlContent);
     const document = dom.window.document;
-
+    
     // NEW: detect direction from inline <style> that targets only body/.body
     const detectedDir = detectDirFromBodyStyle(document);
     if (detectedDir) {
@@ -81,7 +81,7 @@ function htmlWrapper(htmlContent,templateUid, productionUid, templateName) {
     } else {
         document.body.setAttribute('data-template-name', "");     
     }
-    
+
     const pane = createPreviewPane(document);
     //document.body.appendChild(pane);
     if (!pane.isConnected) {
@@ -228,6 +228,5 @@ function detectDirFromBodyStyle(document) {
   
     return dir; // 'rtl' | 'ltr' | null
   }
-
 
 export default processAndWriteFiles;
