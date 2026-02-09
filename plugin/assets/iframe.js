@@ -23,8 +23,8 @@ async function save() {
 }
 // returns item{name,data,scripts,templateId,productionId}
 function getItemData() {
-    const _NA_Values = __NA_GetValues();
-    const _NA_Scripts = __NA_GetScripts();
+    const _NA_Values = __NA_GetValues().replace(/\\'/g, "%27"); ;
+    const _NA_Scripts = __NA_GetScripts().replace(/\\'/g, "%27"); ;
     const template = document.body.getAttribute('data-template');
     const production = document.body.getAttribute('data-production');
 
@@ -51,16 +51,15 @@ function createMosMessage() {
     if (document.body.hasAttribute("data-itemID")) {
         itemID = document.body.getAttribute('data-itemID');
     }
-    const data = __NA_GetValues();
-    let scripts = JSON.stringify(__NA_GetScripts());
+    const data = __NA_GetValues().replace(/\\'/g, "%27"); 
+    let scripts = __NA_GetScripts().replace(/\\'/g, "%27");
 
     // They have elements without scripts at all - this is fallback fot this case
     if (scripts === undefined) { scripts = "  "; }
 
-    const itemSlug = document.getElementById("nameInput").value.replace(/'/g, "")
-
+    const itemSlug = document.getElementById("nameInput").value//.replace(/'/g, "")
     return `<mos><ncsItem><item>
-                <itemSlug>${itemSlug}</itemSlug>
+                <itemSlug>${itemSlug}</itemSlug> 
                 <objID></objID>
                 <objAir>READY</objAir>
                 <mosID>${mosID}</mosID>
@@ -71,8 +70,8 @@ function createMosMessage() {
                     <gfxItem>${gfxItem === null ? "0" : gfxItem}</gfxItem>
                     <gfxTemplate>${templateId}</gfxTemplate>
                     <gfxProduction>${productionId}</gfxProduction>
-                    <data>${JSON.stringify(data).slice(1, -1)}</data>
-                    <scripts>${scripts.slice(1, -1)}</scripts>
+                    <data>${data}</data>
+                    <scripts>${scripts}</scripts>
                 </mosExternalMetadata></item></ncsItem>
             </mos>`;
 }
@@ -92,6 +91,10 @@ function getItemID() { return document.body.getAttribute("data-itemID"); }
 // Onload, we showing the name that we receive from renderItem, 
 //and its return name with template name, so we use includedTemplateName bool to handle this case
 function nameInputUpdate(name, includedTemplateName = false) {
+    
+    // I found some control chars related to hebrew that inews cant hande - so i clean it here 
+    const stripBidi = (s = "") => String(s).replace(/[\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, "");
+    
     if (includedTemplateName) {
         document.getElementById("nameInput").value = name;
         if (document.getElementById("nameInput").value === "") {
@@ -106,7 +109,7 @@ function nameInputUpdate(name, includedTemplateName = false) {
         result = result.substring(0, 40);
     }
 
-    document.getElementById("nameInput").value = result;
+    document.getElementById("nameInput").value = stripBidi(result);
 }
 
 function setNameOnLoad() {
@@ -219,6 +222,8 @@ const debouncedInput = debounce(async function (text) {
     await fetch(`http://${previewHost}:${previewPort}?${encodeURIComponent(uuid)},${templateId},${scripts}`, { method: 'GET' });
     showPrwImage(uuid);
 }, 500);
+
+
 
 document.body.addEventListener('input', function (event) {
     const target = event.target;

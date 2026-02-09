@@ -175,8 +175,9 @@ async function mosMsgFromHost(event) {
         const templateId = extractTagContent(message, "gfxTemplate");
         const gfxItem = extractTagContent(message, "gfxItem");
         const itemID = extractTagContent(message, "itemID");        
+
         //Sending also "data" and itemName from NRCS story - so if rundown is offline (un-monitored), user still can open and edit it
-        const cachedData = extractTagContent(message, "data");//.slice(1,-1);
+        const cachedData = extractTagContent(message, "data");
         const cachedName = extractTagContent(message, "itemSlug");
         renderItem(templateId, gfxItem,itemID, cachedData,cachedName);
         
@@ -217,6 +218,10 @@ function renderTemplate(templateId) {
         }
     }
     
+
+
+
+    
     // Set iframe source and onload handler
     iframe.src = url;  
     iframe.onload = function() {
@@ -237,7 +242,7 @@ async function renderItem(templateId,gfxItem, itemID, cachedData, cachedName){
     const itemObj = await fetchData(`${originUrl}/api/get-item-data/${gfxItem}`, "GET");
     
     // Here, we set item data depends of fetched from our sql - if no data in sql - we load data from NRCS story
-    const itemData = itemObj.data === "N/A" ? cachedData.replace(/\\'/g, '%27') : itemObj.data.replace(/\\'/g, '%27');
+    const itemData = itemObj.data === "N/A" ? cachedData : itemObj.data;
     const itemName = itemObj.data === "N/A" ? cachedName :itemObj.name;
 
     let url = `${originUrl}/templates/${templateId}.html`;
