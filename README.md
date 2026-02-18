@@ -16,6 +16,10 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.4.1.1
+
+- Fix in preview path url - we use "originalURL" now that dynamically reports the server url (not hardcoded).
+
 ## 2.4.1
 
 - Added option to resize preview panel

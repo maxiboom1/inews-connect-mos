@@ -216,11 +216,12 @@ const debouncedInput = debounce(async function(text) {
     const templateId = document.body.getAttribute('data-template');
     const previewHost = document.getElementById("preview").getAttribute("data-preview-host");
     const previewPort = document.getElementById("preview").getAttribute("data-preview-port");
+    const uuid = uuidV4Dashless();
     
     // Send templateId and scripts to LOCAL preview server ==> saved here as memorial
     //await fetch(`http://${previewHost}:${previewPort}?${templateId},${scripts}`,{method:'GET'});
 
-    // Send templateId and scripts to preview server
+    // Send templateId and scripts to PREVIEW SERVER!
     await fetch(`http://${previewHost}:${previewPort}?${encodeURIComponent(uuid)},${templateId},${scripts}`, { method: 'GET' });
     showPrwImage(uuid);
 }, 500);
@@ -276,8 +277,7 @@ async function fetchHeadData(url) {
 
 async function showPrwImage(uuid) {
   try {
-    const previewHost = document.getElementById("preview").getAttribute("data-preview-host");
-    const url = `http://${previewHost}:${previewPort}/prw/${uuid}.jpg`; // Reminder to fix it
+    const url = `${originUrl}/prw/${uuid}.jpg`;
     const maxTries = 10;
     const interval = 500;
 
