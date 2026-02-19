@@ -17,14 +17,17 @@ const debugMode = appConfig.debugMode;
  * @return templates array without source prop.
  */
 async function processAndWriteFiles(templates) {
-     
+    
+    if(!appConfig.showPreviewpanel)logger('[File-processor] Preview Panel is disabled',"yellow");
+    
     const templatesFolder = path.resolve(__dirname, "../../plugin/templates");
     try {
         await fsPromises.access(templatesFolder);
     } catch (error) {
         await fsPromises.mkdir(templatesFolder);
     }
-
+    
+    
     for (const template of templates) {
         const { uid, source, name, production } = template;
         const injectedHtml = htmlWrapper(source,uid, production,name);
@@ -74,7 +77,9 @@ function htmlWrapper(htmlContent,templateUid, productionUid, templateName) {
     document.body.setAttribute('data-production', productionUid);  
     document.body.setAttribute('data-mos-id', appConfig.mosID);
     if(appConfig.previewPanelResize) {document.body.setAttribute('data-preview-resize',true);}
- 
+    document.body.setAttribute('data-preview-extension', appConfig.previewExtension);  
+    document.body.setAttribute('data-preview-ExportDir', appConfig.previewExportDir);  
+    document.body.setAttribute('data-mos-id', appConfig.mosID);
 
     // Add static category name in item name
     if(appConfig.addItemCategoryName){
@@ -83,15 +88,17 @@ function htmlWrapper(htmlContent,templateUid, productionUid, templateName) {
         document.body.setAttribute('data-template-name', "");     
     }
 
-    const pane = createPreviewPane(document);
-    //document.body.appendChild(pane);
-    if (!pane.isConnected) {
-        const toolbox = document.querySelector('.toolbox');   // the wrapper you described
-        if (toolbox) {
-            toolbox.appendChild(pane);                           
-        } else {
-          logger('[File-processor] .toolbox not found, appending Preview panel to <body> as fallback',"red");
-          document.body.appendChild(pane);                     // fallback (shouldn't happen)
+
+    // Preview panel
+    if(appConfig.showPreviewpanel){
+        const pane = createPreviewPane(document);
+        if (!pane.isConnected) {
+            const toolbox = document.querySelector('.toolbox');
+            if (toolbox) {
+                toolbox.appendChild(pane);                           
+            } else {
+              logger('[File-processor] .toolbox not found, preview panel will be disabled',"red");
+            }
         }
     }
 
@@ -115,6 +122,9 @@ function createPluginPanel(document) {
     // Create Link btn
     const linkButton = createButton(document,"button","Favorites","linkButton","pluginPanelBtn");
     
+    // Create refresh btn
+    const refreshButton = createButton(document,"button","↺","syncButton","pluginPanelBtn");
+
     // Create div with id "pluginPanel"
     const pluginPanelDiv = document.createElement('div');
     pluginPanelDiv.id = 'pluginPanel';
@@ -142,7 +152,7 @@ function createPluginPanel(document) {
     pluginPanelDiv.appendChild(nameInput);
 
     pluginPanelDiv.appendChild(dragButton);
-
+    pluginPanelDiv.appendChild(refreshButton);
     pluginPanelDiv.appendChild(promptSpan);
 
 
@@ -153,7 +163,7 @@ function createButton(document,element,text,id,classList){
     const button = document.createElement(element);
     button.textContent  = text;
     button.id = id;
-    button.classList.add(classList); 
+    if (classList) button.classList.add(classList); 
     return button;
 }
 
@@ -183,16 +193,20 @@ function createSpan(document,id, text){
 }
 
 function createPreviewPane(document) {
-  
     const aside = document.createElement('aside');
     aside.id = 'previewPane';
     aside.setAttribute('aria-label', 'Preview');
+  
     aside.innerHTML = `
       <div class="prw-header">Preview</div>
-      <img id="previewImg" alt="Preview will appear here">
+      <img id="previewImg">
+      <button id="exportPngBtn" type="button" class="prw-export-btn">Export PNG</button>
+      <div id="prwToast" class="prw-toast" role="status" aria-live="polite"></div>
     `;
+  
     return aside;
 }
+  
 
 // Seeks for "dir" prop in inline css body selector
 function detectDirFromBodyStyle(document) {

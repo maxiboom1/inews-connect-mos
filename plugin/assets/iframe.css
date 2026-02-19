@@ -135,8 +135,8 @@ button{
   .toolbox > #previewPane {
     grid-area: preview;
   
-    /* override any old fixed positioning */
-    position: static !important;
+    position: relative !important;         
+    /* position: static !important; */
     top: auto !important; 
     right: auto !important;
     height: auto !important;
@@ -186,4 +186,48 @@ button{
 .toolbox > #prwSplitter:hover,
 .toolbox.prw-resizing > #prwSplitter {
   background: #2a3140;
+}
+
+/* Export button (bottom) */
+.toolbox #previewPane .prw-export-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #2a2f3a;
+  background: #1777b7;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.toolbox #previewPane .prw-export-btn:hover {
+  filter: brightness(1.08);
+}
+
+/* Toast (quiet notification) */
+.toolbox #previewPane .prw-toast {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 55px;
+
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #2a2f3a;
+  background: rgba(20, 25, 35, 0.90);
+  color: rgba(255,255,255,0.80);
+  font-size: 12px;
+  font-family: monospace;
+
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 160ms ease, transform 160ms ease;
+
+  pointer-events: none;
+  z-index: 5;
+}
+
+.toolbox #previewPane .prw-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }

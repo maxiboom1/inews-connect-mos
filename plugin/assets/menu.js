@@ -240,7 +240,6 @@ function renderTemplate(templateId) {
 // User loaded exists item in inews
 async function renderItem(templateId,gfxItem, itemID, cachedData, cachedName){
     const itemObj = await fetchData(`${originUrl}/api/get-item-data/${gfxItem}`, "GET");
-    console.log("Item Object is {data,name}: ", itemObj);
     // Here, we set item data depends of fetched from our sql - if no data in sql - we load data from NRCS story
     const itemData = itemObj.data === "N/A" ? cachedData : itemObj.data.replace(/\\'/g, "%27");
     const itemName = itemObj.data === "N/A" ? cachedName :itemObj.name;
@@ -264,8 +263,7 @@ async function renderItem(templateId,gfxItem, itemID, cachedData, cachedName){
         iframe.contentWindow.nameInputUpdate(itemName,true);
         // Show iframe
         iframe.style.display = 'block'; // Show the iframe
-        //iframe.contentWindow.selectFirstTextField();
-
+        iframe.contentWindow.updatePrw();
     }
 }
 
@@ -315,19 +313,16 @@ async function fetchData(url, method, msg) {
 
 function print(msg){console.log(msg)}
 
-function showPopup(message, delay=undefined) {
+function showPopup(message, delay=3000) {
+    console.log('popup');
     var popup = document.getElementById("popup");
     popup.innerHTML = message;
     popup.style.display = "block";
   
-    if(delay){
-        setTimeout(function() {
-            popup.style.display = "none";
-          }, delay); 
-    }
-    
+    setTimeout(function() {popup.style.display = "none";}, delay); 
   };
 
+  
 // Communication listeners with NCS
 if (window.addEventListener) {
     window.addEventListener('message', mosMsgFromHost, false);

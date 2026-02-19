@@ -234,6 +234,12 @@ class StoryProcessor {
         await sqlService.modifyBbStoryOrd(roID, storyID, ord); 
     }
 
+    async storySync(uid){
+        const item = await sqlService.getFullItem(uid)
+        console.log(item);
+        return;
+    }
+
 }
 
 

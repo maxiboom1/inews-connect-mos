@@ -1,9 +1,13 @@
 // window.parent.funcName()
 
 const originUrl = window.location.origin;
+const previewExtension = document.body.getAttribute('data-preview-extension');
+const previewExportDir = document.body.getAttribute('data-preview-ExportDir');
 //document.getElementById('drag').addEventListener('dragstart', drag);
 document.getElementById('drag').addEventListener('click', save);
+document.getElementById('syncButton').addEventListener('click', sendSyncRequest);
 document.querySelector("#navigateBack").addEventListener('click', ()=>{window.parent.hideIframe();});
+document.getElementById('exportPngBtn').addEventListener('click', () => {exportPng();});
 
 async function save(){
     // Try copying with Clipboard API
@@ -211,19 +215,11 @@ document.getElementById('preview').addEventListener('click', async ()=>{
     await fetch(`http://${previewHost}:${previewPort}?reset`,{method:'GET'});
 });
 
-const debouncedInput = debounce(async function(text) {
-    const scripts = __NA_GetScripts();
-    const templateId = document.body.getAttribute('data-template');
-    const previewHost = document.getElementById("preview").getAttribute("data-preview-host");
-    const previewPort = document.getElementById("preview").getAttribute("data-preview-port");
-    const uuid = uuidV4Dashless();
-    
-    // Send templateId and scripts to LOCAL preview server ==> saved here as memorial
-    //await fetch(`http://${previewHost}:${previewPort}?${templateId},${scripts}`,{method:'GET'});
-
-    // Send templateId and scripts to PREVIEW SERVER!
-    await fetch(`http://${previewHost}:${previewPort}?${encodeURIComponent(uuid)},${templateId},${scripts}`, { method: 'GET' });
-    showPrwImage(uuid);
+const debouncedInput = debounce(async function() {
+    const r = await getDataForPrwRequest();
+    const path = encodeURIComponent("c:/Devprojects/inews-connect-mos/plugin/prw/" + r.uuid + ".png");
+    await fetch(`http://${r.previewHost}:${r.previewPort}?${path},${r.templateId},${r.scripts}`, { method: 'GET' });
+    showPrwImage(r.uuid);
 }, 500);
 
 document.body.addEventListener('input', function(event) {
@@ -244,8 +240,8 @@ document.body.addEventListener('change', function(event) {
     }
 });
 
-// RFC4122 v4 (dashless) using Web Crypto, with a safe fallback.
 function uuidV4Dashless() {
+  
     if (window.crypto && crypto.randomUUID) {
         return crypto.randomUUID().replace(/-/g, "");
     }
@@ -275,9 +271,19 @@ async function fetchHeadData(url) {
   }
 }
 
+async function getDataForPrwRequest(){
+  return{
+    scripts: __NA_GetScripts(),
+    templateId: document.body.getAttribute('data-template'),
+    previewHost: document.getElementById("preview").getAttribute("data-preview-host"),
+    previewPort: document.getElementById("preview").getAttribute("data-preview-port"),
+    uuid: uuidV4Dashless()
+  }
+}
+
 async function showPrwImage(uuid) {
   try {
-    const url = `${originUrl}/prw/${uuid}.jpg`;
+    const url = `${originUrl}/prw/${uuid}.png`;
     const maxTries = 10;
     const interval = 500;
 
@@ -296,101 +302,130 @@ async function showPrwImage(uuid) {
   }
 }
 
+async function exportPng(){
+  const r = await getDataForPrwRequest();
+  const filename = document.getElementById("nameInput").value;
+  const path = encodeURIComponent(previewExportDir + filename + previewExtension);
+  await fetch(`http://${r.previewHost}:${r.previewPort}?${path},${r.templateId},${r.scripts}`, { method: 'GET' });
+  showPrwToast(`Export request sent → ${decodeURIComponent(path)}`, 4500);
+}
+
+let prwToastTimer = null;
+
+function showPrwToast(message, delay = 2500) {
+  const el = document.getElementById("prwToast");
+  if (!el) return;
+
+  el.textContent = message;
+  el.classList.add("is-visible");
+
+  if (prwToastTimer) clearTimeout(prwToastTimer);
+  prwToastTimer = setTimeout(() => {
+    el.classList.remove("is-visible");
+  }, delay);
+}
+
+async function sendSyncRequest(){
+  const gfxItem = document.body.getAttribute('data-gfxItem');
+  const url = `${originUrl}/api/story-sync/${gfxItem}`;
+  const res = await fetch(url, { method: 'POST' });
+}
+  
 // Trigger only on item render - ignore on template render
-function updatePrw(){debouncedInput(`Initial Prw`);}
+function updatePrw(){debouncedInput();}
+
 
 (function initPreviewSplitter() {
-    const toolbox = document.querySelector('.toolbox');
-    const previewPane = document.getElementById('previewPane');
-    const isResizeActive = document.body.getAttribute('data-preview-resize');
-    if (!toolbox || !previewPane || isResizeActive != "true") return;
-  
-    // create splitter once
-    let splitter = document.getElementById('prwSplitter');
-    if (!splitter) {
-      splitter = document.createElement('div');
-      splitter.id = 'prwSplitter';
-      splitter.setAttribute('role', 'separator');
-      splitter.setAttribute('aria-label', 'Resize preview');
-      previewPane.parentNode.insertBefore(splitter, previewPane);
+  const toolbox = document.querySelector('.toolbox');
+  const previewPane = document.getElementById('previewPane');
+  const isResizeActive = document.body.getAttribute('data-preview-resize');
+  if (!toolbox || !previewPane || isResizeActive != "true") return;
+
+  // create splitter once
+  let splitter = document.getElementById('prwSplitter');
+  if (!splitter) {
+    splitter = document.createElement('div');
+    splitter.id = 'prwSplitter';
+    splitter.setAttribute('role', 'separator');
+    splitter.setAttribute('aria-label', 'Resize preview');
+    previewPane.parentNode.insertBefore(splitter, previewPane);
+  }
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  const getClientX = (evt) =>
+    (evt.touches && evt.touches[0] ? evt.touches[0].clientX : evt.clientX);
+
+  // preview side:
+  // LTR: preview is on the RIGHT
+  // RTL: preview is on the LEFT (you flip areas/columns)
+  const isRTL = !document.body.classList.contains('na-doc-rtl');
+
+  let dragging = false;
+  let startX = 0;
+  let startWidth = 0;
+
+  // read current preview width (from css var or from actual rect)
+  const getCurrentPreviewWidth = () => {
+    const v = getComputedStyle(toolbox).getPropertyValue('--prw-width').trim();
+    if (v.endsWith('px')) {
+      const n = parseFloat(v);
+      if (!Number.isNaN(n) && n > 0) return n;
     }
-  
-    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-    const getClientX = (evt) =>
-      (evt.touches && evt.touches[0] ? evt.touches[0].clientX : evt.clientX);
-  
-    // preview side:
-    // LTR: preview is on the RIGHT
-    // RTL: preview is on the LEFT (you flip areas/columns)
-    const isRTL = !document.body.classList.contains('na-doc-rtl');
-  
-    let dragging = false;
-    let startX = 0;
-    let startWidth = 0;
-  
-    // read current preview width (from css var or from actual rect)
-    const getCurrentPreviewWidth = () => {
-      const v = getComputedStyle(toolbox).getPropertyValue('--prw-width').trim();
-      if (v.endsWith('px')) {
-        const n = parseFloat(v);
-        if (!Number.isNaN(n) && n > 0) return n;
-      }
-      // fallback: actual rendered width
-      return previewPane.getBoundingClientRect().width || 360;
-    };
-  
-    const onMove = (e) => {
-      if (!dragging) return;
-      e.preventDefault();
-  
-      const rect = toolbox.getBoundingClientRect();
-      const x = getClientX(e);
-  
-      const deltaX = x - startX;
-  
-      // LTR (preview right): dragging splitter to the RIGHT should make preview SMALLER
-      // newWidth = startWidth - deltaX
-      //
-      // RTL (preview left): dragging splitter to the RIGHT should make preview BIGGER
-      // newWidth = startWidth + deltaX
-      let newWidth = isRTL ? (startWidth + deltaX) : (startWidth - deltaX);
-  
-      const min = 220;
-      const max = Math.max(260, rect.width - 220);
-      newWidth = clamp(Math.round(newWidth), min, max);
-  
-      toolbox.style.setProperty('--prw-width', `${newWidth}px`);
-    };
-  
-    const onUp = (e) => {
-      if (!dragging) return;
-      e.preventDefault();
-  
-      dragging = false;
-      toolbox.classList.remove('prw-resizing');
-  
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-      window.removeEventListener('touchmove', onMove);
-      window.removeEventListener('touchend', onUp);
-    };
-  
-    const onDown = (e) => {
-      e.preventDefault();
-  
-      dragging = true;
-      toolbox.classList.add('prw-resizing');
-  
-      startX = getClientX(e);
-      startWidth = getCurrentPreviewWidth();
-  
-      window.addEventListener('mousemove', onMove, { passive: false });
-      window.addEventListener('mouseup', onUp, { passive: false });
-      window.addEventListener('touchmove', onMove, { passive: false });
-      window.addEventListener('touchend', onUp, { passive: false });
-    };
-  
-    splitter.addEventListener('mousedown', onDown);
-    splitter.addEventListener('touchstart', onDown, { passive: false });
+    // fallback: actual rendered width
+    return previewPane.getBoundingClientRect().width || 360;
+  };
+
+  const onMove = (e) => {
+    if (!dragging) return;
+    e.preventDefault();
+
+    const rect = toolbox.getBoundingClientRect();
+    const x = getClientX(e);
+
+    const deltaX = x - startX;
+
+    // LTR (preview right): dragging splitter to the RIGHT should make preview SMALLER
+    // newWidth = startWidth - deltaX
+    //
+    // RTL (preview left): dragging splitter to the RIGHT should make preview BIGGER
+    // newWidth = startWidth + deltaX
+    let newWidth = isRTL ? (startWidth + deltaX) : (startWidth - deltaX);
+
+    const min = 220;
+    const max = Math.max(260, rect.width - 220);
+    newWidth = clamp(Math.round(newWidth), min, max);
+
+    toolbox.style.setProperty('--prw-width', `${newWidth}px`);
+  };
+
+  const onUp = (e) => {
+    if (!dragging) return;
+    e.preventDefault();
+
+    dragging = false;
+    toolbox.classList.remove('prw-resizing');
+
+    window.removeEventListener('mousemove', onMove);
+    window.removeEventListener('mouseup', onUp);
+    window.removeEventListener('touchmove', onMove);
+    window.removeEventListener('touchend', onUp);
+  };
+
+  const onDown = (e) => {
+    e.preventDefault();
+
+    dragging = true;
+    toolbox.classList.add('prw-resizing');
+
+    startX = getClientX(e);
+    startWidth = getCurrentPreviewWidth();
+
+    window.addEventListener('mousemove', onMove, { passive: false });
+    window.addEventListener('mouseup', onUp, { passive: false });
+    window.addEventListener('touchmove', onMove, { passive: false });
+    window.addEventListener('touchend', onUp, { passive: false });
+  };
+
+  splitter.addEventListener('mousedown', onDown);
+  splitter.addEventListener('touchstart', onDown, { passive: false });
 })();
-  

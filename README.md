@@ -16,6 +16,13 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.4.2
+
+- Preview upgrade - now we always send full path to frame server.
+- Added option to export preview png to predefined location. 
+- Added "Export PNG" button inside preview panel - we create it in fileprocessor - then handle it in exportPng(), that also showing slyled moder toast.
+- Added sync button to resync item - currently it still not finishe - done handler => route=> storyService => sql. need to keep work on this.
+
 ## 2.4.1.1
 
 - Fix in preview path url - we use "originalURL" now that dynamically reports the server url (not hardcoded).
