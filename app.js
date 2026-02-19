@@ -6,6 +6,7 @@ import appProcessor from "./src/4-services/1-app-processor.js";
 import appConfig from "./src/3-utilities/app-config.js";
 import startTcpServer from './src/1-dal/tcp.js'; // just importing starts the listener
 import prwRouter from "./src/5-routes/prw.js";
+import startPrwCleaner from "./src/3-utilities/prw-cleaner.js";
 
 const app = express(); 
 
@@ -29,3 +30,5 @@ startTcpServer();
 app.listen(appConfig.pluginPort, () => {
     appProcessor.initialize();
 });
+
+startPrwCleaner();

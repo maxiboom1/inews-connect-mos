@@ -16,6 +16,10 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.4.3
+
+- Implemented prw-cleaner utility module - it has running INTERVAL_MS, MAX_AGE_MS (delete files older than), and MATCH_RE (we can set extension jpg|png). Currently - ive configured it to run once at hour and delete files older than 3 minutes.
+
 ## 2.4.2
 
 - Preview upgrade - now we always send full path to frame server.
