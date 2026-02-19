@@ -26,6 +26,7 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 - Added option to export preview png to predefined location. 
 - Added "Export PNG" button inside preview panel - we create it in fileprocessor - then handle it in exportPng(), that also showing slyled moder toast.
 - Added sync button to resync item - currently it still not finishe - done handler => route=> storyService => sql. need to keep work on this.
+- New config option: previewExtension (must be setten with dot ".png"), and previewExportDir to specify export path (must set end slash "g:/test/"). 
 
 ## 2.4.1.1
 
