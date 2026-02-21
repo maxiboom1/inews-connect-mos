@@ -16,6 +16,13 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.4.4
+
+- Implemented Story Resync (reset story items) mechanism:
+- Added new story-sync-service that can be triggered by item UID.
+- Service sends roReq(roID), intercepts returned roList, finds the target storyID, then deletes all story items from SQL + cache (story itself is kept), rebuilds items from the received story snapshot, and sends mosItemReplace per item to update metadata with the new SQL item UID.
+- Added roList routing hook in app-processor to forward roList to story-sync handler when sync mode is enabled (while keeping boot queue alive).
+
 ## 2.4.3
 
 - Implemented prw-cleaner utility module - it has running INTERVAL_MS, MAX_AGE_MS (delete files older than), and MATCH_RE (we can set extension jpg|png). Currently - ive configured it to run once at hour and delete files older than 3 minutes.

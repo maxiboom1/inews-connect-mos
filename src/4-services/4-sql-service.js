@@ -430,6 +430,37 @@ class SqlService {
         }
     }
 
+    // Uses to return storyID and story uid by item uid (used for sync story)
+    // Returns {itemUid,rundownUid,roID,storyUid,storyID}
+    async getStorySyncContextByItemUid(itemUid) {
+        const values = { uid: itemUid };
+    
+        const sqlQuery = `
+        SELECT
+            i.uid        AS itemUid,
+            i.rundown    AS rundownUid,
+            r.roID       AS roID,
+            i.story      AS storyUid,
+            s.storyID    AS storyID
+        FROM ngn_inews_items AS i
+        INNER JOIN ngn_inews_rundowns AS r
+            ON r.uid = i.rundown
+        INNER JOIN ngn_inews_stories AS s
+            ON s.uid = i.story
+            AND s.rundown = i.rundown   -- extra safety: same rundown
+        WHERE i.uid = @uid;
+    `;
+    
+        try {
+            const result = await db.execute(sqlQuery, values);
+            return result.recordset[0] || null;
+    
+        } catch (error) {
+            console.error('Error on fetching item story/storyID:', error);
+            return null;
+        }
+    }
+
 // ********************* FRONT-TRIGGERED ITEMS FUNCTIONS ********************** //
 
     //This func triggered from web  page, when user click "save". 

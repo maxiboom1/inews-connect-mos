@@ -10,6 +10,7 @@ import storyService from "./2-story-service.js";
 import logMessages from "../3-utilities/logger-messages.js";
 import itemsHash from "../2-cache/items-hashmap.js";
 import itemsService from "./3-items-service.js";
+import storySyncService from "./7-story-sync.js";
 
 
 // MOS 2.8.5
@@ -77,8 +78,14 @@ class AppProcessor {
     }
 
     async roList(msg){
-        // Check if ro exists
-        
+        // If we in storySync mode - pass it do sync handler and exit
+        if(storySyncService.getSyncState() === true) {
+            await storySyncService.roListHandler(msg);
+            this.pendingRequest = false;
+            this.processNextRoReq();
+            return;
+        }
+
         const roSlug = msg.mos.roList.roSlug;
         
         // Normalize `story` to always be an array, handling undefined properly (nested ternary)

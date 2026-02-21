@@ -2,6 +2,7 @@ import express from "express";
 import sqlService from "../4-services/4-sql-service.js";
 import cache from "../2-cache/cache.js";
 import storyService from "../4-services/2-story-service.js";
+import storySyncService from "../4-services/7-story-sync.js";
 
 const router = express.Router();
 
@@ -53,7 +54,7 @@ router.post('/update-item', async (req, res) => {
 router.post('/story-sync/:uid', async (req, res) => {
   try {
       const itemUid = req.params.uid;
-      await storyService.storySync(itemUid);
+      await storySyncService.storySync(itemUid);
       res.json(itemUid);
   } catch (error) {
       console.error('Error processing JSON data:', error);

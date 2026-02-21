@@ -6,7 +6,7 @@ const appConfig =JSON.parse(readFileSync('./config.json', 'utf8'));
 // ***************** App Advanced Configuration ***************** //
 
 // App Version
-appConfig.version = "2.4.3";
+appConfig.version = "2.4.4";
 
 // Express static server port
 appConfig.pluginPort = 3000;
@@ -16,6 +16,9 @@ appConfig.keepSqlItems = false;
 // Those 2 configs should match the correspond settings in inews gateway mosconfig.xml  
 appConfig.prependSeparator = " | ";
 appConfig.prependStringForEmptyPageNumber = "NO PAGE";
+
+appConfig.showPreviewpanel = true;
+appConfig.previewPanelResize = true;
 
 // Debug options
 appConfig.debug = {
