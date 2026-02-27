@@ -7,6 +7,9 @@ import appConfig from "./src/3-utilities/app-config.js";
 import startTcpServer from './src/1-dal/tcp.js'; // just importing starts the listener
 import prwRouter from "./src/5-routes/prw.js";
 import startPrwCleaner from "./src/3-utilities/prw-cleaner.js";
+import { initFileLogging } from "./src/3-utilities/log-file-sink.js";
+
+await initFileLogging();
 
 const app = express(); 
 

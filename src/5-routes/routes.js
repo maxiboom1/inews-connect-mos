@@ -54,8 +54,8 @@ router.post('/update-item', async (req, res) => {
 router.post('/story-sync/:uid', async (req, res) => {
   try {
       const itemUid = req.params.uid;
-      await storySyncService.storySync(itemUid);
-      res.json(itemUid);
+      const result = await storySyncService.storySync(itemUid);
+      res.json(result);
   } catch (error) {
       console.error('Error processing JSON data:', error);
       res.status(400).json("Error processing JSON data");

@@ -16,6 +16,13 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.5.0
+
+- Added log-file-sink.js module. Now app writes to log files splitted by days and by each startup. It logs also MOS messages (that not shown in console).
+- Cleared config.debug obj and its options (related to logger logic).
+- Also added status messages on fronend for story-sync func.
+- Experemental: Added new deleteStoriesHandler (while still keep old func with _old extension) - it handles case when user delete story that not has beed registred yet- so it pospone it to next 10 seconds - up to 8 tries. Its nice - but maybe in the end we will finish with other mechanism.
+
 ## 2.4.4
 
 - Implemented Story Resync (reset story items) mechanism:

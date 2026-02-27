@@ -3,22 +3,20 @@ import logger from "../3-utilities/logger.js";
 import storyService from "./2-story-service.js";
 import appProcessor from "./1-app-processor.js";
 import findRoID from "../3-utilities/findRoID.js";
-import appConfig from "../3-utilities/app-config.js";
 import EventEmitter from 'events';
 import itemsService from "./3-items-service.js";
-
-const logMosIncomingMessages = appConfig.debug.showMos;
 
 class MosRouter extends EventEmitter {
 
     
     async mosMessageProcessor(msg, port) {
     
-        if(logMosIncomingMessages){
-            logger(`[MOS-PROTOCOL-DEBUG] ${this.msgBuider(msg)}`,'yellow'); 
-        }
-        // double !! converts expression to boolean - so, 
-        // if msg.mos.heartbeat exists - the !! convert it to "true"
+        // Those are ignored by logger and logged to file only
+        logger(`//****************************************************************************************`,'yellow'); 
+        logger(`[MOS-PROTOCOL-DEBUG] ${JSON.stringify(msg)}`,'yellow'); 
+        logger(`//****************************************************************************************`,'yellow'); 
+        //logger(`[MOS-PROTOCOL-DEBUG] ${this.msgBuider(msg)}`,'yellow'); // Uncomment to show mos in console
+        
         switch (true) {
             case !!msg.mos.listMachInfo:
                 logger("NCS Machine Info: " + JSON.stringify(msg,null,2));
@@ -53,6 +51,11 @@ class MosRouter extends EventEmitter {
                 logger(`[MOS] {${this.color("roDelete")}} are received from ${port}`);
                 if(appProcessor.isBoot){appProcessor.enqueueDelta("roDelete", msg);break;}                
                 await appProcessor.roDelete(msg);
+                break; 
+            case !!msg.mos.roReplace:
+                logger(`[MOS] {${this.color("roReplace")}} are received from ${port}`);
+                if(appProcessor.isBoot){appProcessor.enqueueDelta("roReplace", msg);break;}
+                ackService.sendAck(msg.mos.roReplace.roID);
                 break; 
             
             // ****************** NEW ACTIONS ************************
@@ -134,7 +137,7 @@ class MosRouter extends EventEmitter {
     };
 
     logLine(){
-        const d = this.color('\n-------------------------------------------------------\n');
+        const d = this.color('\n----------------------------------------------------------------------------------------------------------------\n');
         return d;
     }
 

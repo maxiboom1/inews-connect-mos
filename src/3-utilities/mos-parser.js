@@ -1,9 +1,7 @@
 import {XMLParser} from "fast-xml-parser";
 import mosRouter from "../4-services/0-mos-router.js";
 import logger from "./logger.js";
-import appConfig from "./app-config.js";
 
-const mosDebug = appConfig.debug.showRawMos;
 
 function parseMos(buffer, port) {
     try {
@@ -20,7 +18,7 @@ function parseMos(buffer, port) {
       let obj = parser.parse(decodedData);
       mosRouter.mosMessageProcessor(obj, port);
       
-    if(mosDebug){logger(`[MOS-PROTOCOL-DEBUG] ${JSON.stringify(decodedData)}`,'yellow');}
+    //logger(`[MOS-PROTOCOL-DEBUG] ${JSON.stringify(decodedData)}`,'yellow');
 
 
   } catch (error) {

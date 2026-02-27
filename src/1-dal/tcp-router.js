@@ -7,8 +7,9 @@ export async function handleTcpMessage(socket, cmd) {
 
     // Reset command
     if (cmd.startsWith('iNewsC-reset-')) {
+        logger(`[TCP] Ignoring reset command in current implementation`, 'yellow');
         const uid = Number(cmd.split('-')[2]);
-        await reSyncService.deleteAllRundowns();
+        //await reSyncService.deleteAllRundowns();
         setTimeout(() => {
             socket.write(`iNewsC-reset-${uid}-OK\0`);
         }, "5000");

@@ -19,7 +19,8 @@ class StorySyncSevice {
 
     async storySync(itemUid) {
         const r = await sqlService.getStorySyncContextByItemUid(itemUid);
-        if (!r) return { message: "Item N/A" };
+        if (!r) return { ok: false };
+        if (r === null) return { ok: false };
 
         this.ctx = r;
         this.syncState = true;

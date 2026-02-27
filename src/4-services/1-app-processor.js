@@ -229,7 +229,7 @@ class AppProcessor {
                     case "roMetadataReplace":
                         await this.roMetadataReplace(d.msg);
                         ackService.sendAck(d.msg.mos.roMetadataReplace.roID);
-                        break;
+                        break; 
 
                     case "roStoryAppend":
                         await storyService.appendStory(d.msg);
@@ -269,6 +269,9 @@ class AppProcessor {
 
                     case "roDelete":
                         await this.roDelete(d.msg);
+                        break;
+                    case "roReplace":
+                        ackService.sendAck(d.msg.mos.roReplace.roID);
                         break;
 
                     default:

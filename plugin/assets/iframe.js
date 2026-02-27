@@ -321,14 +321,20 @@ function showPrwToast(message, delay = 2500) {
 
   if (prwToastTimer) clearTimeout(prwToastTimer);
   prwToastTimer = setTimeout(() => {
-    el.classList.remove("is-visible");
+    el.classList.remove("is-visible"); 
   }, delay);
 }
 
 async function sendSyncRequest(){
   const gfxItem = document.body.getAttribute('data-gfxItem');
   const url = `${originUrl}/api/story-sync/${gfxItem}`;
-  const res = await fetch(url, { method: 'POST' });
+  const resp = await fetch(url, { method: "POST" });
+  const data = await resp.json(); // <-- this is { ok: false/true }
+  if(data.ok){
+    showPrwToast("Story Rebuilded. Please exist the story to finish sync with NewsArts and re-open item again.",20000);
+  } else {
+    showPrwToast("Unregistred item. Try to save story, or turn on rundown MOS monitor.", 5000);
+  }
 }
   
 // Trigger only on item render - ignore on template render

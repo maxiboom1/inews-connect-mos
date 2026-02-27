@@ -1,6 +1,4 @@
-import appConfig from "./app-config.js";
-
-const debug = appConfig.debug;
+import { enqueueLogLine } from "./log-file-sink.js";
 
 /**
  * Logs a message to the console with an optional color.
@@ -14,7 +12,11 @@ const debug = appConfig.debug;
  */
 function logger(msg, color = "white"){
     
-    if(debug.sql === 0 && msg.startsWith("[SQL]") && color != "red") return;
+    logToFile(msg);
+    
+    if(msg.startsWith("[MOS-PROTOCOL-DEBUG]") || msg.startsWith("//*******")) return;
+
+    //if(msg.startsWith("[SQL]") && color != "red") return;
     
     if (colors[color] === undefined) { // If color arg wrong or unsupported
         console.log(`${getCurrentDateTime()}  ${msg}`);
@@ -34,6 +36,12 @@ function getCurrentDateTime() {
     const sec = String(now.getSeconds()).padStart(2, '0');
 
     return `${day}/${month}/${year} ${hour}:${min}:${sec}`;
+}
+
+function logToFile(msg){
+    const ts = getCurrentDateTime();
+    const plainLine = `${ts} ${msg}`;
+    enqueueLogLine(plainLine);
 }
 
 const colors = {

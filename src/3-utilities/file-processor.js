@@ -8,7 +8,6 @@ import logger from "./logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const debugMode = appConfig.debugMode;
 
 /** 
  * Gets templates array @param templates. Takes template.source and injects scripts, css link and plugin panel.
@@ -35,9 +34,9 @@ async function processAndWriteFiles(templates) {
         await fsPromises.writeFile(filePath, injectedHtml, 'utf-8');
         delete template.source;
     }
-    if (debugMode){
-        logger(`Loaded ${templates.length} HTML templates from SQL to plugin/templates`);
-    }
+
+    logger(`[File-processor] Loaded ${templates.length} HTML templates from SQL to plugin/templates`);
+
     return templates;
 }
 

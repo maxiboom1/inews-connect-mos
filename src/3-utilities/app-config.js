@@ -6,7 +6,7 @@ const appConfig =JSON.parse(readFileSync('./config.json', 'utf8'));
 // ***************** App Advanced Configuration ***************** //
 
 // App Version
-appConfig.version = "2.4.4";
+appConfig.version = "2.5.0";
 
 // Express static server port
 appConfig.pluginPort = 3000;
@@ -19,14 +19,6 @@ appConfig.prependStringForEmptyPageNumber = "NO PAGE";
 
 appConfig.showPreviewpanel = true;
 appConfig.previewPanelResize = true;
-
-// Debug options
-appConfig.debug = {
-    sql:1,
-    functions:1,
-    showMos:0,
-    showRawMos:0
-}
 
 
 export default appConfig; 
