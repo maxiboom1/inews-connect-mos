@@ -6,6 +6,19 @@ import logger from "./logger.js";
 
 class DeleteManager {
 
+    async deleteItemByStoryUidForce(rundownStr, storyID, storyUid) {  
+        try {
+            // Get story items ids array
+            const itemsIdArr = await cache.getItemsArrByStoryID(rundownStr, storyID);
+
+            await Promise.all(itemsIdArr.map(itemId => itemsHash.removeItem(itemId)));
+            await this.executeDelete(storyUid, itemsIdArr); 
+        
+        } catch (error) {
+            logger(`[Delete-manager] Error deleting items for story ${storyUid}: ${error.message}`);
+        }
+    }
+
     async deleteItemByStoryUid(rundownStr, storyID, storyUid) {  
         try {
             // Get story items ids array
@@ -20,14 +33,14 @@ class DeleteManager {
             setTimeout(async () => {
                 // If story exists in DB, don't delete items
                 if (await cache.isStoryExists(rundownStr, storyID)) {
-                    logger(`Story ${storyID} exists, cancel removing items`);
+                    logger(`[Delete-manager] Story ${storyID} exists, cancel removing items`);
                     return;
                 }
                 await this.executeDelete(storyUid, itemsIdArr); 
             }, 10000);
 
         } catch (error) {
-            logger(`Error deleting items for story ${storyUid}: ${error.message}`);
+            logger(`[Delete-manager] Error deleting items for story ${storyUid}: ${error.message}`);
         }
     }
 
@@ -40,7 +53,7 @@ class DeleteManager {
         setTimeout(async () => {
             // If item in use, cancel delete
             if (itemsHash.isUsed(itemUid)) {
-                logger(`Item ${itemUid} exists, cancel scheduled delete`);
+                logger(`[Delete-manager] Item ${itemUid} exists, cancel scheduled delete`);
                 return;
             }
             await this.executeDelete(0,[],{deleteItem:true, itemUid:itemUid}); 
@@ -51,11 +64,11 @@ class DeleteManager {
     async executeDelete(storyUid,itemsIdArr, options={}) {
         if (options.deleteItem){
             await sqlService.deleteDbItem(options.itemUid);
-            logger(`Item [${options.itemUid}] has been removed.`);
+            logger(`[Delete-manager]  Item [${options.itemUid}] has been removed.`);
             return;
         }
         await sqlService.deleteDbItemsByStoryUid(storyUid);
-        logger(`Items [${itemsIdArr}] in story ${storyUid} removed.`);
+        logger(`[Delete-manager] Items [${itemsIdArr}] in story ${storyUid} removed.`);
     }
 
 }

@@ -1,8 +1,8 @@
 import express from "express";
 import sqlService from "../4-services/4-sql-service.js";
 import cache from "../2-cache/cache.js";
-import storyService from "../4-services/2-story-service.js";
 import storySyncService from "../4-services/7-story-sync.js";
+import hash from "../2-cache/items-hashmap.js";
 
 const router = express.Router();
 
@@ -76,9 +76,9 @@ router.get('/getstories', async (req, res) => {
   res.json(data);
 });
 
-// Get http://serverAddr:3000/api/getstories
+// Get http://localhost:3000/api/getstories
 router.get('/debug', async (req, res) => {
-    const data = await cache.getStories();
+    const data = hash.list();;
     res.json(data);
   });
 

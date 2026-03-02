@@ -16,6 +16,11 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.5.1
+
+- Implemented "showExportButton":true/false config option - to hide export button.
+- Fix in story-sync: cleaned some AI bugs, and fixed delete process core (added deleteItemByStoryUidForce in delete-manager that deletes from hash and SQL).
+
 ## 2.5.0
 
 - Added log-file-sink.js module. Now app writes to log files splitted by days and by each startup. It logs also MOS messages (that not shown in console).

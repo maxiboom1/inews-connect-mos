@@ -18,7 +18,8 @@ const __dirname = dirname(__filename);
 async function processAndWriteFiles(templates) {
     
     if(!appConfig.showPreviewpanel)logger('[File-processor] Preview Panel is disabled',"yellow");
-    
+    if(!appConfig.showExportButton) logger("[File-processor] Export for preview images disabled by admin.","yellow");
+
     const templatesFolder = path.resolve(__dirname, "../../plugin/templates");
     try {
         await fsPromises.access(templatesFolder);
@@ -195,14 +196,13 @@ function createPreviewPane(document) {
     const aside = document.createElement('aside');
     aside.id = 'previewPane';
     aside.setAttribute('aria-label', 'Preview');
-  
+    const showExportBtn = appConfig.showExportButton = true ? `style="display:none"` : ""; //Conditional rendering based on config
     aside.innerHTML = `
       <div class="prw-header">Preview</div>
       <img id="previewImg">
-      <button id="exportPngBtn" type="button" class="prw-export-btn">Export PNG</button>
+      <button id="exportPngBtn" ${showExportBtn} type="button" class="prw-export-btn">Export PNG</button>
       <div id="prwToast" class="prw-toast" role="status" aria-live="polite"></div>
     `;
-  
     return aside;
 }
   

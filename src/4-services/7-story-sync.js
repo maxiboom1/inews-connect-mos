@@ -2,7 +2,7 @@ import sqlService from "./4-sql-service.js";
 import mosConnector from "../1-dal/mos-connector.js";
 import mosCommands from "../3-utilities/mos-cmds.js";
 import mosRouter from "./0-mos-router.js";
-
+import deleteManager from "../3-utilities/delete-manager.js";
 import cache from "../2-cache/cache.js";
 import normalize from "../3-utilities/normalize.js";
 import itemsHash from "../2-cache/items-hashmap.js";
@@ -72,14 +72,14 @@ class StorySyncSevice {
     async resetStory(targetStory, roID) {
         // 1) Normalize targetStory.item to array
         const items = targetStory?.item? (Array.isArray(targetStory.item) ? targetStory.item : [targetStory.item]): [];
+        const storyUid = await cache.getStoryUid(roID, targetStory.storyID);
 
         logger(`[STORY-SYNC] Reset story. roID=${roID} storyID=${targetStory.storyID} items=${items.length}`, "blue");
 
         // 2) Delete ALL existing items in SQL for this story UID (keep story row)
-        await sqlService.deleteDbItemsByStoryUid(Number(this.ctx.storyUid));
-
+        await deleteManager.deleteItemByStoryUidForce(roID, targetStory.storyID, storyUid);
+        
         // 3) Clear items in cache for this story (keep story node)
-        //    We reuse cache.getStory/saveStory like your item delete/insert does.
         const cachedStory = await cache.getStory(roID, String(this.ctx.storyID));
         cachedStory.item = [];
 
@@ -98,7 +98,7 @@ class StorySyncSevice {
             normalize.normalizeItem(el);
             el.ord = i;
 
-            const assertedUid = await this.assertItemUidAndPersist(roID, el, i);
+            const assertedUid = await this.assertItemUidAndPersist(el, i);
 
             // Update MOS item with asserted uid for cache + possible replace
             el.mosExternalMetadata.gfxItem = Number(assertedUid);
@@ -108,21 +108,14 @@ class StorySyncSevice {
 
         // 5) Save rebuilt items to cache story
         cachedStory.item = rebuilt;
-
-        cachedStory.roID = roID;
-        cachedStory.storySlug = cachedStory.name;
-        cachedStory.storyNum = cachedStory.number;
-
         await cache.saveStory(normalize.removeItemsMeta(cachedStory));
+        await sqlService.rundownLastUpdate(roID);
     }
 
     // Decide UID + persist DB + (optionally) send mosItemReplace to push new uid
-    async assertItemUidAndPersist(roID, mosItemEl, ord) {
-        const gfxIncoming = Number(mosItemEl?.mosExternalMetadata?.gfxItem || 0);
-
-        // Build DB item object (duplicated from items-service)
-        const dbItem = {
-            uid: gfxIncoming,
+    async assertItemUidAndPersist(mosItemEl, ord) {
+        
+        const duplicate = {
             name: String(mosItemEl.itemSlug),
             production: Number(mosItemEl.mosExternalMetadata.gfxProduction),
             rundown: Number(this.ctx.rundownUid),
@@ -133,44 +126,11 @@ class StorySyncSevice {
             scripts: String(mosItemEl.mosExternalMetadata.scripts)
         };
 
-        // Case A: NEW (no uid yet) => create and push replace
-        if (!gfxIncoming) {
-            const result = await sqlService.upsertItem(roID, dbItem); // expect {success,event,uid}
-            const asserted = result?.uid;
+        const asserted = await sqlService.storeNewDuplicate(duplicate);
+        itemsHash.registerItem(asserted);
 
-            if (asserted) {
-                itemsHash.registerItem(asserted);
-                await this.sendMosItemReplaceByCtx(mosItemEl, asserted, "NEW ITEM");
-                return asserted;
-            }
-
-            throw new Error(`[STORY-SYNC] Failed to create NEW item (no uid).`);
-        }
-
-        // Case B: incoming uid already used => create duplicate uid and push replace
-        if (itemsHash.isUsed(gfxIncoming)) {
-            const duplicate = {
-                name: dbItem.name,
-                production: dbItem.production,
-                rundown: Number(this.ctx.rundownUid),
-                story: Number(this.ctx.storyUid),
-                ord: Number(ord),
-                template: dbItem.template,
-                data: dbItem.data,
-                scripts: dbItem.scripts
-            };
-
-            const asserted = await sqlService.storeNewDuplicate(duplicate);
-            itemsHash.registerItem(asserted);
-
-            await this.sendMosItemReplaceByCtx(mosItemEl, asserted, "DUPLICATE");
-            return asserted;
-        }
-
-        // Case C: unique existing uid => just upsert, register
-        await sqlService.upsertItem(roID, dbItem);
-        itemsHash.registerItem(gfxIncoming);
-        return gfxIncoming;
+        await this.sendMosItemReplaceByCtx(mosItemEl, asserted, "RE-SYNC");
+        return asserted;
     }
 
     async sendMosItemReplaceByCtx(mosItemEl, assertedUid, action) {
@@ -191,7 +151,7 @@ class StorySyncSevice {
 
         // wait ack (same logic as items-service, duplicated)
         await this.waitForRoAck();
-    }
+    } 
 
     waitForRoAck(timeout = 5000, resolveDelayMs = 40) {
         return new Promise((resolve, reject) => {
