@@ -306,7 +306,7 @@ async function showPrwImage(uuid) {
 
 async function exportPng(){
   const r = await getDataForPrwRequest();// Returns {scripts,templateId,previewHost,previewPort,uuid}
-  const filename = document.getElementById("nameInput").value;
+  const filename = (document.getElementById("nameInput").value).replace(/ /g, "-"); // The replace is guard for spaces some eng not rendering it wit spaces
   const path = encodeURIComponent(previewExportDir + filename + previewExtension);
   await fetch(`http://${r.previewHost}:${r.previewPort}?${path},${r.templateId},${r.scripts}`, { method: 'GET' });
   showPrwToast(`Export request sent → ${decodeURIComponent(path)}`, 4500);
