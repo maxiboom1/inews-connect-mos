@@ -8,7 +8,7 @@ import logger from "./logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
+const prwFolder = path.resolve(__dirname, "../../plugin/prw/");
 /** 
  * Gets templates array @param templates. Takes template.source and injects scripts, css link and plugin panel.
  * Then, we store modified HTML in plugin/assets/templates, as [template.name].html.
@@ -21,6 +21,7 @@ async function processAndWriteFiles(templates) {
     if(!appConfig.showExportButton) logger("[File-processor] Export for preview images disabled by admin.","yellow");
 
     const templatesFolder = path.resolve(__dirname, "../../plugin/templates");
+    
     try {
         await fsPromises.access(templatesFolder);
     } catch (error) {
@@ -78,7 +79,8 @@ function htmlWrapper(htmlContent,templateUid, productionUid, templateName) {
     document.body.setAttribute('data-mos-id', appConfig.mosID);
     if(appConfig.previewPanelResize) {document.body.setAttribute('data-preview-resize',true);}
     document.body.setAttribute('data-preview-extension', appConfig.previewExtension);  
-    document.body.setAttribute('data-preview-ExportDir', appConfig.previewExportDir);  
+    document.body.setAttribute('data-preview-ExportDir', appConfig.previewExportDir);
+    document.body.setAttribute('data-preview-path', prwFolder);
     document.body.setAttribute('data-mos-id', appConfig.mosID);
 
     // Add static category name in item name

@@ -1,8 +1,10 @@
 // window.parent.funcName()
-
+// Constants
 const originUrl = window.location.origin;
 const previewExtension = document.body.getAttribute('data-preview-extension');
 const previewExportDir = document.body.getAttribute('data-preview-ExportDir');
+const prwPath = document.body.getAttribute('data-preview-path') + "\\";
+
 //document.getElementById('drag').addEventListener('dragstart', drag);
 document.getElementById('drag').addEventListener('click', save);
 document.getElementById('syncButton').addEventListener('click', sendSyncRequest);
@@ -217,7 +219,7 @@ document.getElementById('preview').addEventListener('click', async ()=>{
 
 const debouncedInput = debounce(async function() {
     const r = await getDataForPrwRequest();
-    const path = encodeURIComponent(`c:/Devprojects/inews-connect-mos/plugin/prw/${r.uuid}${previewExtension}`);
+    const path = encodeURIComponent(`${prwPath}${r.uuid}${previewExtension}`);
     await fetch(`http://${r.previewHost}:${r.previewPort}?${path},${r.templateId},${r.scripts}`, { method: 'GET' });
     showPrwImage(r.uuid);
 }, 500);

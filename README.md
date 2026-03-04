@@ -16,6 +16,10 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.5.4
+
+- Fixed hardcoded prvPath - now i pass it as body attr to each template.
+
 ## 2.5.3
 
 - Removed unused "KeepSqlItems prop from anywhere

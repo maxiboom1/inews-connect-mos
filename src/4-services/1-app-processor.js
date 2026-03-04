@@ -25,7 +25,7 @@ class AppProcessor {
         await mosConnector.connect();
         await mosMediaConnector.connect();
         //this.isBoot = true;
-        logger("[BOOT] System BOOT Starting - during boot this app will delay ACK for story/item delta updates", "cyan");
+        logger("[BOOT] System BOOT Starting", "cyan");
         mosConnector.sendToClient(mosCommands.roReqAll());// Start point - sends roReqAll and server receives roListAll
     }
     
@@ -59,7 +59,7 @@ class AppProcessor {
         
         // If queue finished -> boot end
         if (this.roQueue.length === 0) {
-            logger("[BOOT] System BOOT Finished, pooling now the deltas", "cyan");
+            logger("[BOOT] System BOOT Finished", "cyan");
             return;
         }
 
