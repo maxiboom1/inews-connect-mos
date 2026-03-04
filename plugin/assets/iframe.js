@@ -2,8 +2,8 @@
 // Constants
 const originUrl = window.location.origin;
 const previewExtension = document.body.getAttribute('data-preview-extension');
-const previewExportDir = document.body.getAttribute('data-preview-ExportDir');
-const prwPath = document.body.getAttribute('data-preview-path') + "\\";
+const previewExportDir = document.body.getAttribute('data-preview-exportDir');
+const prwPath = document.body.getAttribute('data-preview-path');
 
 //document.getElementById('drag').addEventListener('dragstart', drag);
 document.getElementById('drag').addEventListener('click', save);
