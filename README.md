@@ -16,6 +16,11 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.5.3
+
+- Removed unused "KeepSqlItems prop from anywhere
+- Removed Boot mechanism in app-processor and mos-router
+
 ## 2.5.2
 
 - Bug fixed: PrvFileExtension was hardcoded in some plases. Now it fully dynamic and alligns config prop.

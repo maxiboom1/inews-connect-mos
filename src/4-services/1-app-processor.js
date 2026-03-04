@@ -9,7 +9,6 @@ import appConfig from "../3-utilities/app-config.js";
 import storyService from "./2-story-service.js";
 import logMessages from "../3-utilities/logger-messages.js";
 import itemsHash from "../2-cache/items-hashmap.js";
-import itemsService from "./3-items-service.js";
 import storySyncService from "./7-story-sync.js";
 
 
@@ -18,10 +17,6 @@ class AppProcessor {
     constructor() {
         this.roQueue = []; // Queue to store rundown IDs
         this.pendingRequest = false; // Flag to track if a request is in progress
-
-        // Boot mechanism
-        this.isBoot = false;
-        this.deltaUpdates = [];
     }
     
     async initialize() {
@@ -60,15 +55,11 @@ class AppProcessor {
     async processNextRoReq() {
         
         // If a request is in progress, just wait (boot still running)
-        if (this.pendingRequest) {
-            return;
-        }
+        if (this.pendingRequest) {return;}
         
         // If queue finished -> boot end
         if (this.roQueue.length === 0) {
             logger("[BOOT] System BOOT Finished, pooling now the deltas", "cyan");
-            this.isBoot = false;
-            await this.flushDeltaUpdates();
             return;
         }
 
@@ -148,17 +139,11 @@ class AppProcessor {
         try{
             const {uid,rundownStr} = await cache.getRundownUidAndStrByRoID(msg.mos.roDelete.roID);
             
-            // Delete rundown and its stories 
             await sqlService.deleteDbRundown(uid, rundownStr);
             await sqlService.deleteDbStoriesByRundownID(uid);
-            
-            //Delete item when user unmonitors rundown
             await this.deleteItemsOnUnmonitor(uid);
-
-            // Delete rundown stories and items from cache
             await cache.deleteRundownFromCache(rundownStr);
             
-            //Send ack to NCS
             ackService.sendAck(msg.mos.roDelete.roID);
             logger(`[RUNDOWN] {${rundownStr}} was deleted from anywhere!` );
         }catch(e){
@@ -166,7 +151,6 @@ class AppProcessor {
             ackService.sendAck(msg.mos.roDelete.roID);
             logger(`[RUNDOWN] roDelete ignored (rundown not found yet): {${msg.mos.roDelete.roID}}`, "yellow");
         }
-
         
     }
 
@@ -193,120 +177,15 @@ class AppProcessor {
     }
     
     async deleteItemsOnUnmonitor(rundownId){
-        
-        if(appConfig.keepSqlItems) return;
-        
+                
         // Get items uid array, that related to rundownId
         const itemsId = await sqlService.getItemsIdArrByRundownId(rundownId);
+        
         // Clear hash for those items
-        for(const id of itemsId){
-            itemsHash.removeItem(id);
-        }
+        for(const id of itemsId){itemsHash.removeItem(id);}
+        
         await sqlService.deleteDbItemsByRundownID(rundownId);
     }
-
-    enqueueDelta(type, msg){
-        this.deltaUpdates.push({type, msg});
-    }
-
-    async flushDeltaUpdates() {
-        logger(`[BOOT] FLUSH START total=${this.deltaUpdates.length}`, "cyan");
-        if (this.deltaUpdates.length === 0) {
-            logger("[BOOT] No delta updates to process.", "cyan");
-            return;
-        }
-
-        // IMPORTANT: snapshot + clear first (avoid losing deltas arriving during flush)
-        const deltasToProcess = this.deltaUpdates;
-        this.deltaUpdates = [];
-
-        logger(`[BOOT] Processing ${deltasToProcess.length} delta updates...`, "cyan");
-
-        for (const dd of deltasToProcess) {
-            try {
-                const d = deltasToProcess[0];
-                switch (d.type) {
-                    case "roMetadataReplace":
-                        await this.roMetadataReplace(d.msg);
-                        ackService.sendAck(d.msg.mos.roMetadataReplace.roID);
-                        break; 
-
-                    case "roStoryAppend":
-                        await storyService.appendStory(d.msg);
-                        break;
-
-                    case "roStoryReplace":
-                        await storyService.replaceStory(d.msg);
-                        break;
-
-                    case "roStoryDelete":
-                        await storyService.deleteStoriesHandler(d.msg);
-                        break;
-
-                    case "roStoryInsert":
-                        await storyService.insertStory(d.msg);
-                        break;
-
-                    case "roStoryMoveMultiple":
-                        await storyService.moveMultiple(d.msg);
-                        break;
-
-                    case "roItemInsert":
-                        await itemsService.insertItem(d.msg);
-                        break;
-
-                    case "roItemDelete":
-                        await itemsService.deleteItem(d.msg);
-                        break;
-
-                    case "roItemReplace":
-                        await itemsService.replaceItem(d.msg);
-                        break;
-
-                    case "roCreate":
-                        await this.roCreate(d.msg);
-                        break;
-
-                    case "roDelete":
-                        await this.roDelete(d.msg);
-                        break;
-                    case "roReplace":
-                        ackService.sendAck(d.msg.mos.roReplace.roID);
-                        break;
-
-                    default:
-                        logger(`[BOOT] Unknown delta type: ${d.type}`, "red");
-                }
-                break;
-            } catch (err) {
-                logger(`[BOOT] Error processing delta ${d.type}: ${err.message || err}`, "red");
-
-                const roID = (d.msg && d.msg.mos) ? (
-                    (d.msg.mos.roCreate && d.msg.mos.roCreate.roID) ||
-                    (d.msg.mos.roDelete && d.msg.mos.roDelete.roID) ||
-                    (d.msg.mos.roMetadataReplace && d.msg.mos.roMetadataReplace.roID) ||
-                    (d.msg.mos.roItemReplace && d.msg.mos.roItemReplace.roID) ||
-                    (d.msg.mos.roItemInsert && d.msg.mos.roItemInsert.roID) ||
-                    (d.msg.mos.roItemDelete && d.msg.mos.roItemDelete.roID) ||
-                    (d.msg.mos.roStoryInsert && d.msg.mos.roStoryInsert.roID) ||
-                    (d.msg.mos.roStoryDelete && d.msg.mos.roStoryDelete.roID) ||
-                    (d.msg.mos.roStoryReplace && d.msg.mos.roStoryReplace.roID) ||
-                    (d.msg.mos.roStoryAppend && d.msg.mos.roStoryAppend.roID) ||
-                    (d.msg.mos.roStoryMoveMultiple && d.msg.mos.roStoryMoveMultiple.roID)
-                ) : null;
-
-                if (roID) ackService.sendAck(roID);
-            }
-        }
-
-        logger("[BOOT] Delta updates finished.", "cyan");
-
-        // If new deltas arrived during processing, flush them too (no recursion risk)
-        if (this.deltaUpdates.length > 0) {
-            logger(`[BOOT] Detected ${this.deltaUpdates.length} new delta updates during flush. Flushing again...`, "yellow");
-            await this.flushDeltaUpdates();
-        }
-    }    
 
 }
 

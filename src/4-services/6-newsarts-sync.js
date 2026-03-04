@@ -61,8 +61,6 @@ class ReSyncService {
 
     async deleteItemsOnUnmonitor(rundownId){
         
-        if(appConfig.keepSqlItems) return;
-        
         // Get items uid array, that related to rundownId
         const itemsId = await sqlService.getItemsIdArrByRundownId(rundownId);
         // Clear hash for those items

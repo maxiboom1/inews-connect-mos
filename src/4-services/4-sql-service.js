@@ -35,9 +35,7 @@ class SqlService {
     }
 
     async deleteDBItems() {
-        
-        if(appConfig.keepSqlItems) return;
-        
+                
         try {
             const sql = `DELETE FROM ngn_inews_items`;
             await db.execute(sql);

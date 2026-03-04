@@ -15,7 +15,6 @@ class MosRouter extends EventEmitter {
         logger(`//****************************************************************************************`,'yellow'); 
         logger(`[MOS-PROTOCOL-DEBUG] ${JSON.stringify(msg)}`,'yellow'); 
         logger(`//****************************************************************************************`,'yellow'); 
-        //logger(`[MOS-PROTOCOL-DEBUG] ${this.msgBuider(msg)}`,'yellow'); // Uncomment to show mos in console
         
         switch (true) {
             case !!msg.mos.listMachInfo:
@@ -26,7 +25,6 @@ class MosRouter extends EventEmitter {
                 break;
             case !!msg.mos.roMetadataReplace:
                 logger(`[MOS] {${this.color("roMetadataReplace")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roMetadataReplace", msg);break;}
                 await appProcessor.roMetadataReplace(msg);
                 ackService.sendAck(msg.mos.roMetadataReplace.roID);
                 break;              
@@ -40,7 +38,6 @@ class MosRouter extends EventEmitter {
                 break;
             case !!msg.mos.roCreate:
                 logger(`[MOS] {${this.color("roCreate")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roCreate", msg);break;}
                 await appProcessor.roCreate(msg);
                 break;
             case !!msg.mos.roReadyToAir:
@@ -49,12 +46,10 @@ class MosRouter extends EventEmitter {
                 break;
             case !!msg.mos.roDelete:
                 logger(`[MOS] {${this.color("roDelete")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roDelete", msg);break;}                
                 await appProcessor.roDelete(msg);
                 break; 
             case !!msg.mos.roReplace:
                 logger(`[MOS] {${this.color("roReplace")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roReplace", msg);break;}
                 ackService.sendAck(msg.mos.roReplace.roID);
                 break; 
             
@@ -65,44 +60,36 @@ class MosRouter extends EventEmitter {
                 break;            
             case !!msg.mos.roStoryAppend:
                 logger(`[MOS] {${this.color("roStoryAppend")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roStoryAppend", msg);break;}
                 await storyService.appendStory(msg);
                 break; 
             case !!msg.mos.roStoryReplace:
                 logger(`[MOS] {${this.color("roStoryReplace")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roStoryReplace", msg);break;}
                 await storyService.replaceStory(msg);
                 break;             
             case !!msg.mos.roStoryDelete:
                 logger(`[MOS] {${this.color("roStoryDelete")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roStoryDelete", msg);break;}
                 await storyService.deleteStoriesHandler(msg);
                 break;                 
             case !!msg.mos.roStoryInsert:
                 logger(`[MOS] {${this.color("roStoryInsert")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roStoryInsert", msg);break;}
                 await storyService.insertStory(msg);
                 break;  
             case !!msg.mos.roStoryMoveMultiple:
                 logger(`[MOS] {${this.color("roStoryMoveMultiple ")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roStoryMoveMultiple", msg);break;}
                 await storyService.moveMultiple(msg);
                 break;  
             
             // Items events
             case !!msg.mos.roItemInsert:
                 logger(`[MOS] {${this.color("roItemInsert")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roItemInsert", msg);break;}
                 await itemsService.insertItem(msg);                    
                 break;                              
             case !!msg.mos.roItemDelete:
                 logger(`[MOS] {${this.color("roItemDelete")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roItemDelete", msg);break;}
                 await itemsService.deleteItem(msg);
                 break; 
             case !!msg.mos.roItemReplace:
                 logger(`[MOS] {${this.color("roItemReplace")}} are received from ${port}`);
-                if(appProcessor.isBoot){appProcessor.enqueueDelta("roItemReplace", msg);break;}
                 await itemsService.replaceItem(msg);
                 break;                             
             // ****************** roAck handling ************************
