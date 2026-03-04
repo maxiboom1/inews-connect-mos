@@ -168,6 +168,25 @@ class StoryProcessor {
         ackService.sendAck(roID);
     }
 
+    async replaceStory(msg){
+
+        const m = String(msg.mos.roStoryReplace.story.storySlug).split(prependSeparator);
+        const roID = String(msg.mos.roStoryReplace.roID)
+        const values = {
+            storySlug:m[1],
+            storyNum: m[0] === prependStringForEmptyPageNumber ? "": m[0],
+            storyID:msg.mos.roStoryReplace.storyID,
+            floating: 0
+        };
+
+        await sqlService.modifyDbStory(values);
+
+        // Update rundown last update
+        await sqlService.rundownLastUpdate(roID);
+        ackService.sendAck(msg.mos.roStoryReplace.roID);
+
+    }
+
     async deleteStoriesHandler(msg, retryCount = 0) {
 
         const roID = msg.mos.roStoryDelete.roID;

@@ -17,6 +17,10 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 # Change log
 
 
+## 2.5.6  
+
+- Fixed storyReplace missing.
+
 ## 2.5.5   
 
 - Added "previewWorkingDir": "c:/devprojects/inews-connect-mos/plugin/prw/", in config - so this is the path in config for preview images.
