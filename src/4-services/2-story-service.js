@@ -78,48 +78,6 @@ class StoryProcessor {
         ackService.sendAck(roID);
     }    
 
-    async deleteStoriesHandler(msg, retryCount = 0) {
-      
-        const roID = msg.mos.roStoryDelete.roID;
-      
-        // Handle case when more than 1 story deleted
-        const deletedArr = Array.isArray(msg.mos.roStoryDelete.storyID) ? msg.mos.roStoryDelete.storyID  : [msg.mos.roStoryDelete.storyID];
-      
-        for (const deletedID of deletedArr) {
-          const stories = await cache.getRundown(roID);
-      
-          if (!stories[deletedID]) {
-            logger(`[STORY] Story ${deletedID} has been deleted, before registration. Will retry in 10 secs...`,"red");
-      
-            if (retryCount === 0) retryCount = 8;
-      
-            // consume one attempt for this failure
-            retryCount -= 1;
-      
-            // stop retrying after 8 attempts
-            if (retryCount <= 0) {
-              logger(`[STORY] Story ${deletedID} still not registered after 8 attempts. Giving up.`,"red");
-              return;
-            }
-      
-            // IMPORTANT: call the method + pass the counter
-            setTimeout(() => {
-                this.deleteStoriesHandler(msg, retryCount).catch((e) => logger(`[STORY] Retry failed: ${e?.stack || e}`, "red"));
-            }, 10000);
-            
-            return; // stop current run (no ack now)
-          }
-      
-          await this.deleteStory(roID, stories, deletedID);
-        }
-      
-        // Update rundown last update
-        await sqlService.rundownLastUpdate(roID);
-      
-        // Send ack to mos
-        ackService.sendAck(roID);
-      }
-
     // Done, Alex.
     async deleteStory(roID, stories, deletedID) {
 

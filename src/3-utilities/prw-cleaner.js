@@ -59,7 +59,7 @@ function startPrwCleaner() {
 
   timer = setInterval(sweepOnce, INTERVAL_MS);
   timer.unref?.();
-
+  sweepOnce();
   logger(`[PRW cleaner] Started. dir=${PRW_DIR}, interval=${INTERVAL_MS}ms, maxAge=${MAX_AGE_MS}ms`, "green");
 }
 

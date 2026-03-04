@@ -196,7 +196,7 @@ function createPreviewPane(document) {
     const aside = document.createElement('aside');
     aside.id = 'previewPane';
     aside.setAttribute('aria-label', 'Preview');
-    const showExportBtn = appConfig.showExportButton = true ? `style="display:none"` : ""; //Conditional rendering based on config
+    const showExportBtn = appConfig.showExportButton ? "" : `style="display:none"` ; //Conditional rendering based on config
     aside.innerHTML = `
       <div class="prw-header">Preview</div>
       <img id="previewImg">

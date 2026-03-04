@@ -217,7 +217,7 @@ document.getElementById('preview').addEventListener('click', async ()=>{
 
 const debouncedInput = debounce(async function() {
     const r = await getDataForPrwRequest();
-    const path = encodeURIComponent("c:/Devprojects/inews-connect-mos/plugin/prw/" + r.uuid + ".png");
+    const path = encodeURIComponent(`c:/Devprojects/inews-connect-mos/plugin/prw/${r.uuid}${previewExtension}`);
     await fetch(`http://${r.previewHost}:${r.previewPort}?${path},${r.templateId},${r.scripts}`, { method: 'GET' });
     showPrwImage(r.uuid);
 }, 500);
@@ -283,7 +283,7 @@ async function getDataForPrwRequest(){
 
 async function showPrwImage(uuid) {
   try {
-    const url = `${originUrl}/prw/${uuid}.png`;
+    const url = `${originUrl}/prw/${uuid}${previewExtension}`;
     const maxTries = 10;
     const interval = 500;
 
@@ -303,7 +303,7 @@ async function showPrwImage(uuid) {
 }
 
 async function exportPng(){
-  const r = await getDataForPrwRequest();
+  const r = await getDataForPrwRequest();// Returns {scripts,templateId,previewHost,previewPort,uuid}
   const filename = document.getElementById("nameInput").value;
   const path = encodeURIComponent(previewExportDir + filename + previewExtension);
   await fetch(`http://${r.previewHost}:${r.previewPort}?${path},${r.templateId},${r.scripts}`, { method: 'GET' });

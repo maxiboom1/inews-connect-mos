@@ -41,7 +41,7 @@ class MosMediaConnector {
     
                     // Parse the complete message
                     parser.parseMos(completeMessage, `media-client ${this.port}`);
-    
+                    console.log("THIS: ", completeMessage)
                     // Remove the processed message from the buffer
                     buffer = Uint8Array.prototype.slice.call(buffer, endTagIndex + this.mosDelimiter.length);
                 }
@@ -56,7 +56,7 @@ class MosMediaConnector {
                 logger(`[TCP_MEDIA] Media Client Error: ${err.message}`,"red");
                 if (err.code === 'ETIMEDOUT' || err.code === 'ECONNREFUSED') {
                     logger('[TCP_MEDIA] Reconnecting due to network issue...',"red");
-                    setTimeout(() => { this.startClient(); }, 5000); // Attempt to reconnect after timeout
+                    setTimeout(() => { this.startMediaClient(); }, 5000); // Attempt to reconnect after timeout
                 }
                 reject(err); // Reject if there's an error
             });

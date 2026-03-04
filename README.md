@@ -16,6 +16,13 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.5.2
+
+- Bug fixed: PrvFileExtension was hardcoded in some plases. Now it fully dynamic and alligns config prop.
+- Bux fix: Related to ternary operation in showPrvButton.
+- Added sweepOnce() force prv delete files on startup.
+- Bug fixed: deleteStoriesHandler() was defined twice - fixed.
+
 ## 2.5.1
 
 - Implemented "showExportButton":true/false config option - to hide export button.
