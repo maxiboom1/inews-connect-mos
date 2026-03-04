@@ -39,7 +39,7 @@ class MosConnector {
                     const completeMessage = Uint8Array.prototype.slice.call(buffer, 0, endTagIndex + this.mosDelimiter.length);
     
                     // Parse the complete message
-                    parser.parseMos(completeMessage, `client ${this.port}`);
+                    parser.parseMos(completeMessage, `client ${this.port}`).catch(e => logger(`[MOS] parseMos error ${e}`, "red"));
     
                     // Remove the processed message from the buffer
                     buffer = Uint8Array.prototype.slice.call(buffer, endTagIndex + this.mosDelimiter.length);
@@ -80,7 +80,7 @@ class MosConnector {
                     // Search for the `</mos>` delimiter in the buffer
                     while ((endTagIndex = buffer.indexOf(this.mosDelimiter)) !== -1) {
                         const completeMessage = Uint8Array.prototype.slice.call(buffer, 0, endTagIndex + this.mosDelimiter.length);
-                        parser.parseMos(completeMessage, `listener ${this.port}`);
+                        parser.parseMos(completeMessage, `listener ${this.port}`).catch(e => logger(`[MOS] parseMos error ${e}`, "red"));
                         buffer = Uint8Array.prototype.slice.call(buffer, endTagIndex + this.mosDelimiter.length);
                     }
 

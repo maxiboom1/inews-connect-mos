@@ -1,0 +1,43 @@
+{
+	"octopusIpAddr":"192.168.0.40",
+    "mosID":"NAMOS",
+    "ncsID":"INEWS79X",
+    "mediaPort":10540,
+    "rundownPort":10541,
+    
+    "previewServer": "127.0.0.1",
+    "previewPort":5432,
+    "showExportButton":true,
+    "previewExtension":".png",
+    "previewWorkingDir": "c:/devprojects/inews-connect-mos/plugin/prw/",
+    "previewExportDir": "g:/test1/",
+    
+    "sqlServerHost": "ALEX-LAPTOP\\SQLEXPRESS", 
+    "sqlServerUser": "test",
+    "sqlServerPassword": "1234",
+    "sqlServerDatabase": "newsarts",
+    
+    "addItemCategoryName":true, 
+
+    "favorites":[
+        {"name":"Stripe","id":90194, "key": "1"},
+        {"name":"BOX-1","id":90199, "key": "2"}
+    ],
+    
+    "favoritesModifier":"alt",
+    "comment": [
+        "possible modifiers: alt, ctrl, shift",
+        "other comment for user use.."
+    ],
+
+    "rundowns": {
+        
+        "SHOW.TEST.TEST01":{"production":10008, "alias":"Test01"},
+        
+        "SHOW.TEST.RUNDOWN":{"production":10008, "alias":"Friendly-Rundown-Name"},
+        
+        "default":{"production":10009, "alias":"Default-RD"}
+
+    } 
+
+} 

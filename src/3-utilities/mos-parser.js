@@ -1,9 +1,9 @@
 import {XMLParser} from "fast-xml-parser";
 import mosRouter from "../4-services/0-mos-router.js";
-import logger from "./logger.js";
+import mosInterceptor from "../4-services/8-mos-interceptor.js";
+import appConfig from "./app-config.js";
 
-
-function parseMos(buffer, port) {
+async function parseMos(buffer, port) {
     try {
       const decodedData = Buffer.from(buffer).swap16().toString('utf16le');
       const parser = new XMLParser({
@@ -16,9 +16,14 @@ function parseMos(buffer, port) {
       });
       
       let obj = parser.parse(decodedData);
-      mosRouter.mosMessageProcessor(obj, port);
       
-    //logger(`[MOS-PROTOCOL-DEBUG] ${JSON.stringify(decodedData)}`,'yellow');
+      if(appConfig.bootInterceptor){
+        await mosInterceptor.handle(obj, port);
+      }else{
+        mosRouter.mosMessageProcessor(obj, port);
+      }
+      
+      //logger(`[MOS-PROTOCOL-DEBUG] ${JSON.stringify(decodedData)}`,'yellow');
 
 
   } catch (error) {

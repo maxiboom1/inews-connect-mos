@@ -16,6 +16,14 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.6.0
+
+- Implemented mos-interceptor service. Its wired before the mos-router - so all incoming MOS messages arrives first there.
+- During startup it ACKs every incoming MOS update immediately (so NRCS doesn’t pause), but skips processing those messages.
+- All skipped updates are stored in an in-memory FIFO queue (keeps exact arrival order).
+- roAck messages are not intercepted — they are always passed through instantly.
+- When boot finishes, interceptor turns BOOT OFF and drains the queued messages one-by-one, processing them normally.
+- Added appConfig.bootInterceptor config toggle - so we can easily bypass it - since i still didnt checked it enough. 
 
 ## 2.5.6  
 

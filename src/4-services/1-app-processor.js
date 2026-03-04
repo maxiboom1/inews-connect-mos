@@ -10,7 +10,7 @@ import storyService from "./2-story-service.js";
 import logMessages from "../3-utilities/logger-messages.js";
 import itemsHash from "../2-cache/items-hashmap.js";
 import storySyncService from "./7-story-sync.js";
-
+import mosInterceptor from "./8-mos-interceptor.js";
 
 // MOS 2.8.5
 class AppProcessor {
@@ -24,7 +24,7 @@ class AppProcessor {
         await sqlService.initialize();
         await mosConnector.connect();
         await mosMediaConnector.connect();
-        //this.isBoot = true;
+        mosInterceptor.beginBoot();
         logger("[BOOT] System BOOT Starting", "cyan");
         mosConnector.sendToClient(mosCommands.roReqAll());// Start point - sends roReqAll and server receives roListAll
     }
@@ -60,6 +60,7 @@ class AppProcessor {
         // If queue finished -> boot end
         if (this.roQueue.length === 0) {
             logger("[BOOT] System BOOT Finished", "cyan");
+            await mosInterceptor.endBoot();
             return;
         }
 
