@@ -11,6 +11,10 @@ document.getElementById('syncButton').addEventListener('click', sendSyncRequest)
 document.querySelector("#navigateBack").addEventListener('click', ()=>{window.parent.hideIframe();});
 document.getElementById('exportPngBtn').addEventListener('click', () => {exportPng();});
 
+// Events from templates
+document.addEventListener('UpdateNameEvent', function(event) {nameInputUpdate(event.detail.name);}); 
+document.addEventListener('userMediaSelectionEvent', function(event) {updatePrw();}); 
+
 async function save(){
     // Try copying with Clipboard API
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -122,8 +126,6 @@ function setNameOnLoad(){
     const staticHeader = document.body.getAttribute('data-template-name');
     document.getElementById("nameInput").value = staticHeader;   
 }
-
-document.addEventListener('UpdateNameEvent', function(event) {nameInputUpdate(event.detail.name);}); 
 
 // ======================== Favorites ========================
 document.addEventListener('DOMContentLoaded', () => {
@@ -286,7 +288,7 @@ async function getDataForPrwRequest(){
 async function showPrwImage(uuid) {
   try {
     const url = `${originUrl}/prw/${uuid}${previewExtension}`;
-    const maxTries = 10;
+    const maxTries = 20;
     const interval = 500;
 
     for (let i = 0; i < maxTries; i++) {

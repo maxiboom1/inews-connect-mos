@@ -10,7 +10,7 @@ class MosRouter extends EventEmitter {
 
     
     async mosMessageProcessor(msg, port) {
-    
+        
         // Those are ignored by logger and logged to file only
         logger(`//****************************************************************************************`,'yellow'); 
         logger(`[MOS-PROTOCOL-DEBUG] ${JSON.stringify(msg)}`,'yellow'); 
@@ -75,7 +75,7 @@ class MosRouter extends EventEmitter {
                 await storyService.insertStory(msg);
                 break;  
             case !!msg.mos.roStoryMoveMultiple:
-                logger(`[MOS] {${this.color("roStoryMoveMultiple ")}} are received from ${port}`);
+                logger(`[MOS] {${this.color("roStoryMoveMultiple ")}} are received from ${port}.`);
                 await storyService.moveMultiple(msg);
                 break;  
             

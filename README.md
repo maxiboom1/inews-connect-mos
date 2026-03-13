@@ -16,6 +16,19 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.6.1
+
+- Improved mos-interceptor boot logic to handle multi-rundown environments correctly.
+- Interceptor now tracks currently loading rundown (bootingRoID) and full list of rundowns still pending for boot (bootingRoIDsList).
+- During boot:
+  - Messages related to the currently loading rundown are ACKed and queued (FIFO).
+  - Messages related to rundowns that are still waiting for their roList snapshot are ACKed and dropped (snapshot will already contain the changes).
+  - Messages related to already loaded rundowns are passed immediately to mos-router.
+- Added additional logging for interceptor decisions (queued / dropped / passed) including rundown roID and message type.
+Other updates:
+- Added userMediaSelectionEvent listener in iframe.js to handle media selection event that routed to prw render command firing.
+- Changed showPrwImage maxTries in iframe.js to 20 (so now we waits for prw image up to 10 secs).
+
 ## 2.6.0
 
 - Implemented mos-interceptor service. Its wired before the mos-router - so all incoming MOS messages arrives first there.

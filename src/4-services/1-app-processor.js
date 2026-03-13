@@ -46,7 +46,7 @@ class AppProcessor {
         }
         // Now, when cache is updated, hide unwatched rundowns in sql
         await sqlService.hideUnwatchedRundowns();
-        
+        mosInterceptor.setBootingRoIDsList(this.roQueue); // Set full list of booting rundowns in mos-interceptor
         // Start processing the queue
         this.processNextRoReq();
         
@@ -66,6 +66,7 @@ class AppProcessor {
 
         this.pendingRequest = true; // Mark a request as in progress
         const roID = this.roQueue.shift(); // Get the next roID from the queue
+        mosInterceptor.setBootingRoIDsList(this.roQueue); // Update list of booting rundowns in mos-interceptor
         mosConnector.sendToClient(mosCommands.roReq(roID));
     }
 
@@ -79,6 +80,7 @@ class AppProcessor {
         }
 
         const roSlug = msg.mos.roList.roSlug;
+        mosInterceptor.setBootingRoID(roSlug); // Set RoID boot state in mos-interceptor
         
         // Normalize `story` to always be an array, handling undefined properly (nested ternary)
         const stories = msg.mos.roList.story ? (Array.isArray(msg.mos.roList.story) ? msg.mos.roList.story : [msg.mos.roList.story]) : [];
@@ -99,6 +101,7 @@ class AppProcessor {
 
         // Mark the current request as complete and process the next roReq
         this.pendingRequest = false;
+        mosInterceptor.clearBootingRoID(); //Reset boot state in mos-interceptor
         this.processNextRoReq();
 
     }
@@ -187,6 +190,8 @@ class AppProcessor {
         
         await sqlService.deleteDbItemsByRundownID(rundownId);
     }
+
+    getRoQueue(){return this.roQueue}
 
 }
 
