@@ -16,6 +16,9 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.6.2
+- Added appConfig.logMos boolean to toggle save to log (on/off) of large mos messages. Basically - in stable operation its reccomended to turn it off - and use only for debug purposes.
+
 ## 2.6.1
 
 - Improved mos-interceptor boot logic to handle multi-rundown environments correctly.

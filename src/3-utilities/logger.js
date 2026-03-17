@@ -1,5 +1,5 @@
 import { enqueueLogLine } from "./log-file-sink.js";
-
+import appConfig from "./app-config.js";
 /**
  * Logs a message to the console with an optional color.
  * 
@@ -12,9 +12,16 @@ import { enqueueLogLine } from "./log-file-sink.js";
  */
 function logger(msg, color = "white"){
     
+    if(msg.startsWith("[MOS-PROTOCOL-DEBUG]") || msg.startsWith("//*******")) {
+        
+        if(appConfig.logMos) {
+            logToFile(msg);
+        }
+        
+        return;
+    }
+
     logToFile(msg);
-    
-    if(msg.startsWith("[MOS-PROTOCOL-DEBUG]") || msg.startsWith("//*******")) return;
 
     //if(msg.startsWith("[SQL]") && color != "red") return;
     

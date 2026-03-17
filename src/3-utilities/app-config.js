@@ -6,8 +6,9 @@ const appConfig =JSON.parse(readFileSync('./config.json', 'utf8'));
 // ***************** App Advanced Configuration ***************** //
 
 // App Version
-appConfig.version = "2.6.1";
+appConfig.version = "2.6.2";
 appConfig.bootInterceptor = true;
+appConfig.logMos = true;
 // Express static server port
 appConfig.pluginPort = 3000; 
 
