@@ -1,17 +1,15 @@
-// window.parent.funcName()
-// Constants
 const originUrl = window.location.origin;
-const previewExtension = document.body.getAttribute('data-preview-extension');
 const previewExportDir = document.body.getAttribute('data-preview-exportDir');
 const prwPath = document.body.getAttribute('data-preview-path');
+const exportPrwExtension = document.body.getAttribute('data-preview-extension');
+const pluginPrwExtension = ".jpg";
 
-//document.getElementById('drag').addEventListener('dragstart', drag);
 document.getElementById('drag').addEventListener('click', save);
 document.getElementById('syncButton').addEventListener('click', sendSyncRequest);
 document.querySelector("#navigateBack").addEventListener('click', ()=>{window.parent.hideIframe();});
 document.getElementById('exportPngBtn').addEventListener('click', () => {exportPng();});
 
-// Events from templates
+// Events from templates (Shabi HTML's)
 document.addEventListener('UpdateNameEvent', function(event) {nameInputUpdate(event.detail.name);}); 
 document.addEventListener('userMediaSelectionEvent', function(event) {updatePrw();}); 
 
@@ -221,7 +219,7 @@ document.getElementById('preview').addEventListener('click', async ()=>{
 
 const debouncedInput = debounce(async function() {
     const r = await getDataForPrwRequest();
-    const path = encodeURIComponent(`${prwPath}${r.uuid}${previewExtension}`);
+    const path = encodeURIComponent(`${prwPath}${r.uuid}${pluginPrwExtension}`);
     await fetch(`http://${r.previewHost}:${r.previewPort}?${path},${r.templateId},${r.scripts}`, { method: 'GET' });
     showPrwImage(r.uuid);
 }, 500);
@@ -287,7 +285,7 @@ async function getDataForPrwRequest(){
 
 async function showPrwImage(uuid) {
   try {
-    const url = `${originUrl}/prw/${uuid}${previewExtension}`;
+    const url = `${originUrl}/prw/${uuid}${pluginPrwExtension}`;
     const maxTries = 20;
     const interval = 500;
 
@@ -309,7 +307,7 @@ async function showPrwImage(uuid) {
 async function exportPng(){
   const r = await getDataForPrwRequest();// Returns {scripts,templateId,previewHost,previewPort,uuid}
   const filename = (document.getElementById("nameInput").value).replace(/ /g, "-"); // The replace is guard for spaces some eng not rendering it wit spaces
-  const path = encodeURIComponent(previewExportDir + filename + previewExtension);
+  const path = encodeURIComponent(previewExportDir + filename + exportPrwExtension);
   await fetch(`http://${r.previewHost}:${r.previewPort}?${path},${r.templateId},${r.scripts}`, { method: 'GET' });
   showPrwToast(`Export request sent → ${decodeURIComponent(path)}`, 4500);
 }
