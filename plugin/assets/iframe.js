@@ -65,7 +65,7 @@ function createMosMessage(){
     // They have elements without scripts at all - this is fallback fot this case
     if(scripts === undefined) {scripts = "  ";}
 
-    const itemSlug = document.getElementById("nameInput").value.replace(/'/g, "")
+    const itemSlug = document.getElementById("nameInput").value.replace(/'/g, "").replace(/&/g, "");
     return `<mos><ncsItem><item>
                 <itemSlug>${itemSlug}</itemSlug>
                 <objID></objID>
