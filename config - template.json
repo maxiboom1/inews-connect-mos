@@ -25,6 +25,11 @@
     ],
     
     "favoritesModifier":"alt",
+    "previewOpenShortcut": {
+        "modifier1": "ctrl",
+        "modifier2": "shift",
+        "key": "p"
+    },
     "comment": [
         "possible modifiers: alt, ctrl, shift",
         "other comment for user use.."
@@ -38,6 +43,6 @@
         
         "default":{"production":10009, "alias":"Default-RD"}
 
-    } 
+    }
 
-} 
+}

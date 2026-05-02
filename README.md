@@ -16,6 +16,10 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.6.5
+- Added configurable shortcut for reopening the preview panel after close.
+- Added previewOpenShortcut config with modifier1, optional modifier2, and key fields.
+
 ## 2.6.4
 - Added preview panel navbar with left, bottom, and right placement controls.
 - Added preview panel close behavior that stretches the template canvas to the full available width.

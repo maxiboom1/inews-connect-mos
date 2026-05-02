@@ -81,6 +81,7 @@ function htmlWrapper(htmlContent,templateUid, productionUid, templateName) {
     document.body.setAttribute('data-preview-exportDir', appConfig.previewExportDir);
     document.body.setAttribute('data-preview-path', appConfig.previewWorkingDir);
     document.body.setAttribute('data-mos-id', appConfig.mosID);
+    setPreviewOpenShortcutAttrs(document);
 
     // Add static category name in item name
     if(appConfig.addItemCategoryName){
@@ -184,6 +185,17 @@ function createFavoritesDiv(document){
     });
 
     return popupDiv;
+}
+
+function setPreviewOpenShortcutAttrs(document) {
+    const shortcut = appConfig.previewOpenShortcut;
+    if (!shortcut || !shortcut.modifier1 || !shortcut.key) return;
+
+    document.body.setAttribute('data-preview-open-shortcut-modifier1', shortcut.modifier1);
+    if (shortcut.modifier2) {
+        document.body.setAttribute('data-preview-open-shortcut-modifier2', shortcut.modifier2);
+    }
+    document.body.setAttribute('data-preview-open-shortcut-key', shortcut.key);
 }
 
 function createSpan(document,id, text){

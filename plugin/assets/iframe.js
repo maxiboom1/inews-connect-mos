@@ -162,6 +162,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener("keydown", async (event) => {
         const modifier = document.getElementById("pluginPopover").getAttribute("data-modifier"); // Return string "alt"/"ctrl"/"shift"
         const keyPressed = event.key.toLowerCase();
+
+        if (isPreviewOpenShortcut(event)) {
+            event.preventDefault();
+            if (typeof window.openPreviewPanel === 'function') {
+                window.openPreviewPanel();
+            }
+            return;
+        }
         
         // Check if the appropriate modifier key is pressed
         const isModifierPressed = 
@@ -182,6 +190,42 @@ document.addEventListener('DOMContentLoaded', () => {
 }) 
 
 function handleLinksButtonsClick(){window.parent.renderTemplate(this.id);}
+
+function isPreviewOpenShortcut(event) {
+    const shortcut = getPreviewOpenShortcutConfig();
+    if (!shortcut) return false;
+
+    if (normalizeShortcutValue(event.key) !== shortcut.key) return false;
+
+    return ['ctrl', 'alt', 'shift'].every((modifier) => {
+        return shortcut.modifiers.includes(modifier) === isShortcutModifierPressed(event, modifier);
+    });
+}
+
+function getPreviewOpenShortcutConfig() {
+    const modifier1 = normalizeShortcutValue(document.body.getAttribute('data-preview-open-shortcut-modifier1'));
+    const modifier2 = normalizeShortcutValue(document.body.getAttribute('data-preview-open-shortcut-modifier2'));
+    const key = normalizeShortcutValue(document.body.getAttribute('data-preview-open-shortcut-key'));
+    const modifiers = [modifier1, modifier2].filter(Boolean);
+    const supportedModifiers = ['ctrl', 'alt', 'shift'];
+
+    if (!key || modifiers.length === 0) return null;
+    if (!modifiers.every((modifier) => supportedModifiers.includes(modifier))) return null;
+    if (new Set(modifiers).size !== modifiers.length) return null;
+
+    return { key, modifiers };
+}
+
+function normalizeShortcutValue(value) {
+    return String(value || '').trim().toLowerCase();
+}
+
+function isShortcutModifierPressed(event, modifier) {
+    if (modifier === 'ctrl') return event.ctrlKey;
+    if (modifier === 'alt') return event.altKey;
+    if (modifier === 'shift') return event.shiftKey;
+    return false;
+}
 
 // Indication for user on "ctrl+s" with green dot
 function showPrompt(){
