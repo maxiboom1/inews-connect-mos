@@ -195,7 +195,7 @@ function isPreviewOpenShortcut(event) {
     const shortcut = getPreviewOpenShortcutConfig();
     if (!shortcut) return false;
 
-    if (normalizeShortcutValue(event.key) !== shortcut.key) return false;
+    if (!isShortcutKeyPressed(event, shortcut.key)) return false;
 
     return ['ctrl', 'alt', 'shift'].every((modifier) => {
         return shortcut.modifiers.includes(modifier) === isShortcutModifierPressed(event, modifier);
@@ -218,6 +218,22 @@ function getPreviewOpenShortcutConfig() {
 
 function normalizeShortcutValue(value) {
     return String(value || '').trim().toLowerCase();
+}
+
+function isShortcutKeyPressed(event, configuredKey) {
+    const eventKey = normalizeShortcutValue(event.key);
+    if (eventKey === configuredKey) return true;
+
+    if (/^[a-z]$/.test(configuredKey)) {
+        const expectedCode = `key${configuredKey}`;
+        if (normalizeShortcutValue(event.code) === expectedCode) return true;
+    }
+
+    const aliases = {
+        p: ['פ', 'ף']
+    };
+
+    return (aliases[configuredKey] || []).includes(eventKey);
 }
 
 function isShortcutModifierPressed(event, modifier) {
@@ -385,6 +401,9 @@ async function sendSyncRequest(){
   
 // Trigger only on item render - ignore on template render
 function updatePrw(){debouncedInput();}
+
+
+// ========================================= Preview panel ========================================= \\
 
 
 (function initPreviewSplitter() {

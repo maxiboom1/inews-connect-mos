@@ -16,6 +16,9 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.6.6
+- Updated preview-open shortcut handling so configured Latin keys also work when the keyboard layout is Hebrew.
+
 ## 2.6.5
 - Added configurable shortcut for reopening the preview panel after close.
 - Added previewOpenShortcut config with modifier1, optional modifier2, and key fields.
