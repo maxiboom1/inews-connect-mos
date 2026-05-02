@@ -98,6 +98,7 @@ button{
 /* 1) Grid layout */
 .toolbox {
   --prw-width: 360px;
+  --prw-height: 280px;
   --splitter-w: 6px;
 
   display: grid;
@@ -110,6 +111,24 @@ button{
   height: 100vh;
   overflow: hidden;
 }
+
+  .toolbox.prw-layout-right {
+    grid-template-columns: 1fr var(--splitter-w) var(--prw-width);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "header  header   header"
+      "content splitter preview";
+    direction: ltr;
+  }
+
+  .toolbox.prw-layout-left {
+    grid-template-columns: var(--prw-width) var(--splitter-w) 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "header  header   header"
+      "preview splitter content";
+    direction: ltr;
+  }
   
   /* 1b) RTL flip: swap areas AND column sizes */
   .na-doc-rtl .toolbox {
@@ -117,6 +136,43 @@ button{
     grid-template-areas:
       "header  header   header"
       "preview splitter content";
+  }
+
+  .na-doc-rtl .toolbox.prw-layout-right {
+    grid-template-columns: 1fr var(--splitter-w) var(--prw-width);
+    grid-template-areas:
+      "header  header   header"
+      "content splitter preview";
+    direction: ltr;
+  }
+
+  .na-doc-rtl .toolbox.prw-layout-left {
+    grid-template-columns: var(--prw-width) var(--splitter-w) 1fr;
+    grid-template-areas:
+      "header  header   header"
+      "preview splitter content";
+    direction: ltr;
+  }
+
+  .toolbox.prw-layout-bottom,
+  .na-doc-rtl .toolbox.prw-layout-bottom {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr) var(--splitter-w) var(--prw-height);
+    grid-template-areas:
+      "header"
+      "content"
+      "splitter"
+      "preview";
+    direction: ltr;
+  }
+
+  .toolbox.prw-preview-closed,
+  .na-doc-rtl .toolbox.prw-preview-closed {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "header"
+      "content";
   }
   
   /* 2) Map existing blocks */
@@ -127,8 +183,19 @@ button{
   
   .toolbox-content {
     grid-area: content;
+    position: relative;
+    transform: translateZ(0);
     overflow: auto;
     min-width: 0;                          /* allow shrink without overflow */
+    min-height: 0;
+  }
+
+  body.na-doc-rtl .toolbox-content {
+    direction: rtl;
+  }
+
+  body.na-doc-ltr .toolbox-content {
+    direction: ltr;
   }
   
   /* 3) Preview pane */
@@ -149,7 +216,10 @@ button{
     border-left: 1px solid #2a2f3a;        /* default divider on the left side of preview (LTR) */
     padding: 10px;
     box-sizing: border-box;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-width: 0;
+    min-height: 0;
   }
   
   /* 3b) Divider side for RTL */
@@ -157,13 +227,150 @@ button{
     border-left: none;
     border-right: 1px solid #2a2f3a;
   }
+
+  .toolbox.prw-layout-bottom > #previewPane,
+  .na-doc-rtl .toolbox.prw-layout-bottom > #previewPane {
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid #2a2f3a;
+  }
+
+  .toolbox.prw-layout-left > #previewPane {
+    border-left: none;
+    border-right: 1px solid #2a2f3a;
+  }
+
+  .toolbox.prw-preview-closed > #previewPane,
+  .toolbox.prw-preview-closed > #prwSplitter {
+    display: none;
+  }
   
   /* 4) Preview header + image */
   .toolbox #previewPane .prw-header {
-    font-size: 14px;
-    letter-spacing: 0.02em;
-    opacity: 0.8;
     margin-bottom: 8px;
+  }
+
+  .toolbox #previewPane .prw-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 28px;
+    padding: 2px 0 8px;
+    border-bottom: 3px solid #242a35;
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 13px;
+    letter-spacing: 0;
+    opacity: 1;
+  }
+
+  .toolbox #previewPane .prw-navbar-title {
+    min-width: 0;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .toolbox #previewPane .prw-navbar-controls {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+
+  .toolbox #previewPane .prw-navbar-controls > button + button {
+    margin-left: 6px;
+  }
+
+  .toolbox #previewPane .prw-layout-btn,
+  .toolbox #previewPane .prw-close-btn {
+    width: 30px;
+    height: 26px;
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 3px;
+    background: #0f1115;
+    color: rgba(255, 255, 255, 0.62);
+    cursor: pointer;
+    box-sizing: border-box;
+    font-family: inherit;
+    box-shadow: none;
+  }
+
+  .toolbox #previewPane .prw-layout-btn:hover,
+  .toolbox #previewPane .prw-close-btn:hover {
+    background: #161b22;
+    color: rgba(255, 255, 255, 0.82);
+    filter: none;
+  }
+
+  .toolbox #previewPane .prw-layout-btn:focus-visible,
+  .toolbox #previewPane .prw-close-btn:focus-visible {
+    outline: 2px solid #66a9dc;
+    outline-offset: 1px;
+  }
+
+  .toolbox #previewPane .prw-layout-btn.is-active {
+    background: #18496a;
+    color: rgba(255, 255, 255, 0.88);
+    box-shadow: none;
+  }
+
+  .toolbox #previewPane .prw-close-btn {
+    font-size: 15px;
+    line-height: 1;
+    font-weight: 500;
+  }
+
+  .toolbox #previewPane .prw-close-btn:hover {
+    background: #161b22;
+  }
+
+  .toolbox #previewPane .prw-layout-icon {
+    width: 17px;
+    height: 14px;
+    display: grid;
+    gap: 2px;
+    padding: 1px;
+    border: 1px solid rgba(255, 255, 255, 0.46);
+    background: transparent;
+    box-sizing: border-box;
+  }
+
+  .toolbox #previewPane .prw-layout-icon-primary,
+  .toolbox #previewPane .prw-layout-icon-preview {
+    display: block;
+    min-width: 0;
+    min-height: 0;
+    border: 1px solid rgba(255, 255, 255, 0.46);
+    background: rgba(255, 255, 255, 0.10);
+  }
+
+  .toolbox #previewPane .prw-layout-icon-preview {
+    background: rgba(255, 255, 255, 0.58);
+  }
+
+  .toolbox #previewPane .prw-layout-icon-right {
+    grid-template-columns: 1fr 5px;
+  }
+
+  .toolbox #previewPane .prw-layout-icon-left {
+    grid-template-columns: 5px 1fr;
+  }
+
+  .toolbox #previewPane .prw-layout-icon-left .prw-layout-icon-primary {
+    grid-column: 2;
+  }
+
+  .toolbox #previewPane .prw-layout-icon-left .prw-layout-icon-preview {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .toolbox #previewPane .prw-layout-icon-bottom {
+    grid-template-rows: 1fr 4px;
   }
   
   .toolbox #previewPane #previewImg {
@@ -173,6 +380,7 @@ button{
     display: block;
     background: #0b0d11;
     flex: 1;
+    min-height: 0;
   }
   
   /* splitter */
@@ -183,6 +391,53 @@ button{
   touch-action: none;
   background: #1a1f2a;
 }
+
+.toolbox.prw-layout-bottom > #prwSplitter {
+  cursor: row-resize;
+}
+
+body.na-doc-rtl .toolbox.prw-layout-right {
+  grid-template-columns: 1fr var(--splitter-w) var(--prw-width);
+  grid-template-areas:
+    "header  header   header"
+    "content splitter preview";
+  direction: ltr;
+}
+
+body.na-doc-rtl .toolbox.prw-layout-left {
+  grid-template-columns: var(--prw-width) var(--splitter-w) 1fr;
+  grid-template-areas:
+    "header  header   header"
+    "preview splitter content";
+  direction: ltr;
+}
+
+body.na-doc-rtl .toolbox.prw-layout-right > #previewPane {
+  border-left: 1px solid #2a2f3a;
+  border-right: none;
+}
+
+body.na-doc-rtl .toolbox.prw-layout-left > #previewPane {
+  border-left: none;
+  border-right: 1px solid #2a2f3a;
+}
+
+.toolbox.prw-preview-closed,
+body.na-doc-rtl .toolbox.prw-preview-closed,
+body.na-doc-ltr .toolbox.prw-preview-closed {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "header"
+    "content";
+}
+
+.toolbox.prw-preview-closed > .toolbox-content {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: none;
+}
+
 .toolbox > #prwSplitter:hover,
 .toolbox.prw-resizing > #prwSplitter {
   background: #2a3140;

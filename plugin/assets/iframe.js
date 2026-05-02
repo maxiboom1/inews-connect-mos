@@ -359,18 +359,22 @@ function updatePrw(){debouncedInput();}
     previewPane.parentNode.insertBefore(splitter, previewPane);
   }
 
+  moveTemplateToolboxChildren(toolbox, previewPane, splitter);
+
+  const layoutButtons = initPreviewNavbar(toolbox, previewPane, splitter);
+
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
   const getClientX = (evt) =>
     (evt.touches && evt.touches[0] ? evt.touches[0].clientX : evt.clientX);
-
-  // preview side:
-  // LTR: preview is on the RIGHT
-  // RTL: preview is on the LEFT (you flip areas/columns)
-  const isRTL = !document.body.classList.contains('na-doc-rtl');
+  const getClientY = (evt) =>
+    (evt.touches && evt.touches[0] ? evt.touches[0].clientY : evt.clientY);
 
   let dragging = false;
   let startX = 0;
+  let startY = 0;
   let startWidth = 0;
+  let startHeight = 0;
+  let activePlacement = 'right';
 
   // read current preview width (from css var or from actual rect)
   const getCurrentPreviewWidth = () => {
@@ -383,21 +387,67 @@ function updatePrw(){debouncedInput();}
     return previewPane.getBoundingClientRect().width || 360;
   };
 
+  const getCurrentPreviewHeight = () => {
+    const v = getComputedStyle(toolbox).getPropertyValue('--prw-height').trim();
+    if (v.endsWith('px')) {
+      const n = parseFloat(v);
+      if (!Number.isNaN(n) && n > 0) return n;
+    }
+    return previewPane.getBoundingClientRect().height || 280;
+  };
+
+  const setActiveLayoutButton = (placement) => {
+    layoutButtons.forEach((button) => {
+      const isActive = button.getAttribute('data-prw-layout') === placement;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-pressed', String(isActive));
+    });
+  };
+
+  const applyPreviewPlacement = (placement) => {
+    if (placement !== 'bottom' && placement !== 'left' && placement !== 'right') return;
+
+    activePlacement = placement;
+    toolbox.classList.remove('prw-layout-left', 'prw-layout-right', 'prw-layout-bottom', 'prw-preview-closed');
+    toolbox.classList.add(`prw-layout-${placement}`);
+    splitter.setAttribute('aria-orientation', placement === 'bottom' ? 'horizontal' : 'vertical');
+    setActiveLayoutButton(placement);
+  };
+
+  const closePreviewPanel = () => {
+    toolbox.classList.remove('prw-layout-left', 'prw-layout-right', 'prw-layout-bottom');
+    toolbox.classList.add('prw-preview-closed');
+  };
+
+  const openPreviewPanel = () => {
+    applyPreviewPlacement(activePlacement);
+  };
+
+  window.openPreviewPanel = openPreviewPanel;
+
   const onMove = (e) => {
     if (!dragging) return;
     e.preventDefault();
 
     const rect = toolbox.getBoundingClientRect();
+    if (activePlacement === 'bottom') {
+      const y = getClientY(e);
+      const deltaY = y - startY;
+      let newHeight = startHeight - deltaY;
+      const min = 160;
+      const max = Math.max(220, rect.height - 180);
+      newHeight = clamp(Math.round(newHeight), min, max);
+      toolbox.style.setProperty('--prw-height', `${newHeight}px`);
+      return;
+    }
+
     const x = getClientX(e);
 
     const deltaX = x - startX;
 
-    // LTR (preview right): dragging splitter to the RIGHT should make preview SMALLER
-    // newWidth = startWidth - deltaX
-    //
-    // RTL (preview left): dragging splitter to the RIGHT should make preview BIGGER
-    // newWidth = startWidth + deltaX
-    let newWidth = isRTL ? (startWidth + deltaX) : (startWidth - deltaX);
+    let newWidth = activePlacement === 'left'
+      ? startWidth + deltaX
+      : startWidth - deltaX;
 
     const min = 220;
     const max = Math.max(260, rect.width - 220);
@@ -426,7 +476,9 @@ function updatePrw(){debouncedInput();}
     toolbox.classList.add('prw-resizing');
 
     startX = getClientX(e);
+    startY = getClientY(e);
     startWidth = getCurrentPreviewWidth();
+    startHeight = getCurrentPreviewHeight();
 
     window.addEventListener('mousemove', onMove, { passive: false });
     window.addEventListener('mouseup', onUp, { passive: false });
@@ -436,4 +488,102 @@ function updatePrw(){debouncedInput();}
 
   splitter.addEventListener('mousedown', onDown);
   splitter.addEventListener('touchstart', onDown, { passive: false });
+
+  layoutButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      applyPreviewPlacement(button.getAttribute('data-prw-layout'));
+    });
+  });
+
+  const closeButton = previewPane.querySelector('.prw-close-btn');
+  if (closeButton) closeButton.addEventListener('click', closePreviewPanel);
+
+  applyPreviewPlacement('right');
 })();
+
+function initPreviewNavbar(toolbox, previewPane, splitter) {
+  const header = previewPane.querySelector('.prw-header');
+  if (!header) return [];
+
+  header.textContent = '';
+  header.classList.add('prw-navbar');
+
+  const title = document.createElement('span');
+  title.className = 'prw-navbar-title';
+  title.textContent = 'Preview panel';
+
+  const controls = document.createElement('div');
+  controls.className = 'prw-navbar-controls';
+
+  const leftButton = createPreviewNavbarButton('left', 'Place preview on left');
+  leftButton.appendChild(createPreviewLayoutIcon('left'));
+
+  const bottomButton = createPreviewNavbarButton('bottom', 'Place preview on bottom');
+  bottomButton.appendChild(createPreviewLayoutIcon('bottom'));
+
+  const rightButton = createPreviewNavbarButton('right', 'Place preview on right');
+  rightButton.appendChild(createPreviewLayoutIcon('right'));
+
+  const closeButton = document.createElement('button');
+  closeButton.type = 'button';
+  closeButton.className = 'prw-close-btn';
+  closeButton.setAttribute('aria-label', 'Close preview panel');
+  closeButton.textContent = 'x';
+
+  controls.appendChild(leftButton);
+  controls.appendChild(bottomButton);
+  controls.appendChild(rightButton);
+  controls.appendChild(closeButton);
+
+  header.appendChild(title);
+  header.appendChild(controls);
+
+  return [leftButton, bottomButton, rightButton];
+}
+
+function createPreviewNavbarButton(layout, label) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'prw-layout-btn';
+  button.setAttribute('data-prw-layout', layout);
+  button.setAttribute('aria-label', label);
+  button.setAttribute('aria-pressed', 'false');
+  return button;
+}
+
+function createPreviewLayoutIcon(layout) {
+  const icon = document.createElement('span');
+  icon.className = `prw-layout-icon prw-layout-icon-${layout}`;
+  icon.setAttribute('aria-hidden', 'true');
+
+  const primaryPane = document.createElement('span');
+  primaryPane.className = 'prw-layout-icon-primary';
+
+  const previewPane = document.createElement('span');
+  previewPane.className = 'prw-layout-icon-preview';
+
+  icon.appendChild(primaryPane);
+  icon.appendChild(previewPane);
+
+  return icon;
+}
+
+function moveTemplateToolboxChildren(toolbox, previewPane, splitter) {
+  const content = Array.from(toolbox.children).find((child) =>
+    child.classList.contains('toolbox-content')
+  );
+  if (!content) return;
+
+  Array.from(toolbox.children).forEach((child) => {
+    if (
+      child === content ||
+      child === previewPane ||
+      child === splitter ||
+      child.classList.contains('toolbox-header')
+    ) {
+      return;
+    }
+
+    content.appendChild(child);
+  });
+}

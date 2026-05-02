@@ -16,6 +16,11 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.6.4
+- Added preview panel navbar with left, bottom, and right placement controls.
+- Added preview panel close behavior that stretches the template canvas to the full available width.
+- Improved preview navbar button styling to better match the plugin UI and embedded Chromium behavior.
+
 ## 2.6.3
 - Added static pluginPrwExtension hardcoded in iframe.js - now plugin preview image extesion is constant - jpg. While the export preview image is relay on appConfig.previewExtension.
 
