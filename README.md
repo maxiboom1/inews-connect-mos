@@ -16,6 +16,10 @@ Support bidirectional communication with iNEWS rundowns, including active rundow
 
 # Change log
 
+## 2.6.7
+- Removed obsolete preview RTL/LTR CSS artifacts now that preview placement is controlled by navbar buttons.
+- Fixed preview splitter resize direction for left and right preview placements.
+
 ## 2.6.6
 - Updated preview-open shortcut handling so configured Latin keys also work when the keyboard layout is Hebrew.
 

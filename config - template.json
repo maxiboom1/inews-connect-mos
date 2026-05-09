@@ -32,7 +32,7 @@
     },
     "comment": [
         "possible modifiers: alt, ctrl, shift",
-        "other comment for user use.."
+        "If you need 2 modifiers for previewOpenShortcut ==> add modifier2"
     ],
 
     "rundowns": {

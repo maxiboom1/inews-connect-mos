@@ -423,6 +423,7 @@ function updatePrw(){debouncedInput();}
   }
 
   moveTemplateToolboxChildren(toolbox, previewPane, splitter);
+  applyToolboxContentDirection(toolbox);
 
   const layoutButtons = initPreviewNavbar(toolbox, previewPane, splitter);
 
@@ -437,6 +438,7 @@ function updatePrw(){debouncedInput();}
   let startY = 0;
   let startWidth = 0;
   let startHeight = 0;
+  let horizontalResizeSign = -1;
   let activePlacement = 'right';
 
   // read current preview width (from css var or from actual rect)
@@ -457,6 +459,14 @@ function updatePrw(){debouncedInput();}
       if (!Number.isNaN(n) && n > 0) return n;
     }
     return previewPane.getBoundingClientRect().height || 280;
+  };
+
+  const getHorizontalResizeSign = () => {
+    const previewRect = previewPane.getBoundingClientRect();
+    const splitterRect = splitter.getBoundingClientRect();
+    const previewCenterX = previewRect.left + (previewRect.width / 2);
+    const splitterCenterX = splitterRect.left + (splitterRect.width / 2);
+    return previewCenterX < splitterCenterX ? 1 : -1;
   };
 
   const setActiveLayoutButton = (placement) => {
@@ -507,10 +517,7 @@ function updatePrw(){debouncedInput();}
     const x = getClientX(e);
 
     const deltaX = x - startX;
-
-    let newWidth = activePlacement === 'left'
-      ? startWidth + deltaX
-      : startWidth - deltaX;
+    let newWidth = startWidth + (horizontalResizeSign * deltaX);
 
     const min = 220;
     const max = Math.max(260, rect.width - 220);
@@ -542,6 +549,7 @@ function updatePrw(){debouncedInput();}
     startY = getClientY(e);
     startWidth = getCurrentPreviewWidth();
     startHeight = getCurrentPreviewHeight();
+    horizontalResizeSign = getHorizontalResizeSign();
 
     window.addEventListener('mousemove', onMove, { passive: false });
     window.addEventListener('mouseup', onUp, { passive: false });
@@ -563,6 +571,14 @@ function updatePrw(){debouncedInput();}
 
   applyPreviewPlacement('right');
 })();
+
+function applyToolboxContentDirection(toolbox) {
+  const toolboxContent = toolbox.querySelector('.toolbox-content');
+  if (!toolboxContent) return;
+
+  const bodyDirection = getComputedStyle(document.body).direction;
+  toolboxContent.style.setProperty('--toolbox-content-direction', bodyDirection === 'rtl' ? 'rtl' : 'ltr');
+}
 
 function initPreviewNavbar(toolbox, previewPane, splitter) {
   const header = previewPane.querySelector('.prw-header');
